@@ -1,7 +1,7 @@
 import sphinx.application
 
-from antlr_doc.domain import A4Domain
-from antlr_doc.diagram_directive import RailroadDiagramNode, RailroadDiagram, LexerRuleDiagram, ParserRuleDiagram
+from sphinx_a4doc.domain import A4Domain
+from sphinx_a4doc.diagram_directive import RailroadDiagramNode, RailroadDiagram, LexerRuleDiagram, ParserRuleDiagram
 
 
 def setup(app: sphinx.application.Sphinx):

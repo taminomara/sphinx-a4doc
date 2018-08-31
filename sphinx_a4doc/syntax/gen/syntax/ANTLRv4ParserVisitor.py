@@ -1,428 +1,422 @@
-# Generated from /Users/amatanhead/Documents/antlr-doc/antlr_doc/syntax/ANTLRv4Parser.g4 by ANTLR 4.7
+# Generated from /Users/amatanhead/Documents/sphinx-a4doc/sphinx_a4doc/syntax/ANTLRv4Parser.g4 by ANTLR 4.7
 from antlr4 import *
-if __name__ is not None and "." in __name__:
-    from .ANTLRv4Parser import ANTLRv4Parser
-else:
-    from ANTLRv4Parser import ANTLRv4Parser
 
 # This class defines a complete generic visitor for a parse tree produced by ANTLRv4Parser.
 
 class ANTLRv4ParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by ANTLRv4Parser#grammarSpec.
-    def visitGrammarSpec(self, ctx:ANTLRv4Parser.GrammarSpecContext):
+    def visitGrammarSpec(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#grammarType.
-    def visitGrammarType(self, ctx:ANTLRv4Parser.GrammarTypeContext):
+    def visitGrammarType(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#prequelConstruct.
-    def visitPrequelConstruct(self, ctx:ANTLRv4Parser.PrequelConstructContext):
+    def visitPrequelConstruct(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#optionsSpec.
-    def visitOptionsSpec(self, ctx:ANTLRv4Parser.OptionsSpecContext):
+    def visitOptionsSpec(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#option.
-    def visitOption(self, ctx:ANTLRv4Parser.OptionContext):
+    def visitOption(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#pathOption.
-    def visitPathOption(self, ctx:ANTLRv4Parser.PathOptionContext):
+    def visitPathOption(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#stringOption.
-    def visitStringOption(self, ctx:ANTLRv4Parser.StringOptionContext):
+    def visitStringOption(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#actionOption.
-    def visitActionOption(self, ctx:ANTLRv4Parser.ActionOptionContext):
+    def visitActionOption(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#intOption.
-    def visitIntOption(self, ctx:ANTLRv4Parser.IntOptionContext):
+    def visitIntOption(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#delegateGrammars.
-    def visitDelegateGrammars(self, ctx:ANTLRv4Parser.DelegateGrammarsContext):
+    def visitDelegateGrammars(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#delegateGrammar.
-    def visitDelegateGrammar(self, ctx:ANTLRv4Parser.DelegateGrammarContext):
+    def visitDelegateGrammar(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#tokensSpec.
-    def visitTokensSpec(self, ctx:ANTLRv4Parser.TokensSpecContext):
+    def visitTokensSpec(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#channelsSpec.
-    def visitChannelsSpec(self, ctx:ANTLRv4Parser.ChannelsSpecContext):
+    def visitChannelsSpec(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#idList.
-    def visitIdList(self, ctx:ANTLRv4Parser.IdListContext):
+    def visitIdList(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#action.
-    def visitAction(self, ctx:ANTLRv4Parser.ActionContext):
+    def visitAction(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#actionScopeName.
-    def visitActionScopeName(self, ctx:ANTLRv4Parser.ActionScopeNameContext):
+    def visitActionScopeName(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#actionBlock.
-    def visitActionBlock(self, ctx:ANTLRv4Parser.ActionBlockContext):
+    def visitActionBlock(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#argActionBlock.
-    def visitArgActionBlock(self, ctx:ANTLRv4Parser.ArgActionBlockContext):
+    def visitArgActionBlock(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#modeSpec.
-    def visitModeSpec(self, ctx:ANTLRv4Parser.ModeSpecContext):
+    def visitModeSpec(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#rules.
-    def visitRules(self, ctx:ANTLRv4Parser.RulesContext):
+    def visitRules(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#ruleSpec.
-    def visitRuleSpec(self, ctx:ANTLRv4Parser.RuleSpecContext):
+    def visitRuleSpec(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#parserRuleSpec.
-    def visitParserRuleSpec(self, ctx:ANTLRv4Parser.ParserRuleSpecContext):
+    def visitParserRuleSpec(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#exceptionGroup.
-    def visitExceptionGroup(self, ctx:ANTLRv4Parser.ExceptionGroupContext):
+    def visitExceptionGroup(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#exceptionHandler.
-    def visitExceptionHandler(self, ctx:ANTLRv4Parser.ExceptionHandlerContext):
+    def visitExceptionHandler(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#finallyClause.
-    def visitFinallyClause(self, ctx:ANTLRv4Parser.FinallyClauseContext):
+    def visitFinallyClause(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#rulePrequel.
-    def visitRulePrequel(self, ctx:ANTLRv4Parser.RulePrequelContext):
+    def visitRulePrequel(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#ruleReturns.
-    def visitRuleReturns(self, ctx:ANTLRv4Parser.RuleReturnsContext):
+    def visitRuleReturns(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#throwsSpec.
-    def visitThrowsSpec(self, ctx:ANTLRv4Parser.ThrowsSpecContext):
+    def visitThrowsSpec(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#localsSpec.
-    def visitLocalsSpec(self, ctx:ANTLRv4Parser.LocalsSpecContext):
+    def visitLocalsSpec(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#ruleAction.
-    def visitRuleAction(self, ctx:ANTLRv4Parser.RuleActionContext):
+    def visitRuleAction(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#ruleModifiers.
-    def visitRuleModifiers(self, ctx:ANTLRv4Parser.RuleModifiersContext):
+    def visitRuleModifiers(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#ruleModifier.
-    def visitRuleModifier(self, ctx:ANTLRv4Parser.RuleModifierContext):
+    def visitRuleModifier(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#ruleBlock.
-    def visitRuleBlock(self, ctx:ANTLRv4Parser.RuleBlockContext):
+    def visitRuleBlock(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#ruleAltList.
-    def visitRuleAltList(self, ctx:ANTLRv4Parser.RuleAltListContext):
+    def visitRuleAltList(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#labeledAlt.
-    def visitLabeledAlt(self, ctx:ANTLRv4Parser.LabeledAltContext):
+    def visitLabeledAlt(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerRuleSpec.
-    def visitLexerRuleSpec(self, ctx:ANTLRv4Parser.LexerRuleSpecContext):
+    def visitLexerRuleSpec(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerRuleBlock.
-    def visitLexerRuleBlock(self, ctx:ANTLRv4Parser.LexerRuleBlockContext):
+    def visitLexerRuleBlock(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerAltList.
-    def visitLexerAltList(self, ctx:ANTLRv4Parser.LexerAltListContext):
+    def visitLexerAltList(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerAlt.
-    def visitLexerAlt(self, ctx:ANTLRv4Parser.LexerAltContext):
+    def visitLexerAlt(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerElements.
-    def visitLexerElements(self, ctx:ANTLRv4Parser.LexerElementsContext):
+    def visitLexerElements(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerElementLabeled.
-    def visitLexerElementLabeled(self, ctx:ANTLRv4Parser.LexerElementLabeledContext):
+    def visitLexerElementLabeled(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerElementAtom.
-    def visitLexerElementAtom(self, ctx:ANTLRv4Parser.LexerElementAtomContext):
+    def visitLexerElementAtom(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerElementBlock.
-    def visitLexerElementBlock(self, ctx:ANTLRv4Parser.LexerElementBlockContext):
+    def visitLexerElementBlock(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerElementAction.
-    def visitLexerElementAction(self, ctx:ANTLRv4Parser.LexerElementActionContext):
+    def visitLexerElementAction(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#labeledLexerElement.
-    def visitLabeledLexerElement(self, ctx:ANTLRv4Parser.LabeledLexerElementContext):
+    def visitLabeledLexerElement(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerBlock.
-    def visitLexerBlock(self, ctx:ANTLRv4Parser.LexerBlockContext):
+    def visitLexerBlock(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerCommands.
-    def visitLexerCommands(self, ctx:ANTLRv4Parser.LexerCommandsContext):
+    def visitLexerCommands(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerCommand.
-    def visitLexerCommand(self, ctx:ANTLRv4Parser.LexerCommandContext):
+    def visitLexerCommand(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerCommandName.
-    def visitLexerCommandName(self, ctx:ANTLRv4Parser.LexerCommandNameContext):
+    def visitLexerCommandName(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerCommandExpr.
-    def visitLexerCommandExpr(self, ctx:ANTLRv4Parser.LexerCommandExprContext):
+    def visitLexerCommandExpr(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#altList.
-    def visitAltList(self, ctx:ANTLRv4Parser.AltListContext):
+    def visitAltList(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#alternative.
-    def visitAlternative(self, ctx:ANTLRv4Parser.AlternativeContext):
+    def visitAlternative(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#parserElementLabeled.
-    def visitParserElementLabeled(self, ctx:ANTLRv4Parser.ParserElementLabeledContext):
+    def visitParserElementLabeled(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#parserElementAtom.
-    def visitParserElementAtom(self, ctx:ANTLRv4Parser.ParserElementAtomContext):
+    def visitParserElementAtom(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#parserElementBlock.
-    def visitParserElementBlock(self, ctx:ANTLRv4Parser.ParserElementBlockContext):
+    def visitParserElementBlock(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#parserElementAction.
-    def visitParserElementAction(self, ctx:ANTLRv4Parser.ParserElementActionContext):
+    def visitParserElementAction(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#labeledElement.
-    def visitLabeledElement(self, ctx:ANTLRv4Parser.LabeledElementContext):
+    def visitLabeledElement(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#ebnfSuffix.
-    def visitEbnfSuffix(self, ctx:ANTLRv4Parser.EbnfSuffixContext):
+    def visitEbnfSuffix(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerAtomRange.
-    def visitLexerAtomRange(self, ctx:ANTLRv4Parser.LexerAtomRangeContext):
+    def visitLexerAtomRange(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerAtomTerminal.
-    def visitLexerAtomTerminal(self, ctx:ANTLRv4Parser.LexerAtomTerminalContext):
+    def visitLexerAtomTerminal(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerAtomNot.
-    def visitLexerAtomNot(self, ctx:ANTLRv4Parser.LexerAtomNotContext):
+    def visitLexerAtomNot(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerAtomCharSet.
-    def visitLexerAtomCharSet(self, ctx:ANTLRv4Parser.LexerAtomCharSetContext):
+    def visitLexerAtomCharSet(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerAtomWildcard.
-    def visitLexerAtomWildcard(self, ctx:ANTLRv4Parser.LexerAtomWildcardContext):
+    def visitLexerAtomWildcard(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#atomTerminal.
-    def visitAtomTerminal(self, ctx:ANTLRv4Parser.AtomTerminalContext):
+    def visitAtomTerminal(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#atomRuleRef.
-    def visitAtomRuleRef(self, ctx:ANTLRv4Parser.AtomRuleRefContext):
+    def visitAtomRuleRef(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#atomNot.
-    def visitAtomNot(self, ctx:ANTLRv4Parser.AtomNotContext):
+    def visitAtomNot(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#atomWildcard.
-    def visitAtomWildcard(self, ctx:ANTLRv4Parser.AtomWildcardContext):
+    def visitAtomWildcard(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#notElement.
-    def visitNotElement(self, ctx:ANTLRv4Parser.NotElementContext):
+    def visitNotElement(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#notBlock.
-    def visitNotBlock(self, ctx:ANTLRv4Parser.NotBlockContext):
+    def visitNotBlock(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#blockSet.
-    def visitBlockSet(self, ctx:ANTLRv4Parser.BlockSetContext):
+    def visitBlockSet(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#setElementRef.
-    def visitSetElementRef(self, ctx:ANTLRv4Parser.SetElementRefContext):
+    def visitSetElementRef(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#setElementLit.
-    def visitSetElementLit(self, ctx:ANTLRv4Parser.SetElementLitContext):
+    def visitSetElementLit(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#setElementRange.
-    def visitSetElementRange(self, ctx:ANTLRv4Parser.SetElementRangeContext):
+    def visitSetElementRange(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#setElementCharSet.
-    def visitSetElementCharSet(self, ctx:ANTLRv4Parser.SetElementCharSetContext):
+    def visitSetElementCharSet(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#block.
-    def visitBlock(self, ctx:ANTLRv4Parser.BlockContext):
+    def visitBlock(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#ruleref.
-    def visitRuleref(self, ctx:ANTLRv4Parser.RulerefContext):
+    def visitRuleref(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#characterRange.
-    def visitCharacterRange(self, ctx:ANTLRv4Parser.CharacterRangeContext):
+    def visitCharacterRange(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#terminalRef.
-    def visitTerminalRef(self, ctx:ANTLRv4Parser.TerminalRefContext):
+    def visitTerminalRef(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#terminalLit.
-    def visitTerminalLit(self, ctx:ANTLRv4Parser.TerminalLitContext):
+    def visitTerminalLit(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#elementOptions.
-    def visitElementOptions(self, ctx:ANTLRv4Parser.ElementOptionsContext):
+    def visitElementOptions(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#elementOption.
-    def visitElementOption(self, ctx:ANTLRv4Parser.ElementOptionContext):
+    def visitElementOption(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#ruleRefIdentifier.
-    def visitRuleRefIdentifier(self, ctx:ANTLRv4Parser.RuleRefIdentifierContext):
+    def visitRuleRefIdentifier(self, ctx):
         return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by ANTLRv4Parser#tokenRefIdentifier.
-    def visitTokenRefIdentifier(self, ctx:ANTLRv4Parser.TokenRefIdentifierContext):
+    def visitTokenRefIdentifier(self, ctx):
         return self.visitChildren(ctx)
 
 
-
-del ANTLRv4Parser

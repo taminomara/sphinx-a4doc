@@ -7,7 +7,7 @@ options {
 import LexBasic;	// Standard set of fragments
 
 @header {
-from antlr_doc.syntax.lexer_adaptor import LexerAdaptor
+from sphinx_a4doc.syntax.lexer_adaptor import LexerAdaptor
 }
 
 tokens {

@@ -1,6 +1,6 @@
 from typing import *
 
-from antlr_doc.model.model import RuleBase, LexerRule, ParserRule
+from sphinx_a4doc.model.model import RuleBase, LexerRule, ParserRule
 
 
 __all__ = [

@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-   name='antlr_doc',
+   name='sphinx_a4doc',
    version='1.0.0',
    description='A useful module',
    author='Vladimir Goncharov',

@@ -9,12 +9,12 @@ import sphinx.util.logging
 import yaml
 import yaml.error
 
-from antlr_doc.contrib.railroad_diagrams import (
+from sphinx_a4doc.contrib.railroad_diagrams import (
     Diagram, Settings, InternalAlignment, EndClass
 )
 
-from antlr_doc.model.model import ModelCache
-from antlr_doc.model.model_renderer import Renderer
+from sphinx_a4doc.model.model import ModelCache
+from sphinx_a4doc.model.model_renderer import Renderer
 
 
 logger = sphinx.util.logging.getLogger(__name__)

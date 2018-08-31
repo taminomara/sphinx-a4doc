@@ -7,8 +7,8 @@ from typing import *
 from antlr4 import CommonTokenStream, InputStream
 from antlr4.error.ErrorListener import ErrorListener
 
-from antlr_doc.model.model import ModelCache, Model, Position, RuleBase, LexerRule, ParserRule
-from antlr_doc.syntax import Lexer, Parser, ParserVisitor
+from sphinx_a4doc.model.model import ModelCache, Model, Position, RuleBase, LexerRule, ParserRule
+from sphinx_a4doc.syntax import Lexer, Parser, ParserVisitor
 
 import sphinx.util.logging
 

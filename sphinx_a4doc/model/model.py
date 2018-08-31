@@ -25,7 +25,7 @@ class ModelCache(metaclass=ABCMeta):
         Create the default cache implementation.
 
         """
-        from antlr_doc.model.impl import ModelCacheImpl
+        from sphinx_a4doc.model.impl import ModelCacheImpl
         return ModelCacheImpl()
 
     @abstractmethod

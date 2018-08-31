@@ -1,757 +1,753 @@
-# Generated from /Users/amatanhead/Documents/antlr-doc/antlr_doc/syntax/ANTLRv4Parser.g4 by ANTLR 4.7
+# Generated from /Users/amatanhead/Documents/sphinx-a4doc/sphinx_a4doc/syntax/ANTLRv4Parser.g4 by ANTLR 4.7
 from antlr4 import *
-if __name__ is not None and "." in __name__:
-    from .ANTLRv4Parser import ANTLRv4Parser
-else:
-    from ANTLRv4Parser import ANTLRv4Parser
 
 # This class defines a complete listener for a parse tree produced by ANTLRv4Parser.
 class ANTLRv4ParserListener(ParseTreeListener):
 
     # Enter a parse tree produced by ANTLRv4Parser#grammarSpec.
-    def enterGrammarSpec(self, ctx:ANTLRv4Parser.GrammarSpecContext):
+    def enterGrammarSpec(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#grammarSpec.
-    def exitGrammarSpec(self, ctx:ANTLRv4Parser.GrammarSpecContext):
+    def exitGrammarSpec(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#grammarType.
-    def enterGrammarType(self, ctx:ANTLRv4Parser.GrammarTypeContext):
+    def enterGrammarType(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#grammarType.
-    def exitGrammarType(self, ctx:ANTLRv4Parser.GrammarTypeContext):
+    def exitGrammarType(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#prequelConstruct.
-    def enterPrequelConstruct(self, ctx:ANTLRv4Parser.PrequelConstructContext):
+    def enterPrequelConstruct(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#prequelConstruct.
-    def exitPrequelConstruct(self, ctx:ANTLRv4Parser.PrequelConstructContext):
+    def exitPrequelConstruct(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#optionsSpec.
-    def enterOptionsSpec(self, ctx:ANTLRv4Parser.OptionsSpecContext):
+    def enterOptionsSpec(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#optionsSpec.
-    def exitOptionsSpec(self, ctx:ANTLRv4Parser.OptionsSpecContext):
+    def exitOptionsSpec(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#option.
-    def enterOption(self, ctx:ANTLRv4Parser.OptionContext):
+    def enterOption(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#option.
-    def exitOption(self, ctx:ANTLRv4Parser.OptionContext):
+    def exitOption(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#pathOption.
-    def enterPathOption(self, ctx:ANTLRv4Parser.PathOptionContext):
+    def enterPathOption(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#pathOption.
-    def exitPathOption(self, ctx:ANTLRv4Parser.PathOptionContext):
+    def exitPathOption(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#stringOption.
-    def enterStringOption(self, ctx:ANTLRv4Parser.StringOptionContext):
+    def enterStringOption(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#stringOption.
-    def exitStringOption(self, ctx:ANTLRv4Parser.StringOptionContext):
+    def exitStringOption(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#actionOption.
-    def enterActionOption(self, ctx:ANTLRv4Parser.ActionOptionContext):
+    def enterActionOption(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#actionOption.
-    def exitActionOption(self, ctx:ANTLRv4Parser.ActionOptionContext):
+    def exitActionOption(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#intOption.
-    def enterIntOption(self, ctx:ANTLRv4Parser.IntOptionContext):
+    def enterIntOption(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#intOption.
-    def exitIntOption(self, ctx:ANTLRv4Parser.IntOptionContext):
+    def exitIntOption(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#delegateGrammars.
-    def enterDelegateGrammars(self, ctx:ANTLRv4Parser.DelegateGrammarsContext):
+    def enterDelegateGrammars(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#delegateGrammars.
-    def exitDelegateGrammars(self, ctx:ANTLRv4Parser.DelegateGrammarsContext):
+    def exitDelegateGrammars(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#delegateGrammar.
-    def enterDelegateGrammar(self, ctx:ANTLRv4Parser.DelegateGrammarContext):
+    def enterDelegateGrammar(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#delegateGrammar.
-    def exitDelegateGrammar(self, ctx:ANTLRv4Parser.DelegateGrammarContext):
+    def exitDelegateGrammar(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#tokensSpec.
-    def enterTokensSpec(self, ctx:ANTLRv4Parser.TokensSpecContext):
+    def enterTokensSpec(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#tokensSpec.
-    def exitTokensSpec(self, ctx:ANTLRv4Parser.TokensSpecContext):
+    def exitTokensSpec(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#channelsSpec.
-    def enterChannelsSpec(self, ctx:ANTLRv4Parser.ChannelsSpecContext):
+    def enterChannelsSpec(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#channelsSpec.
-    def exitChannelsSpec(self, ctx:ANTLRv4Parser.ChannelsSpecContext):
+    def exitChannelsSpec(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#idList.
-    def enterIdList(self, ctx:ANTLRv4Parser.IdListContext):
+    def enterIdList(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#idList.
-    def exitIdList(self, ctx:ANTLRv4Parser.IdListContext):
+    def exitIdList(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#action.
-    def enterAction(self, ctx:ANTLRv4Parser.ActionContext):
+    def enterAction(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#action.
-    def exitAction(self, ctx:ANTLRv4Parser.ActionContext):
+    def exitAction(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#actionScopeName.
-    def enterActionScopeName(self, ctx:ANTLRv4Parser.ActionScopeNameContext):
+    def enterActionScopeName(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#actionScopeName.
-    def exitActionScopeName(self, ctx:ANTLRv4Parser.ActionScopeNameContext):
+    def exitActionScopeName(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#actionBlock.
-    def enterActionBlock(self, ctx:ANTLRv4Parser.ActionBlockContext):
+    def enterActionBlock(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#actionBlock.
-    def exitActionBlock(self, ctx:ANTLRv4Parser.ActionBlockContext):
+    def exitActionBlock(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#argActionBlock.
-    def enterArgActionBlock(self, ctx:ANTLRv4Parser.ArgActionBlockContext):
+    def enterArgActionBlock(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#argActionBlock.
-    def exitArgActionBlock(self, ctx:ANTLRv4Parser.ArgActionBlockContext):
+    def exitArgActionBlock(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#modeSpec.
-    def enterModeSpec(self, ctx:ANTLRv4Parser.ModeSpecContext):
+    def enterModeSpec(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#modeSpec.
-    def exitModeSpec(self, ctx:ANTLRv4Parser.ModeSpecContext):
+    def exitModeSpec(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#rules.
-    def enterRules(self, ctx:ANTLRv4Parser.RulesContext):
+    def enterRules(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#rules.
-    def exitRules(self, ctx:ANTLRv4Parser.RulesContext):
+    def exitRules(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#ruleSpec.
-    def enterRuleSpec(self, ctx:ANTLRv4Parser.RuleSpecContext):
+    def enterRuleSpec(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#ruleSpec.
-    def exitRuleSpec(self, ctx:ANTLRv4Parser.RuleSpecContext):
+    def exitRuleSpec(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#parserRuleSpec.
-    def enterParserRuleSpec(self, ctx:ANTLRv4Parser.ParserRuleSpecContext):
+    def enterParserRuleSpec(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#parserRuleSpec.
-    def exitParserRuleSpec(self, ctx:ANTLRv4Parser.ParserRuleSpecContext):
+    def exitParserRuleSpec(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#exceptionGroup.
-    def enterExceptionGroup(self, ctx:ANTLRv4Parser.ExceptionGroupContext):
+    def enterExceptionGroup(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#exceptionGroup.
-    def exitExceptionGroup(self, ctx:ANTLRv4Parser.ExceptionGroupContext):
+    def exitExceptionGroup(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#exceptionHandler.
-    def enterExceptionHandler(self, ctx:ANTLRv4Parser.ExceptionHandlerContext):
+    def enterExceptionHandler(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#exceptionHandler.
-    def exitExceptionHandler(self, ctx:ANTLRv4Parser.ExceptionHandlerContext):
+    def exitExceptionHandler(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#finallyClause.
-    def enterFinallyClause(self, ctx:ANTLRv4Parser.FinallyClauseContext):
+    def enterFinallyClause(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#finallyClause.
-    def exitFinallyClause(self, ctx:ANTLRv4Parser.FinallyClauseContext):
+    def exitFinallyClause(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#rulePrequel.
-    def enterRulePrequel(self, ctx:ANTLRv4Parser.RulePrequelContext):
+    def enterRulePrequel(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#rulePrequel.
-    def exitRulePrequel(self, ctx:ANTLRv4Parser.RulePrequelContext):
+    def exitRulePrequel(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#ruleReturns.
-    def enterRuleReturns(self, ctx:ANTLRv4Parser.RuleReturnsContext):
+    def enterRuleReturns(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#ruleReturns.
-    def exitRuleReturns(self, ctx:ANTLRv4Parser.RuleReturnsContext):
+    def exitRuleReturns(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#throwsSpec.
-    def enterThrowsSpec(self, ctx:ANTLRv4Parser.ThrowsSpecContext):
+    def enterThrowsSpec(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#throwsSpec.
-    def exitThrowsSpec(self, ctx:ANTLRv4Parser.ThrowsSpecContext):
+    def exitThrowsSpec(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#localsSpec.
-    def enterLocalsSpec(self, ctx:ANTLRv4Parser.LocalsSpecContext):
+    def enterLocalsSpec(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#localsSpec.
-    def exitLocalsSpec(self, ctx:ANTLRv4Parser.LocalsSpecContext):
+    def exitLocalsSpec(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#ruleAction.
-    def enterRuleAction(self, ctx:ANTLRv4Parser.RuleActionContext):
+    def enterRuleAction(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#ruleAction.
-    def exitRuleAction(self, ctx:ANTLRv4Parser.RuleActionContext):
+    def exitRuleAction(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#ruleModifiers.
-    def enterRuleModifiers(self, ctx:ANTLRv4Parser.RuleModifiersContext):
+    def enterRuleModifiers(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#ruleModifiers.
-    def exitRuleModifiers(self, ctx:ANTLRv4Parser.RuleModifiersContext):
+    def exitRuleModifiers(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#ruleModifier.
-    def enterRuleModifier(self, ctx:ANTLRv4Parser.RuleModifierContext):
+    def enterRuleModifier(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#ruleModifier.
-    def exitRuleModifier(self, ctx:ANTLRv4Parser.RuleModifierContext):
+    def exitRuleModifier(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#ruleBlock.
-    def enterRuleBlock(self, ctx:ANTLRv4Parser.RuleBlockContext):
+    def enterRuleBlock(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#ruleBlock.
-    def exitRuleBlock(self, ctx:ANTLRv4Parser.RuleBlockContext):
+    def exitRuleBlock(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#ruleAltList.
-    def enterRuleAltList(self, ctx:ANTLRv4Parser.RuleAltListContext):
+    def enterRuleAltList(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#ruleAltList.
-    def exitRuleAltList(self, ctx:ANTLRv4Parser.RuleAltListContext):
+    def exitRuleAltList(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#labeledAlt.
-    def enterLabeledAlt(self, ctx:ANTLRv4Parser.LabeledAltContext):
+    def enterLabeledAlt(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#labeledAlt.
-    def exitLabeledAlt(self, ctx:ANTLRv4Parser.LabeledAltContext):
+    def exitLabeledAlt(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerRuleSpec.
-    def enterLexerRuleSpec(self, ctx:ANTLRv4Parser.LexerRuleSpecContext):
+    def enterLexerRuleSpec(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerRuleSpec.
-    def exitLexerRuleSpec(self, ctx:ANTLRv4Parser.LexerRuleSpecContext):
+    def exitLexerRuleSpec(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerRuleBlock.
-    def enterLexerRuleBlock(self, ctx:ANTLRv4Parser.LexerRuleBlockContext):
+    def enterLexerRuleBlock(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerRuleBlock.
-    def exitLexerRuleBlock(self, ctx:ANTLRv4Parser.LexerRuleBlockContext):
+    def exitLexerRuleBlock(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerAltList.
-    def enterLexerAltList(self, ctx:ANTLRv4Parser.LexerAltListContext):
+    def enterLexerAltList(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerAltList.
-    def exitLexerAltList(self, ctx:ANTLRv4Parser.LexerAltListContext):
+    def exitLexerAltList(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerAlt.
-    def enterLexerAlt(self, ctx:ANTLRv4Parser.LexerAltContext):
+    def enterLexerAlt(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerAlt.
-    def exitLexerAlt(self, ctx:ANTLRv4Parser.LexerAltContext):
+    def exitLexerAlt(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerElements.
-    def enterLexerElements(self, ctx:ANTLRv4Parser.LexerElementsContext):
+    def enterLexerElements(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerElements.
-    def exitLexerElements(self, ctx:ANTLRv4Parser.LexerElementsContext):
+    def exitLexerElements(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerElementLabeled.
-    def enterLexerElementLabeled(self, ctx:ANTLRv4Parser.LexerElementLabeledContext):
+    def enterLexerElementLabeled(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerElementLabeled.
-    def exitLexerElementLabeled(self, ctx:ANTLRv4Parser.LexerElementLabeledContext):
+    def exitLexerElementLabeled(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerElementAtom.
-    def enterLexerElementAtom(self, ctx:ANTLRv4Parser.LexerElementAtomContext):
+    def enterLexerElementAtom(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerElementAtom.
-    def exitLexerElementAtom(self, ctx:ANTLRv4Parser.LexerElementAtomContext):
+    def exitLexerElementAtom(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerElementBlock.
-    def enterLexerElementBlock(self, ctx:ANTLRv4Parser.LexerElementBlockContext):
+    def enterLexerElementBlock(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerElementBlock.
-    def exitLexerElementBlock(self, ctx:ANTLRv4Parser.LexerElementBlockContext):
+    def exitLexerElementBlock(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerElementAction.
-    def enterLexerElementAction(self, ctx:ANTLRv4Parser.LexerElementActionContext):
+    def enterLexerElementAction(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerElementAction.
-    def exitLexerElementAction(self, ctx:ANTLRv4Parser.LexerElementActionContext):
+    def exitLexerElementAction(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#labeledLexerElement.
-    def enterLabeledLexerElement(self, ctx:ANTLRv4Parser.LabeledLexerElementContext):
+    def enterLabeledLexerElement(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#labeledLexerElement.
-    def exitLabeledLexerElement(self, ctx:ANTLRv4Parser.LabeledLexerElementContext):
+    def exitLabeledLexerElement(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerBlock.
-    def enterLexerBlock(self, ctx:ANTLRv4Parser.LexerBlockContext):
+    def enterLexerBlock(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerBlock.
-    def exitLexerBlock(self, ctx:ANTLRv4Parser.LexerBlockContext):
+    def exitLexerBlock(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerCommands.
-    def enterLexerCommands(self, ctx:ANTLRv4Parser.LexerCommandsContext):
+    def enterLexerCommands(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerCommands.
-    def exitLexerCommands(self, ctx:ANTLRv4Parser.LexerCommandsContext):
+    def exitLexerCommands(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerCommand.
-    def enterLexerCommand(self, ctx:ANTLRv4Parser.LexerCommandContext):
+    def enterLexerCommand(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerCommand.
-    def exitLexerCommand(self, ctx:ANTLRv4Parser.LexerCommandContext):
+    def exitLexerCommand(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerCommandName.
-    def enterLexerCommandName(self, ctx:ANTLRv4Parser.LexerCommandNameContext):
+    def enterLexerCommandName(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerCommandName.
-    def exitLexerCommandName(self, ctx:ANTLRv4Parser.LexerCommandNameContext):
+    def exitLexerCommandName(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerCommandExpr.
-    def enterLexerCommandExpr(self, ctx:ANTLRv4Parser.LexerCommandExprContext):
+    def enterLexerCommandExpr(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerCommandExpr.
-    def exitLexerCommandExpr(self, ctx:ANTLRv4Parser.LexerCommandExprContext):
+    def exitLexerCommandExpr(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#altList.
-    def enterAltList(self, ctx:ANTLRv4Parser.AltListContext):
+    def enterAltList(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#altList.
-    def exitAltList(self, ctx:ANTLRv4Parser.AltListContext):
+    def exitAltList(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#alternative.
-    def enterAlternative(self, ctx:ANTLRv4Parser.AlternativeContext):
+    def enterAlternative(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#alternative.
-    def exitAlternative(self, ctx:ANTLRv4Parser.AlternativeContext):
+    def exitAlternative(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#parserElementLabeled.
-    def enterParserElementLabeled(self, ctx:ANTLRv4Parser.ParserElementLabeledContext):
+    def enterParserElementLabeled(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#parserElementLabeled.
-    def exitParserElementLabeled(self, ctx:ANTLRv4Parser.ParserElementLabeledContext):
+    def exitParserElementLabeled(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#parserElementAtom.
-    def enterParserElementAtom(self, ctx:ANTLRv4Parser.ParserElementAtomContext):
+    def enterParserElementAtom(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#parserElementAtom.
-    def exitParserElementAtom(self, ctx:ANTLRv4Parser.ParserElementAtomContext):
+    def exitParserElementAtom(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#parserElementBlock.
-    def enterParserElementBlock(self, ctx:ANTLRv4Parser.ParserElementBlockContext):
+    def enterParserElementBlock(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#parserElementBlock.
-    def exitParserElementBlock(self, ctx:ANTLRv4Parser.ParserElementBlockContext):
+    def exitParserElementBlock(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#parserElementAction.
-    def enterParserElementAction(self, ctx:ANTLRv4Parser.ParserElementActionContext):
+    def enterParserElementAction(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#parserElementAction.
-    def exitParserElementAction(self, ctx:ANTLRv4Parser.ParserElementActionContext):
+    def exitParserElementAction(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#labeledElement.
-    def enterLabeledElement(self, ctx:ANTLRv4Parser.LabeledElementContext):
+    def enterLabeledElement(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#labeledElement.
-    def exitLabeledElement(self, ctx:ANTLRv4Parser.LabeledElementContext):
+    def exitLabeledElement(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#ebnfSuffix.
-    def enterEbnfSuffix(self, ctx:ANTLRv4Parser.EbnfSuffixContext):
+    def enterEbnfSuffix(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#ebnfSuffix.
-    def exitEbnfSuffix(self, ctx:ANTLRv4Parser.EbnfSuffixContext):
+    def exitEbnfSuffix(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerAtomRange.
-    def enterLexerAtomRange(self, ctx:ANTLRv4Parser.LexerAtomRangeContext):
+    def enterLexerAtomRange(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerAtomRange.
-    def exitLexerAtomRange(self, ctx:ANTLRv4Parser.LexerAtomRangeContext):
+    def exitLexerAtomRange(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerAtomTerminal.
-    def enterLexerAtomTerminal(self, ctx:ANTLRv4Parser.LexerAtomTerminalContext):
+    def enterLexerAtomTerminal(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerAtomTerminal.
-    def exitLexerAtomTerminal(self, ctx:ANTLRv4Parser.LexerAtomTerminalContext):
+    def exitLexerAtomTerminal(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerAtomNot.
-    def enterLexerAtomNot(self, ctx:ANTLRv4Parser.LexerAtomNotContext):
+    def enterLexerAtomNot(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerAtomNot.
-    def exitLexerAtomNot(self, ctx:ANTLRv4Parser.LexerAtomNotContext):
+    def exitLexerAtomNot(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerAtomCharSet.
-    def enterLexerAtomCharSet(self, ctx:ANTLRv4Parser.LexerAtomCharSetContext):
+    def enterLexerAtomCharSet(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerAtomCharSet.
-    def exitLexerAtomCharSet(self, ctx:ANTLRv4Parser.LexerAtomCharSetContext):
+    def exitLexerAtomCharSet(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#lexerAtomWildcard.
-    def enterLexerAtomWildcard(self, ctx:ANTLRv4Parser.LexerAtomWildcardContext):
+    def enterLexerAtomWildcard(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerAtomWildcard.
-    def exitLexerAtomWildcard(self, ctx:ANTLRv4Parser.LexerAtomWildcardContext):
+    def exitLexerAtomWildcard(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#atomTerminal.
-    def enterAtomTerminal(self, ctx:ANTLRv4Parser.AtomTerminalContext):
+    def enterAtomTerminal(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#atomTerminal.
-    def exitAtomTerminal(self, ctx:ANTLRv4Parser.AtomTerminalContext):
+    def exitAtomTerminal(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#atomRuleRef.
-    def enterAtomRuleRef(self, ctx:ANTLRv4Parser.AtomRuleRefContext):
+    def enterAtomRuleRef(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#atomRuleRef.
-    def exitAtomRuleRef(self, ctx:ANTLRv4Parser.AtomRuleRefContext):
+    def exitAtomRuleRef(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#atomNot.
-    def enterAtomNot(self, ctx:ANTLRv4Parser.AtomNotContext):
+    def enterAtomNot(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#atomNot.
-    def exitAtomNot(self, ctx:ANTLRv4Parser.AtomNotContext):
+    def exitAtomNot(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#atomWildcard.
-    def enterAtomWildcard(self, ctx:ANTLRv4Parser.AtomWildcardContext):
+    def enterAtomWildcard(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#atomWildcard.
-    def exitAtomWildcard(self, ctx:ANTLRv4Parser.AtomWildcardContext):
+    def exitAtomWildcard(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#notElement.
-    def enterNotElement(self, ctx:ANTLRv4Parser.NotElementContext):
+    def enterNotElement(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#notElement.
-    def exitNotElement(self, ctx:ANTLRv4Parser.NotElementContext):
+    def exitNotElement(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#notBlock.
-    def enterNotBlock(self, ctx:ANTLRv4Parser.NotBlockContext):
+    def enterNotBlock(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#notBlock.
-    def exitNotBlock(self, ctx:ANTLRv4Parser.NotBlockContext):
+    def exitNotBlock(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#blockSet.
-    def enterBlockSet(self, ctx:ANTLRv4Parser.BlockSetContext):
+    def enterBlockSet(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#blockSet.
-    def exitBlockSet(self, ctx:ANTLRv4Parser.BlockSetContext):
+    def exitBlockSet(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#setElementRef.
-    def enterSetElementRef(self, ctx:ANTLRv4Parser.SetElementRefContext):
+    def enterSetElementRef(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#setElementRef.
-    def exitSetElementRef(self, ctx:ANTLRv4Parser.SetElementRefContext):
+    def exitSetElementRef(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#setElementLit.
-    def enterSetElementLit(self, ctx:ANTLRv4Parser.SetElementLitContext):
+    def enterSetElementLit(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#setElementLit.
-    def exitSetElementLit(self, ctx:ANTLRv4Parser.SetElementLitContext):
+    def exitSetElementLit(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#setElementRange.
-    def enterSetElementRange(self, ctx:ANTLRv4Parser.SetElementRangeContext):
+    def enterSetElementRange(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#setElementRange.
-    def exitSetElementRange(self, ctx:ANTLRv4Parser.SetElementRangeContext):
+    def exitSetElementRange(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#setElementCharSet.
-    def enterSetElementCharSet(self, ctx:ANTLRv4Parser.SetElementCharSetContext):
+    def enterSetElementCharSet(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#setElementCharSet.
-    def exitSetElementCharSet(self, ctx:ANTLRv4Parser.SetElementCharSetContext):
+    def exitSetElementCharSet(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#block.
-    def enterBlock(self, ctx:ANTLRv4Parser.BlockContext):
+    def enterBlock(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#block.
-    def exitBlock(self, ctx:ANTLRv4Parser.BlockContext):
+    def exitBlock(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#ruleref.
-    def enterRuleref(self, ctx:ANTLRv4Parser.RulerefContext):
+    def enterRuleref(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#ruleref.
-    def exitRuleref(self, ctx:ANTLRv4Parser.RulerefContext):
+    def exitRuleref(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#characterRange.
-    def enterCharacterRange(self, ctx:ANTLRv4Parser.CharacterRangeContext):
+    def enterCharacterRange(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#characterRange.
-    def exitCharacterRange(self, ctx:ANTLRv4Parser.CharacterRangeContext):
+    def exitCharacterRange(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#terminalRef.
-    def enterTerminalRef(self, ctx:ANTLRv4Parser.TerminalRefContext):
+    def enterTerminalRef(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#terminalRef.
-    def exitTerminalRef(self, ctx:ANTLRv4Parser.TerminalRefContext):
+    def exitTerminalRef(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#terminalLit.
-    def enterTerminalLit(self, ctx:ANTLRv4Parser.TerminalLitContext):
+    def enterTerminalLit(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#terminalLit.
-    def exitTerminalLit(self, ctx:ANTLRv4Parser.TerminalLitContext):
+    def exitTerminalLit(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#elementOptions.
-    def enterElementOptions(self, ctx:ANTLRv4Parser.ElementOptionsContext):
+    def enterElementOptions(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#elementOptions.
-    def exitElementOptions(self, ctx:ANTLRv4Parser.ElementOptionsContext):
+    def exitElementOptions(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#elementOption.
-    def enterElementOption(self, ctx:ANTLRv4Parser.ElementOptionContext):
+    def enterElementOption(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#elementOption.
-    def exitElementOption(self, ctx:ANTLRv4Parser.ElementOptionContext):
+    def exitElementOption(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#ruleRefIdentifier.
-    def enterRuleRefIdentifier(self, ctx:ANTLRv4Parser.RuleRefIdentifierContext):
+    def enterRuleRefIdentifier(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#ruleRefIdentifier.
-    def exitRuleRefIdentifier(self, ctx:ANTLRv4Parser.RuleRefIdentifierContext):
+    def exitRuleRefIdentifier(self, ctx):
         pass
 
 
     # Enter a parse tree produced by ANTLRv4Parser#tokenRefIdentifier.
-    def enterTokenRefIdentifier(self, ctx:ANTLRv4Parser.TokenRefIdentifierContext):
+    def enterTokenRefIdentifier(self, ctx):
         pass
 
     # Exit a parse tree produced by ANTLRv4Parser#tokenRefIdentifier.
-    def exitTokenRefIdentifier(self, ctx:ANTLRv4Parser.TokenRefIdentifierContext):
+    def exitTokenRefIdentifier(self, ctx):
         pass
 
 
