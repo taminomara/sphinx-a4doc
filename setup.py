@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
    name='sphinx_a4doc',
    version='1.0.0',
-   description='A useful module',
+   description='Sphinx domain and autodoc for Antlr4 grammar files',
    author='Vladimir Goncharov',
    author_email='dev.zelta@gmail.com',
    install_requires=[
