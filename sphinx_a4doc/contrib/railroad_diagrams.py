@@ -1,5 +1,6 @@
 import re
 import io
+import math
 
 from dataclasses import dataclass, field
 from enum import Enum
@@ -564,6 +565,8 @@ class Sequence(DiagramItem):
         if self.items[-1].needs_space:
             self.width -= self.settings.horizontal_separation
 
+        self.width = math.ceil(self.width)
+
     def format(self, x, y, width, reverse, alignment_override):
         fmt = FormattedItem(self)
 
@@ -701,6 +704,8 @@ class Choice(DiagramItem):
         # Reference points along y axis for each child, relative to main line
         self.child_refs = [c - self.up for c in child_refs]
 
+        self.width = math.ceil(self.width)
+
     def format(self, x, y, width, reverse, alignment_override):
         fmt = FormattedItem(self)
 
@@ -799,6 +804,8 @@ class OneOrMore(DiagramItem):
         self.down = item.down + self.settings.vertical_separation + repeat.up
         self.down = max(self.settings.arc_radius * 2, self.down)
         self.down += repeat.height + repeat.down
+
+        self.width = math.ceil(self.width)
 
     def format(self, x, y, width, reverse, alignment_override):
         fmt = FormattedItem(self)
@@ -956,6 +963,8 @@ class Node(DiagramItem):
         self.down = 11
 
         self.width = len(text) * self.settings.character_advance + padding
+
+        self.width = math.ceil(self.width)
 
     def format(self, x, y, width, reverse, alignment_override):
         fmt = FormattedItem(self)

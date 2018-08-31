@@ -174,8 +174,8 @@ class A4Domain(Domain):
     def clear_doc(self, docname):
         for fullname, (fn, objtype) in list(self.data['objects'].items()):
             if fn == docname:
-                del self.data['objects'][fullname]
-                del self.data['relations'][fullname]
+                self.data['objects'].pop(fullname)
+                self.data['relations'].pop(fullname, None)
 
     def merge_domaindata(self, docnames, otherdata):
         for fullname, (fn, objtype) in otherdata['objects'].items():
