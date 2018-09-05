@@ -117,6 +117,10 @@ class Grammar(A4ObjectDescription):
     })
 
     def handle_signature(self, sig, signode):
+        if 'a4:rule' in self.env.ref_context:
+            msg = 'defining grammars within a rule body is not allowed'
+            self.state_machine.reporter.warning(msg, line=self.lineno)
+            raise ValueError(msg)
         if 'a4:grammar' in self.env.ref_context:
             msg = 'defining nested grammars is not allowed'
             self.state_machine.reporter.warning(msg, line=self.lineno)
