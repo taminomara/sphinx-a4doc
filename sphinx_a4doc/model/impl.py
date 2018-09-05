@@ -187,15 +187,16 @@ class MetaLoader(ParserVisitor):
             rule = LexerRule(
                 name=token.getText(),
                 display_name=None,
-                position=Position(self._model.get_path(), token.start.line + self._model.get_offset()),
                 model=self._model,
+                position=Position(self._model.get_path(), token.start.line + self._model.get_offset()),
                 is_literal=False,
                 is_fragment=False,
                 content=None,
                 is_doxygen_nodoc=True,
                 is_doxygen_inline=True,
-                is_doxygen_important=True,
-                documentation=''
+                importance=1,
+                documentation='',
+                css_class=None
             )
 
             self._model.set_lexer_rule(rule.name, rule)
