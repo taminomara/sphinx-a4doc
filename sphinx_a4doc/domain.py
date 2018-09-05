@@ -216,9 +216,9 @@ class A4Domain(Domain):
         if as_grammar is not None:
             results.append(('a4:grammar', as_grammar))
 
-        as_rule = self.resolve_rule(env, fromdocname, builder, target, node, contnode)
-        if as_rule is not None:
-            results.append(('a4:rule', as_rule))
+        as_rule = self.resolve_rule(env, fromdocname, builder, target, node, contnode, True)
+        for r in as_rule:
+            results.append(('a4:rule', r))
 
         return results
 
@@ -230,15 +230,23 @@ class A4Domain(Domain):
             return None
         return sphinx.util.nodes.make_refnode(builder, fromdocname, obj[0], 'a4.' + target, contnode, target)
 
-    def resolve_rule(self, env, fromdocname, builder, target, node, contnode):
+    def resolve_rule(self, env, fromdocname, builder, target, node, contnode, allow_multiple=False):
         relations = self.data['relations']
         if '.' not in target:
-            grammar, rule = node['a4:grammar'], target
-            grammars = ['__default__', grammar]
+            if 'a4:grammar' in node:
+                grammar, rule = node['a4:grammar'], target
+                grammars = ['__default__', grammar]
+            else:
+                # Cross-reference from `any` role.
+                rule = target
+                grammars = [n for n, (_, t) in self.data['objects'].items()
+                            if t == 'grammar']
+                grammars += ['__default__']
         else:
             grammar, rule = target.rsplit('.', 1)
             grammars = [grammar]
 
+        results = []
         seen = set()
         while grammars:
             grammar = grammars.pop()
@@ -252,10 +260,20 @@ class A4Domain(Domain):
                 continue
             obj = self.data['objects'][fullname]
             if obj[1] != 'rule':
-                return None
-            return sphinx.util.nodes.make_refnode(builder, fromdocname, obj[0], 'a4.' + fullname, contnode, fullname)
+                if allow_multiple:
+                    continue
+                else:
+                    return None
+            node = sphinx.util.nodes.make_refnode(builder, fromdocname, obj[0], 'a4.' + fullname, contnode, fullname)
+            if allow_multiple:
+                results.append(node)
+            else:
+                return node
 
-        return None
+        if allow_multiple:
+            return results
+        else:
+            return None
 
     def get_objects(self):
         for refname, (docname, objtype) in list(self.data['objects'].items()):
