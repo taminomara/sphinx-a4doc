@@ -44,13 +44,24 @@ class A4ObjectDescription(ObjectDescription):
             self.state_machine.reporter.warning(msg, line=self.lineno)
             raise ValueError(msg)
 
-        ann = self.objtype + ' '
+        ann = self.objtype
         if self.objtype == 'grammar':
             grammar_type = self.options.get('type', '')
             if grammar_type:
                 ann = grammar_type + ' ' + ann
-        signode += sphinx.addnodes.desc_annotation(ann, ann)
-        signode += sphinx.addnodes.desc_name(sig, sig)
+        if self.options.get('name', ''):
+            signode += sphinx.addnodes.desc_annotation(ann, ann)
+            signode += sphinx.addnodes.desc_name(
+                f' {self.options["name"]} ',
+                f' {self.options["name"]} ',
+            )
+            signode += sphinx.addnodes.desc_annotation(
+                f'({sig})',
+                f'({sig})',
+            )
+        else:
+            signode += sphinx.addnodes.desc_annotation(ann + ' ', ann + ' ')
+            signode += sphinx.addnodes.desc_name(sig, sig)
 
         return sig
 
@@ -102,6 +113,7 @@ class Grammar(A4ObjectDescription):
     option_spec = dict(A4ObjectDescription.option_spec, **{
         'imports': check_imports_string,
         'type': check_grammar_type,
+        'name': str.strip
     })
 
     def handle_signature(self, sig, signode):
@@ -118,6 +130,10 @@ class Grammar(A4ObjectDescription):
 
 
 class Rule(A4ObjectDescription):
+    option_spec = dict(A4ObjectDescription.option_spec, **{
+        'name': str.strip
+    })
+
     def handle_signature(self, sig, signode):
         if 'a4:rule' in self.env.ref_context:
             msg = 'defining nested rules is not allowed'
