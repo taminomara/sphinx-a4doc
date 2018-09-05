@@ -73,8 +73,8 @@ class RailroadDiagram(docutils.parsers.rst.Directive):
 
 class LexerRuleDiagram(RailroadDiagram):
     def get_content(self):
-        content = f'grammar X; ROOT : {"".join(self.content)} ;'
-        model = ModelCache.create().from_text(
+        content = f'grammar X; ROOT : {" ".join(self.content)} ;'
+        model = ModelCache.instance().from_text(
             content, (self.state_machine.reporter.source, self.content_offset))
         tree = model.lookup('ROOT')
         if tree is None or tree.content is None:
@@ -85,8 +85,8 @@ class LexerRuleDiagram(RailroadDiagram):
 
 class ParserRuleDiagram(RailroadDiagram):
     def get_content(self):
-        content = f'grammar X; root : {"".join(self.content)} ;'
-        model = ModelCache.create().from_text(
+        content = f'grammar X; root : {" ".join(self.content)} ;'
+        model = ModelCache.instance().from_text(
             content, (self.state_machine.reporter.source, self.content_offset))
         tree = model.lookup('root')
         if tree is None or tree.content is None:

@@ -18,6 +18,9 @@ __all__ = [
 ]
 
 
+_global_cache = None
+
+
 class ModelCache(metaclass=ABCMeta):
     @staticmethod
     def create() -> 'ModelCache':
@@ -27,6 +30,17 @@ class ModelCache(metaclass=ABCMeta):
         """
         from sphinx_a4doc.model.impl import ModelCacheImpl
         return ModelCacheImpl()
+
+    @staticmethod
+    def instance() -> 'ModelCache':
+        """
+        Get a global cache instance.
+
+        """
+        global _global_cache
+        if _global_cache is None:
+            _global_cache = ModelCache.create()
+        return _global_cache
 
     @abstractmethod
     def from_file(self, path: Union[str, Tuple[str, int]]) -> 'Model':
