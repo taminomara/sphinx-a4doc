@@ -147,34 +147,48 @@ class Renderer(CachedRuleContentVisitor[dict]):
 
         self.style_provider = style_provider
 
-    def _sequence(self, *items):
-        return dict(type='sequence', items=items)
+    @staticmethod
+    def _sequence(*items):
+        return dict(type='sequence', items=items, autowrap=True)
 
-    def _choice(self, *items, default: int = 0):
+    @staticmethod
+    def _stack(*items):
+        return dict(type='stack', items=items)
+
+    @staticmethod
+    def _choice(*items, default: int = 0):
         return dict(type='choice', items=items, default=default)
 
-    def _optional(self, item, skip: bool = False):
+    @staticmethod
+    def _optional(item, skip: bool = False):
         return dict(type='optional', item=item, skip=skip)
 
-    def _one_or_more(self, item, repeat=None):
+    @staticmethod
+    def _one_or_more(item, repeat=None):
         return dict(type='one_or_more', item=item, repeat=repeat)
 
-    def _zero_or_more(self, item, repeat=None):
+    @staticmethod
+    def _zero_or_more(item, repeat=None):
         return dict(type='zero_or_more', item=item, repeat=repeat)
 
-    def _node(self, text: str, href: Optional[str]=None, css_class: str='', radius: int=0, padding: int=20):
+    @staticmethod
+    def _node(text: str, href: Optional[str]=None, css_class: str= '', radius: int=0, padding: int=20):
         return dict(type='node', text=text, href=href, css_class=css_class, radius=radius, padding=padding)
 
-    def _terminal(self, text: str, href: Optional[str]=None):
+    @staticmethod
+    def _terminal(text: str, href: Optional[str]=None):
         return dict(type='terminal', text=text, href=href)
 
-    def _non_terminal(self, text: str, href: Optional[str]=None):
+    @staticmethod
+    def _non_terminal(text: str, href: Optional[str]=None):
         return dict(type='non_terminal', text=text, href=href)
 
-    def _comment(self, text: str, href: Optional[str]=None):
+    @staticmethod
+    def _comment(text: str, href: Optional[str]=None):
         return dict(type='comment', text=text, href=href)
 
-    def _skip(self):
+    @staticmethod
+    def _skip():
         return dict(type='skip')
 
     def visit_literal(self, r: LexerRule.Literal):

@@ -177,6 +177,9 @@ class Settings:
     css: Dict[str, Dict[str, Any]] = field(default_factory=get_default_css)
     """CSS styles to embed into diagram"""
 
+    max_width: int = 550
+    """Max width after which a sequence will be wrapped"""
+
 
 DEFAULT_SETTINGS = Settings()
 
@@ -195,8 +198,28 @@ class Diagram:
     def style(self, css: Dict[str, Dict[str, Any]]) -> 'Style':
         return Style(self, css)
 
-    def sequence(self, *items: 'DiagramItem') -> 'DiagramItem':
-        return Sequence(self, list(items))
+    def sequence(self, *items: 'DiagramItem', autowrap=False) -> 'DiagramItem':
+        seq = Sequence(self, list(items))
+        if autowrap and seq.width > self.settings.max_width:
+            new_items = []
+            sequence = []
+            width = 0
+            for item in items:
+                if width + item.width > self.settings.max_width:
+                    if sequence:
+                        new_items.append(self.sequence(*sequence))
+                    width = item.width
+                    sequence = [item]
+                else:
+                    width += item.width
+                    sequence.append(item)
+            if sequence:
+                new_items.append(self.sequence(*sequence))
+            return self.stack(*new_items)
+        return seq
+
+    def stack(self, *items: 'DiagramItem') -> 'DiagramItem':
+        return Stack(self, list(items))
 
     def choice(self, *items: 'DiagramItem', default: int = 0):
         return Choice(self, default, list(items))
@@ -251,6 +274,7 @@ class Diagram:
 
         constructors = {
             'sequence': self.sequence,
+            'stack': self.stack,
             'choice': self.choice,
             'optional': self.optional,
             'one_or_more': self.one_or_more,
@@ -544,27 +568,175 @@ class Style(DiagramItem):
 
 
 @dataclass
+class Stack(DiagramItem):
+    items: List[DiagramItem] = None
+
+    def __init__(self, dia: Diagram, items: List[DiagramItem]):
+        super().__init__(dia, 'g')
+
+        if len(items) < 1:
+            items = [self.dia.skip()]
+
+        self.items = items
+        self.needs_space = True
+
+        self.up = items[0].up
+        self.down = items[-1].down
+
+        last = len(self.items) - 1
+        vertical_separation = self.settings.vertical_separation
+        horizontal_separation = self.settings.horizontal_separation
+        arc_radius = self.settings.arc_radius
+
+        for i, item in enumerate(items):
+            self.width = max(
+                self.width,
+                item.width + item.needs_space * 2 * horizontal_separation
+            )
+
+            self.height += item.height
+
+            if i < last:
+                self.height += max(arc_radius * 2,
+                                   item.down + vertical_separation)
+                self.height += max(arc_radius * 2,
+                                   items[i + 1].up + vertical_separation)
+
+        if len(self.items) > 1:
+            self.width += self.settings.arc_radius * 2
+
+    def format(self, x, y, width, reverse, alignment_override):
+        fmt = FormattedItem(self)
+
+        left_gap, right_gap = self.determine_gaps(width, alignment_override)
+
+        alignment_override = self.alignment_override_center()
+
+        # Input line y coordinate
+        y_in = y
+        # Output line y coordinate
+        y_out = y + self.height
+
+        if reverse:
+            y_in, y_out = y_out, y_in
+
+        self.dia.path(x, y_in) \
+            .h(left_gap) \
+            .format() \
+            .add_to(fmt)
+        self.dia.path(x + left_gap + self.width, y_out) \
+            .h(right_gap) \
+            .format() \
+            .add_to(fmt)
+
+        x += left_gap
+
+        if len(self.items) > 1:
+            self.dia.path(x, y_in) \
+                .h(self.settings.arc_radius) \
+                .format() \
+                .add_to(fmt)
+            self.dia.path(x + self.width, y_out) \
+                .h(-self.settings.arc_radius) \
+                .format() \
+                .add_to(fmt)
+            inner_width = self.width - self.settings.arc_radius * 2
+            x += self.settings.arc_radius
+        else:
+            inner_width = self.width
+
+        current_y = y
+
+        last = len(self.items) - 1
+        vertical_separation = self.settings.vertical_separation
+        arc_radius = self.settings.arc_radius
+
+        for i, item in enumerate(self.items):
+            item.format(x, current_y, inner_width, reverse, alignment_override) \
+                .add_to(fmt)
+
+            current_y += item.height
+
+            if i < last:
+                y_1 = current_y
+                current_y += max(arc_radius * 2,
+                                 item.down + vertical_separation)
+                y_2 = current_y
+                current_y += max(arc_radius * 2,
+                                 self.items[i + 1].up + vertical_separation)
+                y_3 = current_y
+
+                if reverse:
+                    self.dia.path(x, y_1) \
+                        .arc('nw') \
+                        .v(y_2 - y_1 - 2 * arc_radius) \
+                        .arc('ws') \
+                        .h(inner_width) \
+                        .arc('ne') \
+                        .v(y_3 - y_2 - 2 * arc_radius) \
+                        .arc('es') \
+                        .format() \
+                        .add_to(fmt)
+                else:
+                    self.dia.path(x + inner_width, y_1) \
+                        .arc('ne') \
+                        .v(y_2 - y_1 - 2 * arc_radius) \
+                        .arc('es') \
+                        .h(-inner_width) \
+                        .arc('nw') \
+                        .v(y_3 - y_2 - 2 * arc_radius) \
+                        .arc('ws') \
+                        .format() \
+                        .add_to(fmt)
+
+        return fmt
+
+
+@dataclass
 class Sequence(DiagramItem):
     items: List[DiagramItem] = None
 
     def __init__(self, dia: Diagram, items: List[DiagramItem]):
         super().__init__(dia, 'g')
 
+        if len(items) < 1:
+            items = [self.dia.skip()]
+
         self.items = items
         self.needs_space = True
 
+        # Calculate vertical dimensions for when we're rendered normally:
+        height = 0
+        up = 0
+        down = 0
+        for item in self.items:
+            up = max(up, item.up - height)
+            height += item.height
+            down = max(down - item.height, item.down)
+
+        # Calculate vertical dimensions for when we're rendered in reverse:
+        revheight = 0
+        revup = 0
+        revdown = 0
+        for item in self.items[::-1]:
+            revup = max(revup, item.up - revheight)
+            revheight += item.height
+            revdown = max(revdown - item.height, item.down)
+
+        # Set up vertical dimensions:
+        self.height = height
+        self.up = max(up, revup)
+        self.down = max(down, revdown)
+
+        # Calculate width:
         for item in self.items:
             self.width += item.width
             if item.needs_space:
                 self.width += self.settings.horizontal_separation * 2
-            self.up = max(self.up, item.up - self.height)
-            self.height += item.height
-            self.down = max(self.down - item.height, item.down)
         if self.items[0].needs_space:
             self.width -= self.settings.horizontal_separation
         if self.items[-1].needs_space:
             self.width -= self.settings.horizontal_separation
-
         self.width = math.ceil(self.width)
 
     def format(self, x, y, width, reverse, alignment_override):
