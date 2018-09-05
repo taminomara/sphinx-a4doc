@@ -94,9 +94,9 @@ BEGIN_ACTION
 // TOKENS, & CHANNELS blocks are handled idiomatically in dedicated lexical modes.
 
 
-OPTIONS		: {self.getCurrentRuleType() == Token.INVALID_TYPE}? 'options' [ \t\f\n\r]* '{' 	-> pushMode(Options)	;
-TOKENS		: {self.getCurrentRuleType() == Token.INVALID_TYPE}? 'tokens' [ \t\f\n\r]* '{'		-> pushMode(Tokens)		;
-CHANNELS	: {self.getCurrentRuleType() == Token.INVALID_TYPE}? 'channels' [ \t\f\n\r]* '{'	-> pushMode(Channels)	;
+OPTIONS		: 'options' [ \t\f\n\r]* '{' 	-> pushMode(Options)	;
+TOKENS		: 'tokens' [ \t\f\n\r]* '{'		-> pushMode(Tokens)		;
+CHANNELS	: 'channels' [ \t\f\n\r]* '{'	-> pushMode(Channels)	;
 
 IMPORT		: 'import'		;
 FRAGMENT	: 'fragment'	;
