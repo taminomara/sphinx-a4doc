@@ -62,6 +62,21 @@ class ModelCache(metaclass=ABCMeta):
 
 class Model(metaclass=ABCMeta):
     @abstractmethod
+    def get_type(self) -> Optional[str]:
+        """
+        Get grammar type: lexer or parser. Returns ``None`` for mixed grammars.
+
+        """
+
+    @abstractmethod
+    def get_name(self) -> Optional[str]:
+        """
+        Get grammar name. Can be empty for in-memory models or in case of
+        parsing failure.
+
+        """
+
+    @abstractmethod
     def is_in_memory(self) -> bool:
         """
         Indicates that this model was loaded from memory and there is no real
@@ -75,6 +90,16 @@ class Model(metaclass=ABCMeta):
         Get path for the file that this model was loaded from.
         If model is in-memory, returns a placeholder
         suitable for error reporting.
+
+        """
+
+    @abstractmethod
+    def get_model_docs(self) -> Optional[List[Tuple[int, str]]]:
+        """
+        Get documentation that appear on top of the model.
+        The returned list contains one item per documentation comment.
+        The first element of this item is a line number at which the comment
+        started, the second element is the comment itself.
 
         """
 
@@ -208,8 +233,13 @@ class RuleBase:
     """
 
     is_doxygen_nodoc: bool
-    """Indicates that the `'nodoc'` flag is set for this rule.
+    """Indicates that the ``'nodoc'`` flag is set for this rule.
     If true, generators should not output any content for this rule.
+    """
+
+    is_doxygen_no_diagram: bool
+    """Indicates that the ``'no_diagram'`` flag is set.
+    If true, generators should not produce railroad diagram for this rule.
     """
 
     is_doxygen_inline: bool
@@ -225,7 +255,7 @@ class RuleBase:
     css_class: str
     """CSS class that should be assigned to all references to this rule"""
 
-    documentation: str
+    documentation: Optional[List[Tuple[int, str]]]
     """Documentation for this rule"""
 
     def __str__(self):

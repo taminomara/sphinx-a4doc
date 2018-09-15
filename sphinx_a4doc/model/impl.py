@@ -108,11 +108,33 @@ class ModelImpl(Model):
         self._parser_rules: Dict[str, ParserRule] = {}
         self._imports: Set[Model] = set()
 
+        self._type: Optional[str] = None
+        self._name: Optional[str] = None
+        self._docs: Optional[List[Tuple[int, str]]] = None
+
+    def get_type(self) -> Optional[str]:
+        return self._type
+
+    def set_type(self, t: str):
+        self._type = t
+
+    def get_name(self) -> str:
+        return self._name
+
+    def set_name(self, n: str):
+        self._name = n
+
     def is_in_memory(self):
         return self._in_memory
 
     def get_path(self) -> str:
         return self._path
+
+    def get_model_docs(self) -> Optional[List[Tuple[int, str]]]:
+        return self._docs
+
+    def set_model_docs(self, docs: Optional[List[Tuple[int, str]]]):
+        self._docs = docs
 
     def get_offset(self) -> int:
         return self._offset
@@ -158,10 +180,25 @@ class MetaLoader(ParserVisitor):
 
     def add_import(self, name: str, position: Position):
         if self._model.is_in_memory():
-            logger.error('imports are not allowed for in-memory grammars')
+            logger.error(f'{position}: WARNING: imports are not allowed for in-memory grammars')
         else:
             model = self._cache.from_file(os.path.join(self._basedir, name + '.g4'))
             self._model.add_import(model)
+
+    def visitGrammarSpec(self, ctx):
+        t = ctx.gtype.getText()
+        if 'lexer' in t:  # that's nasty =(
+            t = 'lexer'   # in fact, the whole file is nasty =(
+        elif 'parser' in t:
+            t = 'parser'
+        else:
+            t = None
+        self._model.set_name(ctx.gname.getText())
+        self._model.set_type(t)
+        if ctx.docs:
+            docs = load_docs(self._model, ctx.docs, allow_cmd=False)
+            self._model.set_model_docs(docs['documentation'])
+        return super(MetaLoader, self).visitGrammarSpec(ctx)
 
     def visitParserRuleSpec(self, ctx: Parser.ParserRuleSpecContext):
         return None  # do not recurse into this
@@ -194,6 +231,7 @@ class MetaLoader(ParserVisitor):
                 content=None,
                 is_doxygen_nodoc=True,
                 is_doxygen_inline=True,
+                is_doxygen_no_diagram=True,
                 importance=1,
                 documentation='',
                 css_class=None
@@ -272,86 +310,6 @@ class RuleLoader(ParserVisitor):
                            for i in range(len(elements)))
         return self.rule_class.Sequence(tuple(elements), linebreaks)
 
-    def load_docs(self, tokens):
-        is_doxygen_nodoc = False
-        is_doxygen_inline = False
-        css_class = ''
-        importance = 1
-        name = None
-        documentation_lines = []
-
-        for token in tokens:
-            text: str = token.text
-            position = Position(self._model.get_path(), token.line + self._model.get_offset())
-            if text.startswith('//@'):
-                match = CMD_RE.match(text)
-
-                if match is None:
-                    logger.error(f'{position}: WARNING: invalid command {text!r}')
-                    continue
-
-                cmd = match['cmd']
-
-                if cmd == 'nodoc':
-                    is_doxygen_nodoc = True
-                elif cmd == 'inline':
-                    is_doxygen_inline = True
-                elif cmd == 'unimportant':
-                    importance = 0
-                elif cmd == 'class':
-                    css_class = match['ctx'].strip()
-                elif cmd == 'importance':
-                    try:
-                        val = int(match['ctx'].strip())
-                    except ValueError:
-                        logger.error(f'{position}: WARNING: importance requires an integer argument')
-                        continue
-                    if val < 0:
-                        logger.error(f'{position}: WARNING: importance should not be negative')
-                    importance = val
-                elif cmd == 'name':
-                    name = match['ctx'].strip()
-                    if not name:
-                        logger.error(f'{position}: WARNING: name command requires an argument')
-                        continue
-                else:
-                    logger.error(f'{position}: WARNING: unknown command {cmd!r}')
-
-                if cmd not in ['name', 'class', 'importance'] and match['ctx']:
-                    logger.warning(f'argument for {cmd!r} command is ignored')
-            else:
-                lines = list(map(str.strip, text.splitlines()))
-
-                if len(lines) == 1:
-                    documentation_lines.append(lines[0][3:-2].strip())
-                else:
-                    first_line, *lines = lines
-
-                    first_line = first_line[3:].lstrip()
-                    if first_line:
-                        documentation_lines.append(first_line)
-
-                    lines[-1] = lines[-1][:-2].rstrip()
-
-                    if not lines[-1]:
-                        lines.pop()
-
-                    if all(line.startswith('*') for line in lines):
-                        lines = [line[1:] for line in lines]
-
-                    text = textwrap.dedent('\n'.join(lines))
-
-                    documentation_lines.append(text)
-
-        return dict(
-            css_class=css_class,
-            importance=importance,
-            is_doxygen_inline=is_doxygen_inline,
-            is_doxygen_nodoc=is_doxygen_nodoc,
-            name=name,
-            documentation='\n'.join(documentation_lines)
-        )
-
 
 class LexerRuleLoader(RuleLoader):
     rule_class = LexerRule
@@ -365,7 +323,7 @@ class LexerRuleLoader(RuleLoader):
     def visitLexerRuleSpec(self, ctx: Parser.LexerRuleSpecContext):
         content: LexerRule.RuleContent = self.visit(ctx.lexerRuleBlock())
 
-        doc_info = self.load_docs(ctx.docs)
+        doc_info = load_docs(self._model, ctx.docs)
 
         if isinstance(content, LexerRule.Literal):
             is_literal = True
@@ -382,6 +340,7 @@ class LexerRuleLoader(RuleLoader):
             content=content,
             is_doxygen_nodoc=doc_info['is_doxygen_nodoc'],
             is_doxygen_inline=doc_info['is_doxygen_inline'],
+            is_doxygen_no_diagram=doc_info['is_doxygen_no_diagram'],
             importance=doc_info['importance'],
             css_class=doc_info['css_class'],
             documentation=doc_info['documentation'],
@@ -475,7 +434,7 @@ class ParserRuleLoader(RuleLoader):
 
     def visitParserRuleSpec(self, ctx: Parser.ParserRuleSpecContext):
         content: ParserRule.RuleContent = self.visit(ctx.ruleBlock())
-        doc_info = self.load_docs(ctx.docs)
+        doc_info = load_docs(self._model, ctx.docs)
         rule = ParserRule(
             name=ctx.name.text,
             display_name=doc_info['name'] or None,
@@ -484,6 +443,7 @@ class ParserRuleLoader(RuleLoader):
             content=content,
             is_doxygen_nodoc=doc_info['is_doxygen_nodoc'],
             is_doxygen_inline=doc_info['is_doxygen_inline'],
+            is_doxygen_no_diagram=doc_info['is_doxygen_no_diagram'],
             importance=doc_info['importance'],
             css_class=doc_info['css_class'],
             documentation=doc_info['documentation']
@@ -565,3 +525,95 @@ class ParserRuleLoader(RuleLoader):
     def visitCharacterRange(self, ctx: Parser.CharacterRangeContext):
         # This also makes no sense...
         return ParserRule.EMPTY
+
+
+def load_docs(model, tokens, allow_cmd=True):
+        is_doxygen_nodoc = False
+        is_doxygen_inline = False
+        is_doxygen_no_diagram = False
+        css_class = ''
+        importance = 1
+        name = None
+        docs: List[Tuple[int, str]] = []
+
+        for token in tokens:
+            text: str = token.text
+            position = Position(model.get_path(), token.line + model.get_offset())
+            if text.startswith('//@'):
+                match = CMD_RE.match(text)
+
+                if match is None:
+                    logger.error(f'{position}: WARNING: invalid command {text!r}')
+                    continue
+
+                if not allow_cmd:
+                    logger.error(f'{position}: WARNING: commands not allowed here')
+                    continue
+
+                cmd = match['cmd']
+
+                if cmd == 'no-doc':
+                    is_doxygen_nodoc = True
+                elif cmd == 'inline':
+                    is_doxygen_inline = True
+                elif cmd == 'no-diagram':
+                    is_doxygen_no_diagram = True
+                elif cmd == 'unimportant':
+                    importance = 0
+                elif cmd == 'class':
+                    css_class = match['ctx'].strip()
+                elif cmd == 'importance':
+                    try:
+                        val = int(match['ctx'].strip())
+                    except ValueError:
+                        logger.error(f'{position}: WARNING: importance requires an integer argument')
+                        continue
+                    if val < 0:
+                        logger.error(f'{position}: WARNING: importance should not be negative')
+                    importance = val
+                elif cmd == 'name':
+                    name = match['ctx'].strip()
+                    if not name:
+                        logger.error(f'{position}: WARNING: name command requires an argument')
+                        continue
+                else:
+                    logger.error(f'{position}: WARNING: unknown command {cmd!r}')
+
+                if cmd not in ['name', 'class', 'importance'] and match['ctx']:
+                    logger.warning(f'argument for {cmd!r} command is ignored')
+            else:
+                documentation_lines = []
+
+                lines = list(map(str.strip, text.splitlines()))
+
+                if len(lines) == 1:
+                    documentation_lines.append(lines[0][3:-2].strip())
+                else:
+                    first_line, *lines = lines
+
+                    first_line = first_line[3:].lstrip()
+                    documentation_lines.append(first_line)
+
+                    lines[-1] = lines[-1][:-2].rstrip()
+
+                    if not lines[-1]:
+                        lines.pop()
+
+                    if all(line.startswith('*') for line in lines):
+                        lines = [line[1:] for line in lines]
+
+                    text = textwrap.dedent('\n'.join(lines))
+
+                    documentation_lines.append(text)
+
+                docs.append((position.line, '\n'.join(documentation_lines)))
+
+        return dict(
+            css_class=css_class,
+            importance=importance,
+            is_doxygen_inline=is_doxygen_inline,
+            is_doxygen_nodoc=is_doxygen_nodoc,
+            is_doxygen_no_diagram=is_doxygen_no_diagram,
+            name=name,
+            documentation=docs
+        )
