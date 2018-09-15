@@ -1007,8 +1007,13 @@ class Sequence(DiagramItem):
         if len(items) < 1:
             items = [self.dia.skip()]
 
-        self.items = items
-        self.needs_space = True
+        self.items = []
+
+        for item in items:
+            if isinstance(item, Sequence):
+                self.items.extend(item.items)
+            else:
+                self.items.append(item)
 
         # Calculate vertical dimensions for when we're rendered normally:
         height = 0
@@ -1188,7 +1193,7 @@ class Choice(DiagramItem):
 
         left_gap, right_gap = self.determine_gaps(width, alignment_override)
 
-        alignment_override = self.settings.internal_alignment
+        alignment_override = self.alignment_override_reverse(reverse)
 
         # Input line y coordinate
         y_in = y
