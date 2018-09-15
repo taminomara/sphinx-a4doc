@@ -549,6 +549,8 @@ class FormattedItem:
         f.write(f'<{self.diagram_item.name}')
         for name, value in sorted(self.diagram_item.attrs.items()):
             f.write(f' {name}="{e(value)}"')
+        f.write(f' data-dbg-cls="{self.diagram_item.__class__.__name__}"'
+                f' data-dbg-w="{self.diagram_item.width}"')
         f.write('>')
         for child in self.children:
             if isinstance(child, FormattedItem):
