@@ -648,7 +648,7 @@ class DiagramItem:
         elif internal_alignment == InternalAlignment.RIGHT:
             return diff, 0
         else:
-            return diff / 2, diff / 2
+            return math.floor(diff / 2), math.ceil(diff / 2)
 
     def alignment_override_center(self):
         if self.settings.internal_alignment == InternalAlignment.AUTO_RIGHT:
