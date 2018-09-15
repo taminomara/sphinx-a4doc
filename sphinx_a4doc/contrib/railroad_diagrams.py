@@ -655,6 +655,15 @@ class DiagramItem:
             return InternalAlignment.CENTER
         return self.settings.internal_alignment
 
+    def alignment_override_reverse(self, reverse):
+        if not reverse:
+            return self.settings.internal_alignment
+        if self.settings.internal_alignment == InternalAlignment.AUTO_RIGHT:
+            return InternalAlignment.AUTO_LEFT
+        if self.settings.internal_alignment == InternalAlignment.AUTO_LEFT:
+            return InternalAlignment.AUTO_RIGHT
+        return self.settings.internal_alignment
+
 
 @dataclass
 class Element(DiagramItem):
@@ -739,6 +748,7 @@ class Style(DiagramItem):
 @dataclass
 class Stack(DiagramItem):
     items: List[DiagramItem] = None
+    skipped: Set[int] = None
 
     def __init__(self, dia: Diagram, items: List[DiagramItem]):
         super().__init__(dia, 'g')
@@ -746,40 +756,85 @@ class Stack(DiagramItem):
         if len(items) < 1:
             items = [self.dia.skip()]
 
+        self.skipped = set()
+
+        for i in range(len(items)):
+            if not isinstance(items[i], Sequence):
+                items[i] = self.dia.sequence(items[i])
+
+        if len(items) > 1:
+            for i in range(1, len(items)):
+                item = items[i]
+                if isinstance(item, Sequence) and len(item.items) == 1:
+                    item = item.items[0]
+                if (
+                    isinstance(item, Choice) and
+                    len(item.items) == 2 and
+                    (
+                        isinstance(item.items[0], Skip) or
+                        isinstance(item.items[1], Skip)
+                    )
+                ):
+                    self.skipped.add(i)
+                    if isinstance(item.items[0], Skip):
+                        items[i] = item.items[1]
+                    else:
+                        items[i] = item.items[0]
+
         self.items = items
-        self.needs_space = True
 
         self.up = items[0].up
         self.down = items[-1].down
 
         last = len(self.items) - 1
         vertical_separation = self.settings.vertical_separation
-        horizontal_separation = self.settings.horizontal_separation
         arc_radius = self.settings.arc_radius
 
         for i, item in enumerate(items):
-            self.width = max(
-                self.width,
-                item.width + item.needs_space * 2 * horizontal_separation
-            )
+            self.width = max(self.width, item.width)
 
             self.height += item.height
 
             if i < last:
                 self.height += max(arc_radius * 2,
-                                   item.down + vertical_separation)
+                                   item.down + 2 * vertical_separation)
                 self.height += max(arc_radius * 2,
-                                   items[i + 1].up + vertical_separation)
+                                   items[i + 1].up + 2 * vertical_separation)
+            elif i in self.skipped:
+                # In this case, the end of the stack will look like:
+                #
+                #  v
+                #  |    +-----------+
+                #  \---># last-elem |->--\
+                #  |    +-----------+    |
+                #  \---------------------\--->
+                #
+                self.down = 0
+                self.height += max(arc_radius, item.down + vertical_separation)
+                self.height += arc_radius
+                if self.settings.internal_alignment == InternalAlignment.CENTER:
+                    self.width += arc_radius
+                elif self.width < item.width + arc_radius:
+                    self.width += arc_radius
 
         if len(self.items) > 1:
             self.width += self.settings.arc_radius * 2
+            # Add a little bit of extra space on edges ...
+            self.width += self.settings.horizontal_separation
+            # ... and bottom of the diagram
+            self.down += vertical_separation
 
     def format(self, x, y, width, reverse, alignment_override):
         fmt = FormattedItem(self)
 
         left_gap, right_gap = self.determine_gaps(width, alignment_override)
 
-        alignment_override = self.alignment_override_center()
+        alignment_override = self.settings.internal_alignment
+        if alignment_override != InternalAlignment.CENTER:
+            if reverse:
+                alignment_override = InternalAlignment.RIGHT
+            else:
+                alignment_override = InternalAlignment.LEFT
 
         # Input line y coordinate
         y_in = y
@@ -811,6 +866,27 @@ class Stack(DiagramItem):
                 .add_to(fmt)
             inner_width = self.width - self.settings.arc_radius * 2
             x += self.settings.arc_radius
+            if len(self.items) - 1 in self.skipped:
+                if self.settings.internal_alignment == InternalAlignment.CENTER:
+                    # When the last element is skipped and the stack
+                    # is centered, it looks like this:
+                    #
+                    #      +----+
+                    # -----| E1 |----\
+                    #      +----+    |
+                    # /--------------/
+                    # |  +--------+
+                    # \--|   E2   |--\
+                    # |  +--------+  |
+                    # \--------------\---
+                    #
+                    #                |   |
+                    #                  ^
+                    # This extra bit of space is what we're removing from
+                    # the inner width.
+                    if reverse:
+                        x += self.settings.arc_radius
+                    inner_width -= self.settings.arc_radius
         else:
             inner_width = self.width
 
@@ -821,40 +897,98 @@ class Stack(DiagramItem):
         arc_radius = self.settings.arc_radius
 
         for i, item in enumerate(self.items):
-            item.format(x, current_y, inner_width, reverse, alignment_override) \
+            if self.settings.internal_alignment == InternalAlignment.CENTER:
+                elem_width = inner_width
+            elif len(self.items) > 1:
+                elem_width = item.width + self.settings.horizontal_separation
+            else:
+                elem_width = item.width
+            if reverse:
+                x_of = x + inner_width - elem_width
+            else:
+                x_of = x
+
+            item.format(x_of, current_y, elem_width, reverse, alignment_override) \
                 .add_to(fmt)
 
-            current_y += item.height
-
             if i < last:
+                current_y += item.height
+
                 y_1 = current_y
                 current_y += max(arc_radius * 2,
-                                 item.down + vertical_separation)
+                                 item.down + 2 * vertical_separation)
                 y_2 = current_y
                 current_y += max(arc_radius * 2,
-                                 self.items[i + 1].up + vertical_separation)
+                                 self.items[i + 1].up + 2 * vertical_separation)
                 y_3 = current_y
 
                 if reverse:
-                    self.dia.path(x, y_1) \
+                    if i in self.skipped:
+                        self.dia.path(x_of + elem_width + arc_radius, y_1 - item.height - arc_radius) \
+                            .v(item.height + y_3 - y_1) \
+                            .format() \
+                            .add_to(fmt)
+                    self.dia.path(x_of, y_1) \
                         .arc('nw') \
                         .v(y_2 - y_1 - 2 * arc_radius) \
                         .arc('ws') \
-                        .h(inner_width) \
+                        .h(elem_width) \
                         .arc('ne') \
                         .v(y_3 - y_2 - 2 * arc_radius) \
                         .arc('es') \
                         .format() \
                         .add_to(fmt)
                 else:
-                    self.dia.path(x + inner_width, y_1) \
+                    if i in self.skipped:
+                        self.dia.path(x_of - arc_radius, y_1 - item.height - arc_radius) \
+                            .v(item.height + y_3 - y_1) \
+                            .format() \
+                            .add_to(fmt)
+                    self.dia.path(x_of + elem_width, y_1) \
                         .arc('ne') \
                         .v(y_2 - y_1 - 2 * arc_radius) \
                         .arc('es') \
-                        .h(-inner_width) \
+                        .h(-elem_width) \
                         .arc('nw') \
                         .v(y_3 - y_2 - 2 * arc_radius) \
                         .arc('ws') \
+                        .format() \
+                        .add_to(fmt)
+            else:
+                if reverse:
+                    if i in self.skipped:
+                        self.dia.path(x_of + elem_width + arc_radius, current_y - arc_radius) \
+                            .v(y_in - current_y) \
+                            .arc('es') \
+                            .h(-elem_width - arc_radius) \
+                            .format() \
+                            .add_to(fmt)
+                        self.dia.path(x_of, current_y + item.height) \
+                            .arc('nw') \
+                            .v(y_in - current_y - 2 * arc_radius - item.height) \
+                            .arc('es') \
+                            .format() \
+                            .add_to(fmt)
+                    self.dia.path(x, y_in) \
+                        .h(x_of - x) \
+                        .format() \
+                        .add_to(fmt)
+                else:
+                    if i in self.skipped:
+                        self.dia.path(x - arc_radius, current_y - arc_radius) \
+                            .v(y_out - current_y) \
+                            .arc('ws') \
+                            .h(elem_width + arc_radius) \
+                            .format() \
+                            .add_to(fmt)
+                        self.dia.path(x + elem_width, current_y + item.height) \
+                            .arc('ne') \
+                            .v(y_out - current_y - 2 * arc_radius - item.height) \
+                            .arc('ws') \
+                            .format() \
+                            .add_to(fmt)
+                    self.dia.path(x + elem_width, y_out) \
+                        .h(inner_width - elem_width) \
                         .format() \
                         .add_to(fmt)
 
