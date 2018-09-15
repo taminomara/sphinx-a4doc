@@ -45,12 +45,66 @@ def get_default_css():
             'text-anchor': 'middle',
             'alignment-baseline': 'central',
         },
+        'a': {
+            'text-decoration': 'none',
+        },
         'rect': {
             'stroke-width': 1,
             'stroke': 'black',
             'fill': 'none',
-        }
+        },
+        'g.comment rect': {
+            'stroke-width': 0,
+        },
     }
+
+
+def group_by_subsequences(items: Iterable['DiagramItem'],
+                          linebreaks: Iterable[bool]):
+    subsequences: List[Tuple[int, List['DiagramItem']]] = []
+    subsequence = []
+    width = 0
+    for item, linebreak in zip(items, linebreaks):
+        subsequence.append(item)
+        width += item.width
+        if linebreak:
+            subsequences.append((width, subsequence))
+            subsequence = []
+            width = 0
+    if subsequence:
+        subsequences.append((width, subsequence))
+    return subsequences
+
+
+def wrap_subsequence(items: Iterable['DiagramItem'], max_width: int):
+    new_items = []
+    sequence = []
+    width = 0
+    for item in items:
+        if width + item.width > max_width:
+            if sequence:
+                new_items.append(sequence)
+            width = item.width
+            sequence = [item]
+        else:
+            width += item.width
+            sequence.append(item)
+    if sequence:
+        new_items.append(sequence)
+    return new_items
+
+
+def ensure_type(name, x, *types):
+    if not isinstance(x, types):
+        types_str = ', '.join([t.__name__ for t in types])
+        raise ValueError(f'{name} should be {types_str}, '
+                         f'got {type(x)} instead')
+
+
+def ensure_empty_dict(name, x):
+    if x:
+        keys = ', '.join(x.keys())
+        raise ValueError(f'{name} got unexpected parameters: {keys}')
 
 
 class InternalAlignment(Enum):
@@ -177,7 +231,7 @@ class Settings:
     css: Dict[str, Dict[str, Any]] = field(default_factory=get_default_css)
     """CSS styles to embed into diagram"""
 
-    max_width: int = 550
+    max_width: int = 500
     """Max width after which a sequence will be wrapped"""
 
 
@@ -198,21 +252,36 @@ class Diagram:
     def style(self, css: Dict[str, Dict[str, Any]]) -> 'Style':
         return Style(self, css)
 
-    def sequence(self, *items: 'DiagramItem', autowrap=False) -> 'DiagramItem':
+    def sequence(self, *items: 'DiagramItem',
+                 autowrap: bool=False,
+                 linebreaks: Iterable[bool]=None) -> 'DiagramItem':
+        linebreaks = linebreaks or [False] * len(items)
+        assert len(items) == len(linebreaks)
+
         seq = Sequence(self, list(items))
+
         if autowrap and seq.width > self.settings.max_width:
+            subsequences = group_by_subsequences(items, linebreaks)
+
             new_items = []
             sequence = []
             width = 0
-            for item in items:
-                if width + item.width > self.settings.max_width:
+
+            for ss_width, ss in subsequences:
+                if width + ss_width > self.settings.max_width:
                     if sequence:
                         new_items.append(self.sequence(*sequence))
-                    width = item.width
-                    sequence = [item]
+                    if ss_width > self.settings.max_width:
+                        ssss = wrap_subsequence(ss, self.settings.max_width)
+                    else:
+                        ssss = [ss]
+                    for sss in ssss:
+                        new_items.append(self.sequence(*sss))
+                    width = 0
+                    sequence = []
                 else:
-                    width += item.width
-                    sequence.append(item)
+                    sequence.extend(ss)
+                    width += ss_width
             if sequence:
                 new_items.append(self.sequence(*sequence))
             return self.stack(*new_items)
@@ -254,67 +323,167 @@ class Diagram:
     def skip(self) -> 'DiagramItem':
         return Skip(self)
 
-    def from_dict(self, structure) -> 'DiagramItem':
-        if isinstance(structure, str):
-            return self.terminal(structure)
+    def load(self, structure) -> 'DiagramItem':
+        """
+        Loa diagram from object (usually a parsed yaml/json).
 
-        if not isinstance(structure, dict):
-            raise ValueError(f'node description should be string or object, '
-                             f'got {type(structure)} instead')
+        """
+        if structure is None:
+            return self.skip()
+        elif isinstance(structure, str):
+            return self._load_terminal(structure, {})
+        elif isinstance(structure, list):
+            return self._load_sequence(structure, {})
+        elif isinstance(structure, dict):
+            ctors = {
+                'sequence': self._load_sequence,
+                'stack': self._load_stack,
+                'choice': self._load_choice,
+                'optional': self._load_optional,
+                'one_or_more': self._load_one_or_more,
+                'zero_or_more': self._load_zero_or_more,
+                'node': self._load_node,
+                'terminal': self._load_terminal,
+                'non_terminal': self._load_non_terminal,
+                'comment': self._load_comment,
+            }
 
-        if 'type' not in structure:
-            raise ValueError('required field "type" not found')
+            ctors_found = []
 
-        structure = structure.copy()
+            for name in structure:
+                if name in ctors:
+                    ctors_found.append(name)
 
-        node_type = structure.pop('type')
+            if len(ctors_found) != 1:
+                raise ValueError(f'cannot deternine type for {structure!r}')
 
-        if not isinstance(node_type, str):
-            raise ValueError('field "type" should be string')
+            name = ctors_found[0]
+            structure = structure.copy()
+            arg = structure.pop(name)
+            return ctors[name](arg, structure)
+        else:
+            raise ValueError(f'diagram item description should be string, '
+                             f'list or object, got {type(structure)} instead')
 
-        constructors = {
-            'sequence': self.sequence,
-            'stack': self.stack,
-            'choice': self.choice,
-            'optional': self.optional,
-            'one_or_more': self.one_or_more,
-            'zero_or_more': self.zero_or_more,
-            'node': self.node,
-            'terminal': self.terminal,
-            'non_terminal': self.non_terminal,
-            'comment': self.comment,
-            'skip': self.skip,
-        }
+    def _load_sequence(self, a, kw) -> 'DiagramItem':
+        return self._load_generic(
+            a, kw, self.sequence, (list, tuple,), self._from_list,
+            {
+                'autowrap':   ((bool,                 ), None           ),
+                'linebreaks': ((list, tuple,          ), None           ),
+            }
+        )
 
-        if node_type not in constructors:
-            raise ValueError(f'unknown node type {node_type!r}')
+    def _load_stack(self, a, kw) -> 'DiagramItem':
+        return self._load_generic(
+            a, kw, self.stack, (list, tuple,), self._from_list,
+            {
+            }
+        )
 
-        items = list(structure.pop('items', []))
+    def _load_choice(self, a, kw) -> 'DiagramItem':
+        return self._load_generic(
+            a, kw, self.choice, (list, tuple,), self._from_list,
+            {
+                'default':    ((int,                  ), None           ),
+            }
+        )
 
-        if not isinstance(items, (list, tuple)):
-            raise ValueError('items field should be list')
+    def _load_optional(self, a, kw) -> 'DiagramItem':
+        return self._load_generic(
+            a, kw, self.optional, (str, dict, list, tuple), self._from_dict,
+            {
+                'skip':       ((bool,                 ), None           ),
+            }
+        )
 
-        if not items and 'item' in structure:
-            items.append(structure.pop('item'))
-        elif 'item' in structure:
-            raise ValueError('"items" and "item" keys are mutual exclusive')
+    def _load_one_or_more(self, a, kw) -> 'DiagramItem':
+        return self._load_generic(
+            a, kw, self.one_or_more, (str, dict, list, tuple), self._from_dict,
+            {
+                'repeat':     ((str, dict, list, tuple), self.load      ),
+            }
+        )
 
-        if node_type in ['optional', 'one_or_more', 'zero_or_more']:
-            if len(items) > 1:
-                raise ValueError(f'only one item allowed for node {node_type}')
-            if len(items) == 0:
-                raise ValueError(f'one item is mandatory for node {node_type}')
-        elif node_type in ['node', 'terminal', 'non_terminal', 'comment', 'skip']:
-            if len(items) > 0:
-                raise ValueError(f'no items allowed for node {node_type}')
+    def _load_zero_or_more(self, a, kw) -> 'DiagramItem':
+        return self._load_generic(
+            a, kw, self.zero_or_more, (str, dict, list, tuple), self._from_dict,
+            {
+                'repeat':     ((str, dict, list, tuple), self.load      ),
+            }
+        )
 
-        items = [self.from_dict(it) for it in items]
+    def _load_node(self, a, kw) -> 'DiagramItem':
+        return self._load_generic(
+            a, kw, self.node, (str,), lambda s: ([s], {}),
+            {
+                'href':       ((str,                  ), None           ),
+                'css_class':  ((str,                  ), None           ),
+                'radius':     ((int,                  ), None           ),
+                'padding':    ((int,                  ), None           ),
+            }
+        )
 
-        if node_type in ['one_or_more', 'zero_or_more']:
-            if 'repeat' in structure and structure['repeat'] is not None:
-                structure['repeat'] = self.from_dict(structure['repeat'])
+    def _load_terminal(self, a, kw) -> 'DiagramItem':
+        return self._load_generic(
+            a, kw, self.terminal, (str,), lambda s: ([s], {}),
+            {
+                'href':       ((str,                  ), None           ),
+            }
+        )
 
-        return constructors[node_type](*items, **structure)
+    def _load_non_terminal(self, a, kw) -> 'DiagramItem':
+        return self._load_generic(
+            a, kw, self.non_terminal, (str,), lambda s: ([s], {}),
+            {
+                'href':       ((str,                  ), None           ),
+            }
+        )
+
+    def _load_comment(self, a, kw) -> 'DiagramItem':
+        return self._load_generic(
+            a, kw, self.comment, (str,), lambda s: ([s], {}),
+            {
+                'href':       ((str,                  ), None           ),
+            }
+        )
+
+    def _load_skip(self, a, kw) -> 'DiagramItem':
+        return self.skip()
+
+    def _load_generic(self, user_a, user_kw, ctor, primary_type, primary_loader,
+                      spec: Dict[str, Tuple[tuple, callable]]):
+        ensure_type(f'{ctor.__name__} content', user_a, *primary_type)
+
+        a, kw = primary_loader(user_a)
+
+        user_kw = user_kw.copy()
+
+        for name, (types, loader) in spec.items():
+            if name not in user_kw:
+                continue
+
+            arg = user_kw.pop(name)
+
+            if arg is None:
+                continue
+
+            ensure_type(f'{ctor.__name__}\'s parameter {name}', arg, *types)
+
+            if loader is not None:
+                arg = loader(arg)
+
+            kw[name] = arg
+
+        ensure_empty_dict(ctor.__name__, user_kw)
+
+        return ctor(*a, **kw)
+
+    def _from_list(self, x):
+        return [self.load(i) for i in x], {}
+
+    def _from_dict(self, x):
+        return [self.load(x)], {}
 
     @overload
     def render(self, root: 'DiagramItem', output: None = None) -> str: ...

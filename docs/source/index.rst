@@ -18,22 +18,14 @@ Features
 - Directives for rendering railroad diagrams, such as this one:
 
   .. railroad-diagram::
-     type: sequence
-     items:
-     - type: choice
+     - choice:
+       - terminal: 'parser'
+       -
+       - terminal: 'lexer '
        default: 1
-       items:
-       - type: terminal
-         text: 'parser'
-       - type: skip
-       - type: terminal
-         text: 'lexer '
-     - type: terminal
-       text: 'grammar'
-     - type: non_terminal
-       text: identifier
-     - type: terminal
-       text: ';'
+     - terminal: 'grammar'
+     - non_terminal: 'identifier'
+     - terminal: ';'
 
 - Directive for extracting documentation comments and rendering docs and
   diagrams from ``.g4`` source files.
@@ -300,44 +292,28 @@ Rendering diagrams
    .. code-block:: rst
 
       .. railroad-diagram::
-         type: sequence
-         items:
-         - type: choice
+         - choice:
+           - terminal: 'parser'
+           -
+           - terminal: 'lexer '
            default: 1
-           items:
-           - type: terminal
-             text: 'parser'
-           - type: skip
-           - type: terminal
-             text: 'lexer '
-         - type: terminal
-           text: 'grammar'
-         - type: non_terminal
-           text: identifier
-         - type: terminal
-           text: ';'
+         - terminal: 'grammar'
+         - non_terminal: 'identifier'
+         - terminal: ';'
 
    which translates to:
 
    .. highlights::
 
       .. railroad-diagram::
-         type: sequence
-         items:
-         - type: choice
+         - choice:
+           - terminal: 'parser'
+           -
+           - terminal: 'lexer '
            default: 1
-           items:
-           - type: terminal
-             text: 'parser'
-           - type: skip
-           - type: terminal
-             text: 'lexer '
-         - type: terminal
-           text: 'grammar'
-         - type: non_terminal
-           text: identifier
-         - type: terminal
-           text: ';'
+         - terminal: 'grammar'
+         - non_terminal: 'identifier'
+         - terminal: ';'
 
    **Options:**
 
@@ -403,7 +379,6 @@ Rendering diagrams
          SELECT DISTINCT?
          ('*' | expression (AS row_name)?
                 (',' expression (AS row_name)?)*)
-         FROM from_item (',' from_item)* (WHERE condition)?
 
    translates to:
 
@@ -414,7 +389,6 @@ Rendering diagrams
          SELECT DISTINCT?
          ('*' | expression (AS row_name)?
                 (',' expression (AS row_name)?)*)
-         FROM from_item (',' from_item)* (WHERE condition)?
 
 
    **Options:**

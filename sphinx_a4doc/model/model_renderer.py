@@ -148,48 +148,48 @@ class Renderer(CachedRuleContentVisitor[dict]):
         self.style_provider = style_provider
 
     @staticmethod
-    def _sequence(*items):
-        return dict(type='sequence', items=items, autowrap=True)
+    def _sequence(*items, linebreaks):
+        return dict(sequence=items, autowrap=True, linebreaks=linebreaks)
 
     @staticmethod
     def _stack(*items):
-        return dict(type='stack', items=items)
+        return dict(stack=items)
 
     @staticmethod
     def _choice(*items, default: int = 0):
-        return dict(type='choice', items=items, default=default)
+        return dict(choice=items, default=default)
 
     @staticmethod
     def _optional(item, skip: bool = False):
-        return dict(type='optional', item=item, skip=skip)
+        return dict(optional=item, skip=skip)
 
     @staticmethod
     def _one_or_more(item, repeat=None):
-        return dict(type='one_or_more', item=item, repeat=repeat)
+        return dict(one_or_more=item, repeat=repeat)
 
     @staticmethod
     def _zero_or_more(item, repeat=None):
-        return dict(type='zero_or_more', item=item, repeat=repeat)
+        return dict(zero_or_more=item, repeat=repeat)
 
     @staticmethod
     def _node(text: str, href: Optional[str]=None, css_class: str= '', radius: int=0, padding: int=20):
-        return dict(type='node', text=text, href=href, css_class=css_class, radius=radius, padding=padding)
+        return dict(node=text, href=href, css_class=css_class, radius=radius, padding=padding)
 
     @staticmethod
     def _terminal(text: str, href: Optional[str]=None):
-        return dict(type='terminal', text=text, href=href)
+        return dict(terminal=text, href=href)
 
     @staticmethod
     def _non_terminal(text: str, href: Optional[str]=None):
-        return dict(type='non_terminal', text=text, href=href)
+        return dict(non_terminal=text, href=href)
 
     @staticmethod
     def _comment(text: str, href: Optional[str]=None):
-        return dict(type='comment', text=text, href=href)
+        return dict(comment=text, href=href)
 
     @staticmethod
     def _skip():
-        return dict(type='skip')
+        return None
 
     def visit_literal(self, r: LexerRule.Literal):
         css, radius, padding = self.style_provider.get_literal(r)
@@ -268,14 +268,17 @@ class Renderer(CachedRuleContentVisitor[dict]):
         return self._optional(self.visit(r.child), skip=skip)
 
     def visit_sequence(self, r: RuleBase.Sequence):
-        return self._optimize_sequence(list(r.children))
+        return self._optimize_sequence(list(r.children),
+                                       list(r.get_linebreaks()))
 
     def visit_alternative(self, r: RuleBase.Alternative):
         default = max(enumerate(r.children),
                       key=lambda x: self.importance_provider.visit(x[1]))[0]
         return self._choice(*[self.visit(c) for c in r.children], default=default)
 
-    def _optimize_sequence(self, seq: List[RuleBase.RuleContent]):
+    def _optimize_sequence(self, seq: List[RuleBase.RuleContent], lb: List[bool]):
+        assert len(seq) == len(lb)
+
         # We are trying to find a sub-sequence of form `x y z (A B x y z)*`
         # and replace it with a single 'OneOrMore(Seq(x, y, z), Seq(A, B))'.
         for i in range(len(seq) - 1, -1, -1):
@@ -288,6 +291,7 @@ class Renderer(CachedRuleContentVisitor[dict]):
                 continue
 
             nested_seq = list(star.child.children)
+            nested_seq_lb = list(star.child.get_linebreaks())
 
             for j in range(len(nested_seq) - 1, -1, -1):
                 k = i + j - len(nested_seq)
@@ -309,15 +313,18 @@ class Renderer(CachedRuleContentVisitor[dict]):
                 # matched no elements from the nested sequence
                 continue
 
-            repeat = self._optimize_sequence(nested_seq[:nested_seq_start])
-            main = self._optimize_sequence(nested_seq[nested_seq_start:])
+            repeat = self._optimize_sequence(nested_seq[:nested_seq_start],
+                                             nested_seq_lb[:nested_seq_start])
+            main = self._optimize_sequence(nested_seq[nested_seq_start:],
+                                           nested_seq_lb[nested_seq_start:])
 
             item = self._one_or_more(main, repeat)
 
             seq[seq_start:i + 1] = [item]
+            lb[seq_start:i + 1] = [any(lb[seq_start:i + 1])]
 
-            return self._optimize_sequence(seq)
+            return self._optimize_sequence(seq, lb)
 
         return self._sequence(*[
             e if isinstance(e, dict) else self.visit(e) for e in seq
-        ])
+        ], linebreaks=lb)

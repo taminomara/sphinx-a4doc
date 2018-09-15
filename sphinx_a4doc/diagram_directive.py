@@ -28,7 +28,7 @@ class RailroadDiagramNode(docutils.nodes.Element, docutils.nodes.General):
     def visit_node_html(self: sphinx.writers.html.HTMLTranslator, node):
         dia = Diagram(replace(Settings(), **node['options']))
         try:
-            data = dia.from_dict(node['diagram'])
+            data = dia.load(node['diagram'])
             svg = dia.render(data)
         except Exception as e:
             logger.exception(f'{node.source}:{node.line}: WARNING: {e}')
