@@ -1167,9 +1167,8 @@ class Node(DiagramItem):
 
         if self.href is not None:
             a = self.dia.element('a', attrs={'xlink:href': self.href}).format()
-            a.children.append(text)
-            a.add_to(fmt)
             text.add_to(a)
+            a.add_to(fmt)
         else:
             text.add_to(fmt)
 
