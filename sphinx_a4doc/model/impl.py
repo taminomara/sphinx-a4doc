@@ -256,17 +256,21 @@ class RuleLoader(ParserVisitor):
 
     def make_seq_rule(self, content):
         elements = []
+        linebreaks = set()
 
         for element in [self.visit(element) for element in content]:
             if isinstance(element, self.rule_class.Sequence):
                 elements.extend(element.children)
             else:
                 elements.append(element)
+            linebreaks.add(len(elements) - 1)
 
         if len(elements) == 1:
             return elements[0]
 
-        return self.rule_class.Sequence(tuple(elements))
+        linebreaks = tuple(True if i in linebreaks else False
+                           for i in range(len(elements)))
+        return self.rule_class.Sequence(tuple(elements), linebreaks)
 
     def load_docs(self, tokens):
         is_doxygen_nodoc = False

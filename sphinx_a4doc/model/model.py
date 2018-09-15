@@ -362,6 +362,20 @@ class RuleBase:
         children: Tuple['RuleBase.RuleContent', ...]
         """Children rules that will be parsed in order"""
 
+        linebreaks: Optional[Tuple[bool, ...]] = field(
+            default=None, compare=False, repr=False)
+        """Bitmask which describes where it is preferable to wrap sequence"""
+
+        def __post_init__(self):
+            assert self.linebreaks is None or \
+                   len(self.linebreaks) == len(self.children)
+
+        def get_linebreaks(self):
+            if self.linebreaks is not None:
+                return self.linebreaks
+            else:
+                return tuple([False] * len(self.children))
+
     @dataclass(frozen=True)
     @meta(visitor_relay='visit_alternative')
     @meta(precedence=0, formatter=lambda x, f: ' | '.join(map(f, x.children)))
