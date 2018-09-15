@@ -47,7 +47,9 @@ options {
 }
 
 //@ doc:unimportant
-/** The main entry point for parsing a v4 grammar. */
+/**
+ * The main entry point for parsing a v4 grammar.
+ */
 grammarSpec
    : docs+=DOC_COMMENT* gtype=grammarType gname=identifier SEMI prequelConstruct* rules modeSpec* EOF
    ;
