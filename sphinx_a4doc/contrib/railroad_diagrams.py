@@ -36,20 +36,23 @@ def e(text):
 def get_default_css():
     return {
         'path': {
-            'stroke-width': 1,
+            'stroke-width': 1.5,
             'stroke': 'black',
             'fill': 'none',
         },
         'text': {
-            'font': '14px monospace',
+            'font-size': '14px',
+            'font-family': "'Consolas', 'Menlo', 'Deja Vu Sans Mono', "
+                           "'Bitstream Vera Sans Mono', monospace",
             'text-anchor': 'middle',
             'alignment-baseline': 'central',
+            'font-weight': 'bold',
         },
         'a': {
             'text-decoration': 'none',
         },
         'rect': {
-            'stroke-width': 1,
+            'stroke-width': 1.5,
             'stroke': 'black',
             'fill': 'none',
         },
@@ -222,7 +225,7 @@ class Settings:
     internal_alignment: InternalAlignment = InternalAlignment.AUTO_LEFT
     """How to align nodes within diagram"""
 
-    character_advance: int = 8.4
+    character_advance: float = 8.4
     """Width of a single symbol in the monospace font"""
 
     end_class: EndClass = EndClass.SIMPLE
