@@ -121,7 +121,7 @@ class Model(metaclass=ABCMeta):
 
         Returns `None` if symbol cannot be found.
 
-        If there are duplicate symbols, it is unspecified
+        If there are duplicate symbols, it is unspecified which one is returned.
 
         """
 
