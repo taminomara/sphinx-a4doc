@@ -72,6 +72,7 @@ class A4Autogrammar(docutils.parsers.rst.Directive):
 
         nodes = grammar_dir.run()
 
+        # TODO: need model.has_errors()
         if model.get_name() is None:  # parsing error
             return nodes
 
