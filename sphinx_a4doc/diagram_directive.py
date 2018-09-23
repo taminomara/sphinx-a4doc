@@ -51,9 +51,9 @@ class RailroadDiagram(docutils.parsers.rst.Directive):
         'arc-radius': docutils.parsers.rst.directives.positive_int,
         'diagram-class': str.strip,
         'translate-half-pixel': docutils.parsers.rst.directives.flag,
-        'internal-alignment': lambda x: InternalAlignment[x.strip()],
+        'internal-alignment': lambda x: InternalAlignment[x.strip().upper()],
         'character-advance': docutils.parsers.rst.directives.positive_int,
-        'end-class': lambda x: EndClass[x.strip()],
+        'end-class': lambda x: EndClass[x.strip().upper()],
     }
 
     def run(self):
