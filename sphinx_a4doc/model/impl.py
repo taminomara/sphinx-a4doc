@@ -552,7 +552,7 @@ def load_docs(model, tokens, allow_cmd=True):
 
                 cmd = match['cmd']
 
-                if cmd == 'no-doc':
+                if cmd == 'nodoc':
                     is_doxygen_nodoc = True
                 elif cmd == 'inline':
                     is_doxygen_inline = True
