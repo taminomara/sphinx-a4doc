@@ -1,5 +1,6 @@
 import re
 import sphinx.addnodes
+import sphinx.util.docutils
 import sphinx.util.logging
 import sphinx.util.nodes
 
@@ -49,18 +50,13 @@ class A4ObjectDescription(ObjectDescription):
             grammar_type = self.options.get('type', '')
             if grammar_type:
                 ann = grammar_type + ' ' + ann
+        signode += sphinx.addnodes.desc_annotation(ann + ' ', ann + ' ')
         if self.options.get('name', ''):
-            signode += sphinx.addnodes.desc_annotation(ann, ann)
             signode += sphinx.addnodes.desc_name(
-                f' {self.options["name"]} ',
-                f' {self.options["name"]} ',
-            )
-            signode += sphinx.addnodes.desc_annotation(
-                f'({sig})',
-                f'({sig})',
+                f'{self.options["name"]}',
+                f'{self.options["name"]}',
             )
         else:
-            signode += sphinx.addnodes.desc_annotation(ann + ' ', ann + ' ')
             signode += sphinx.addnodes.desc_name(sig, sig)
 
         return sig
@@ -83,12 +79,13 @@ class A4ObjectDescription(ObjectDescription):
             self.add_index(domaindata, qualname)
 
         grammar_type = self.options.get('type', '')
+        textname = self.options.get('name', '') or name
         if self.objtype == 'rule':
-            indextext = f'{name} (Antlr4 production rule)'
+            indextext = f'{textname} (Antlr4 production rule)'
         elif grammar_type:
-            indextext = f'{name} (Antlr4 {grammar_type} grammar)'
+            indextext = f'{textname} (Antlr4 {grammar_type} grammar)'
         else:
-            indextext = f'{name} (Antlr4 grammar)'
+            indextext = f'{textname} (Antlr4 grammar)'
         if indextext:
             self.indexnode['entries'].append(
                 ('single', indextext, targetname, '', None)
@@ -96,6 +93,8 @@ class A4ObjectDescription(ObjectDescription):
 
     def add_index(self, domaindata, qualname):
         domaindata['objects'][qualname] = (self.env.docname, self.objtype)
+        domaindata['relations'][qualname] = []
+        domaindata['dispnames'][qualname] = self.options.get('name', None)
 
     def before_content(self):
         if self.names:
@@ -154,6 +153,7 @@ class Rule(A4ObjectDescription):
 class A4XRefRole(XRefRole):
     def process_link(self, env, refnode, has_explicit_title, title, target):
         refnode['a4:grammar'] = env.ref_context.get('a4:grammar', '__default__')
+        refnode['a4:has_explicit_title'] = has_explicit_title
         target = target.lstrip('~')
         if not has_explicit_title:
             if title[0:1] == '~':
@@ -189,6 +189,7 @@ class A4Domain(Domain):
     initial_data: Dict[str, Dict[str, Tuple[str, Any]]] = {
         'objects': {},  # fullname -> docname, objtype
         'relations': {},  # fullname -> list of imported grammars
+        'dispnames': {},  # fullname -> display name
     }
 
     def clear_doc(self, docname):
@@ -196,12 +197,14 @@ class A4Domain(Domain):
             if fn == docname:
                 self.data['objects'].pop(fullname)
                 self.data['relations'].pop(fullname, None)
+                self.data['dispnames'].pop(fullname, None)
 
     def merge_domaindata(self, docnames, otherdata):
         for fullname, (fn, objtype) in otherdata['objects'].items():
             if fn in docnames:
                 self.data['objects'][fullname] = (fn, objtype)
                 self.data['relations'][fullname] = otherdata['relations'][fullname]
+                self.data['dispnames'][fullname] = otherdata['dispnames'][fullname]
 
     def resolve_xref(self, env, fromdocname, builder, typ, target, node, contnode):
         if typ in ['grammar', 'g']:
@@ -227,14 +230,16 @@ class A4Domain(Domain):
         return results
 
     def resolve_grammar(self, env, fromdocname, builder, target, node, contnode):
+        has_explicit_title = node.get('a4:has_explicit_title', True)
         if target not in self.data['objects']:
             return None
         obj = self.data['objects'][target]
         if obj[1] != 'grammar':
             return None
-        return sphinx.util.nodes.make_refnode(builder, fromdocname, obj[0], 'a4.' + target, contnode, target)
+        return self.make_refnode(builder, fromdocname, obj[0], target, contnode, target, has_explicit_title)
 
     def resolve_rule(self, env, fromdocname, builder, target, node, contnode, allow_multiple=False):
+        has_explicit_title = node.get('a4:has_explicit_title', True)
         relations = self.data['relations']
         if '.' not in target:
             if 'a4:grammar' in node:
@@ -268,7 +273,7 @@ class A4Domain(Domain):
                     continue
                 else:
                     return None
-            node = sphinx.util.nodes.make_refnode(builder, fromdocname, obj[0], 'a4.' + fullname, contnode, fullname)
+            node = self.make_refnode(builder, fromdocname, obj[0], fullname, contnode, fullname, has_explicit_title)
             if allow_multiple:
                 results.append(node)
             else:
@@ -279,6 +284,15 @@ class A4Domain(Domain):
         else:
             return None
 
+    def make_refnode(self, builder, fromdocname, todocname, targetid, child, title, has_explicit_title):
+        dispname = self.data['dispnames'].get(targetid, '')
+        if dispname and not has_explicit_title:
+            child = child.deepcopy()
+            child.clear()
+            child += sphinx.util.docutils.nodes.Text(dispname)
+        return sphinx.util.nodes.make_refnode(builder, fromdocname, todocname, 'a4.' + targetid, child, title)
+
     def get_objects(self):
         for refname, (docname, objtype) in list(self.data['objects'].items()):
-            yield (refname, refname, objtype, docname, 'a4.' + refname, 1)
+            dispname = self.data['dispnames'].get(refname, '') or refname
+            yield (refname, dispname, objtype, docname, 'a4.' + refname, 1)
