@@ -234,7 +234,6 @@ class MetaLoader(ParserVisitor):
                 is_doxygen_no_diagram=True,
                 importance=1,
                 documentation='',
-                css_class=None
             )
 
             self._model.set_lexer_rule(rule.name, rule)
@@ -342,7 +341,6 @@ class LexerRuleLoader(RuleLoader):
             is_doxygen_inline=doc_info['is_doxygen_inline'],
             is_doxygen_no_diagram=doc_info['is_doxygen_no_diagram'],
             importance=doc_info['importance'],
-            css_class=doc_info['css_class'],
             documentation=doc_info['documentation'],
             is_fragment=bool(ctx.frag),
             is_literal=is_literal
@@ -445,7 +443,6 @@ class ParserRuleLoader(RuleLoader):
             is_doxygen_inline=doc_info['is_doxygen_inline'],
             is_doxygen_no_diagram=doc_info['is_doxygen_no_diagram'],
             importance=doc_info['importance'],
-            css_class=doc_info['css_class'],
             documentation=doc_info['documentation']
         )
 
@@ -531,7 +528,6 @@ def load_docs(model, tokens, allow_cmd=True):
         is_doxygen_nodoc = False
         is_doxygen_inline = False
         is_doxygen_no_diagram = False
-        css_class = ''
         importance = 1
         name = None
         docs: List[Tuple[int, str]] = []
@@ -560,8 +556,6 @@ def load_docs(model, tokens, allow_cmd=True):
                     is_doxygen_no_diagram = True
                 elif cmd == 'unimportant':
                     importance = 0
-                elif cmd == 'class':
-                    css_class = match['ctx'].strip()
                 elif cmd == 'importance':
                     try:
                         val = int(match['ctx'].strip())
@@ -609,7 +603,6 @@ def load_docs(model, tokens, allow_cmd=True):
                 docs.append((position.line, '\n'.join(documentation_lines)))
 
         return dict(
-            css_class=css_class,
             importance=importance,
             is_doxygen_inline=is_doxygen_inline,
             is_doxygen_nodoc=is_doxygen_nodoc,

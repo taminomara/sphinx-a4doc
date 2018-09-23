@@ -252,9 +252,6 @@ class RuleBase:
     importance: int
     """Importance of the rule"""
 
-    css_class: str
-    """CSS class that should be assigned to all references to this rule"""
-
     documentation: Optional[List[Tuple[int, str]]]
     """Documentation for this rule"""
 
