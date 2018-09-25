@@ -19,6 +19,7 @@ __all__ = [
     'EndClass',
     'Settings',
     'Diagram',
+    'HrefResolver',
     'DEFAULT_SETTINGS',
 ]
 
@@ -201,6 +202,11 @@ class EndClass(Enum):
     """
 
 
+class HrefResolver:
+    def resolve(self, text: str, href: Optional[str], title_is_weak: bool):
+        return text, href
+
+
 @dataclass(frozen=True)
 class Settings:
     padding: Tuple[int, int, int, int] = (1, 1, 1, 1)
@@ -236,6 +242,9 @@ class Settings:
 
     max_width: int = 500
     """Max width after which a sequence will be wrapped"""
+
+    href_resolver: HrefResolver = field(default_factory=HrefResolver)
+    """"""
 
 
 DEFAULT_SETTINGS = Settings()
@@ -311,17 +320,32 @@ class Diagram:
     def end(self) -> 'DiagramItem':
         return End(self)
 
-    def node(self, text: str, href: Optional[str] = None, css_class: str = '', radius: int = 0, padding: int = 20) -> 'DiagramItem':
-        return Node(self, text, href, css_class, radius, padding)
+    def node(self, text: str, href: Optional[str] = None, css_class: str = '', radius: int = 0, padding: int = 20, resolve: bool = False, title_is_weak: bool = False) -> 'DiagramItem':
+        return Node(self, text, href, css_class, radius, padding, resolve, title_is_weak)
 
-    def terminal(self, text: str, href: Optional[str] = None):
-        return self.node(text, href, 'terminal', 10, 20)
+    def terminal(self, text: str, href: Optional[str] = None, resolve: bool = True, title_is_weak: bool = False):
+        return self.node(text, href, 'node terminal', 10, 20, resolve, title_is_weak)
 
-    def non_terminal(self, text: str, href: Optional[str] = None):
-        return self.node(text, href, 'non-terminal', 0, 20)
+    def non_terminal(self, text: str, href: Optional[str] = None, resolve: bool = True, title_is_weak: bool = False):
+        return self.node(text, href, 'node non-terminal', 0, 20, resolve, title_is_weak)
 
     def comment(self, text: str, href: Optional[str] = None):
-        return self.node(text, href, 'comment', 0, 5)
+        return self.node(text, href, 'node comment', 0, 5)
+
+    def literal(self, text: str):
+        return self.node(text, None, 'node literal', 10, 20)
+
+    def range(self, text: str):
+        return self.node(text, None, 'node range', 10, 20)
+
+    def charset(self, text: str):
+        return self.node(text, None, 'node charset', 10, 20)
+
+    def wildcard(self, text: str):
+        return self.node(text, None, 'node wildcard', 10, 20)
+
+    def negation(self, text: str):
+        return self.node(text, None, 'node negation', 10, 20)
 
     def skip(self) -> 'DiagramItem':
         return Skip(self)
@@ -349,6 +373,11 @@ class Diagram:
                 'terminal': self._load_terminal,
                 'non_terminal': self._load_non_terminal,
                 'comment': self._load_comment,
+                'literal': self._load_literal,
+                'range': self._load_range,
+                'charset': self._load_charset,
+                'wildcard': self._load_wildcard,
+                'negation': self._load_negation,
             }
 
             ctors_found = []
@@ -372,8 +401,8 @@ class Diagram:
         return self._load_generic(
             a, kw, self.sequence, (list, tuple,), self._from_list,
             {
-                'autowrap':   ((bool,                 ), None           ),
-                'linebreaks': ((list, tuple,          ), None           ),
+                'autowrap':      ((bool,                 ), None           ),
+                'linebreaks':    ((list, tuple,          ), None           ),
             }
         )
 
@@ -388,7 +417,7 @@ class Diagram:
         return self._load_generic(
             a, kw, self.choice, (list, tuple,), self._from_list,
             {
-                'default':    ((int,                  ), None           ),
+                'default':       ((int,                  ), None           ),
             }
         )
 
@@ -396,7 +425,7 @@ class Diagram:
         return self._load_generic(
             a, kw, self.optional, (str, dict, list, tuple), self._from_dict,
             {
-                'skip':       ((bool,                 ), None           ),
+                'skip':          ((bool,                 ), None           ),
             }
         )
 
@@ -404,7 +433,7 @@ class Diagram:
         return self._load_generic(
             a, kw, self.one_or_more, (str, dict, list, tuple), self._from_dict,
             {
-                'repeat':     ((str, dict, list, tuple), self.load      ),
+                'repeat':        ((str, dict, list, tuple), self.load      ),
             }
         )
 
@@ -412,7 +441,7 @@ class Diagram:
         return self._load_generic(
             a, kw, self.zero_or_more, (str, dict, list, tuple), self._from_dict,
             {
-                'repeat':     ((str, dict, list, tuple), self.load      ),
+                'repeat':        ((str, dict, list, tuple), self.load      ),
             }
         )
 
@@ -420,10 +449,12 @@ class Diagram:
         return self._load_generic(
             a, kw, self.node, (str,), lambda s: ([s], {}),
             {
-                'href':       ((str,                  ), None           ),
-                'css_class':  ((str,                  ), None           ),
-                'radius':     ((int,                  ), None           ),
-                'padding':    ((int,                  ), None           ),
+                'href':          ((str,                  ), None           ),
+                'css_class':     ((str,                  ), None           ),
+                'radius':        ((int,                  ), None           ),
+                'padding':       ((int,                  ), None           ),
+                'resolve':       ((bool,                 ), None           ),
+                'title_is_weak': ((bool,                 ), None           ),
             }
         )
 
@@ -431,7 +462,9 @@ class Diagram:
         return self._load_generic(
             a, kw, self.terminal, (str,), lambda s: ([s], {}),
             {
-                'href':       ((str,                  ), None           ),
+                'href':          ((str,                  ), None           ),
+                'resolve':       ((bool,                 ), None           ),
+                'title_is_weak': ((bool,                 ), None           ),
             }
         )
 
@@ -439,7 +472,9 @@ class Diagram:
         return self._load_generic(
             a, kw, self.non_terminal, (str,), lambda s: ([s], {}),
             {
-                'href':       ((str,                  ), None           ),
+                'href':          ((str,                  ), None           ),
+                'resolve':       ((bool,                 ), None           ),
+                'title_is_weak': ((bool,                 ), None           ),
             }
         )
 
@@ -447,7 +482,42 @@ class Diagram:
         return self._load_generic(
             a, kw, self.comment, (str,), lambda s: ([s], {}),
             {
-                'href':       ((str,                  ), None           ),
+                'href':          ((str,                  ), None           ),
+            }
+        )
+
+    def _load_literal(self, a, kw) -> 'DiagramItem':
+        return self._load_generic(
+            a, kw, self.literal, (str,), lambda s: ([s], {}),
+            {
+            }
+        )
+
+    def _load_range(self, a, kw) -> 'DiagramItem':
+        return self._load_generic(
+            a, kw, self.range, (str,), lambda s: ([s], {}),
+            {
+            }
+        )
+
+    def _load_charset(self, a, kw) -> 'DiagramItem':
+        return self._load_generic(
+            a, kw, self.charset, (str,), lambda s: ([s], {}),
+            {
+            }
+        )
+
+    def _load_wildcard(self, a, kw) -> 'DiagramItem':
+        return self._load_generic(
+            a, kw, self.wildcard, (str,), lambda s: ([s], {}),
+            {
+            }
+        )
+
+    def _load_negation(self, a, kw) -> 'DiagramItem':
+        return self._load_generic(
+            a, kw, self.negation, (str,), lambda s: ([s], {}),
+            {
             }
         )
 
@@ -1435,19 +1505,25 @@ class Node(DiagramItem):
     href: Optional[str] = None
     radius: int = None
 
-    def __init__(self, dia: Diagram, text, href=None, css_class='', radius=0, padding=20):
+    def __init__(self, dia: Diagram, text, href=None, css_class='', radius=0, padding=20, resolve=True, title_is_weak=False):
         super().__init__(dia, 'g')
 
         self.text = text
         self.href = href
         self.radius = radius
+        self.resolve = resolve
+        self.title_is_weak = title_is_weak
+
+        if self.resolve:
+            self.text, self.href = self.settings.href_resolver.resolve(
+                self.text, self.href, self.title_is_weak)
 
         self.attrs = {'class': css_class}
         self.needs_space = True
         self.up = 11
         self.down = 11
 
-        self.width = len(text) * self.settings.character_advance + padding
+        self.width = len(self.text) * self.settings.character_advance + padding
 
         self.width = math.ceil(self.width)
 

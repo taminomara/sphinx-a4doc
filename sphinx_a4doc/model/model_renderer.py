@@ -1,6 +1,3 @@
-from dataclasses import dataclass
-from enum import Enum
-
 from typing import *
 
 from sphinx_a4doc.model.model import RuleBase, LexerRule, ParserRule
@@ -9,7 +6,7 @@ from sphinx_a4doc.model.visitor import *
 
 class ImportanceProvider(CachedRuleContentVisitor[int]):
     """
-    Given a rule content item, returns True if this item is important.
+    Given a rule content item, calculates its importance.
 
     """
 
@@ -51,101 +48,14 @@ class ImportanceProvider(CachedRuleContentVisitor[int]):
         return max(self.visit(c) for c in r.children)
 
 
-class HrefProvider:
-    """
-    Giver a rule provides href to the rule's documentation.
-
-    """
-
-    default_href: Optional[str] = None
-
-    def get_href(self, _: RuleBase) -> Optional[str]:
-        return self.default_href
-
-
-class LiteralNaming(Enum):
-    FORCE_LITERAL = 'FORCE_LITERAL'
-    FORCE_NAME = 'FORCE_NAME'
-    DO_NOT_FORCE = 'DO_NOT_FORCE'
-
-
-@dataclass(frozen=True)
-class StyleProvider:
-    """
-    Provides all settings for svg rendering.
-
-    """
-
-    literal_naming: LiteralNaming = LiteralNaming.FORCE_LITERAL
-
-    # The following variables control properties for individual diagram node.
-    # Tuple items are (css_class, border_radius, horizontal_padding):
-    T = Tuple[str, int, int]
-
-    literal: T = ('node lexer literal', 10, 20)
-    range: T = ('node lexer range', 10, 20)
-    charset: T = ('node lexer charset', 10, 20)
-    wildcard: T = ('node lexer wildcard', 10, 20)
-    negation: T = ('node lexer negation', 10, 20)
-
-    important_terminal: T = ('node lexer terminal important', 10, 20)
-    unimportant_terminal: T = ('node lexer terminal unimportant', 10, 20)
-    unresolved_terminal: T = ('node lexer terminal unresolved', 10, 20)
-
-    important_non_terminal: T = ('node lexer non-terminal important', 0, 20)
-    unimportant_non_terminal: T = ('node lexer non-terminal unimportant', 0, 20)
-    unresolved_non_terminal: T = ('node lexer non-terminal unresolved', 0, 20)
-
-    def get_literal(self, _: LexerRule.Literal) -> T:
-        return self.literal
-
-    def get_range(self, _: LexerRule.Range) -> T:
-        return self.range
-
-    def get_charset(self, _: LexerRule.CharSet) -> T:
-        return self.charset
-
-    def get_wildcard(self, _: RuleBase.Wildcard) -> T:
-        return self.wildcard
-
-    def get_wildcard_text(self, _: RuleBase.Wildcard) -> str:
-        return '.'
-
-    def get_negation(self, _: RuleBase.Negation) -> T:
-        return self.negation
-
-    def get_terminal(self, r: LexerRule) -> T:
-        if r.importance:
-            return self.important_terminal
-        else:
-            return self.unimportant_terminal
-
-    def get_non_terminal(self, r: ParserRule) -> T:
-        if r.importance:
-            return self.important_non_terminal
-        else:
-            return self.unimportant_non_terminal
-
-    def get_unresolved_terminal(self) -> T:
-        return self.unresolved_terminal
-
-    def get_unresolved_non_terminal(self) -> T:
-        return self.unresolved_non_terminal
-
-
 class Renderer(CachedRuleContentVisitor[dict]):
     def __init__(
         self,
         importance_provider: ImportanceProvider = ImportanceProvider(),
-        href_provider: HrefProvider = HrefProvider(),
-        style_provider: StyleProvider = StyleProvider()
     ):
         super().__init__()
 
         self.importance_provider = importance_provider
-        self.href_provider = href_provider
-
-        self.style_provider = style_provider
 
     @staticmethod
     def _sequence(*items, linebreaks):
@@ -172,76 +82,77 @@ class Renderer(CachedRuleContentVisitor[dict]):
         return dict(zero_or_more=item, repeat=repeat)
 
     @staticmethod
-    def _node(text: str, href: Optional[str]=None, css_class: str= '', radius: int=0, padding: int=20):
-        return dict(node=text, href=href, css_class=css_class, radius=radius, padding=padding)
+    def _terminal(text: str, href: Optional[str]=None, resolve: bool = True, title_is_weak: bool = False):
+        return dict(terminal=text, href=href, resolve=resolve, title_is_weak=title_is_weak)
 
     @staticmethod
-    def _terminal(text: str, href: Optional[str]=None):
-        return dict(terminal=text, href=href)
-
-    @staticmethod
-    def _non_terminal(text: str, href: Optional[str]=None):
-        return dict(non_terminal=text, href=href)
+    def _non_terminal(text: str, href: Optional[str]=None, resolve: bool = True, title_is_weak: bool = False):
+        return dict(non_terminal=text, href=href, resolve=resolve, title_is_weak=title_is_weak)
 
     @staticmethod
     def _comment(text: str, href: Optional[str]=None):
         return dict(comment=text, href=href)
 
     @staticmethod
+    def _literal(text: str):
+        return dict(literal=text)
+
+    @staticmethod
+    def _range(text: str):
+        return dict(range=text)
+
+    @staticmethod
+    def _charset(text: str):
+        return dict(charset=text)
+
+    @staticmethod
+    def _wildcard(text: str):
+        return dict(wildcard=text)
+
+    @staticmethod
+    def _negation(text: str):
+        return dict(negation=text)
+
+    @staticmethod
     def _skip():
         return None
 
     def visit_literal(self, r: LexerRule.Literal):
-        css, radius, padding = self.style_provider.get_literal(r)
-        return self._node(r.content, None, css, radius, padding)
+        return self._literal(r.content)
 
     def visit_range(self, r: LexerRule.Range):
-        css, radius, padding = self.style_provider.get_range(r)
-        return self._node(f'{r.start}..{r.end}', None, css, radius, padding)
+        return self._range(f'{r.start}..{r.end}')
 
     def visit_charset(self, r: LexerRule.CharSet):
-        css, radius, padding = self.style_provider.get_charset(r)
-        return self._node(r.content, None, css, radius, padding)
+        return self._charset(r.content)
 
     def visit_reference(self, r: RuleBase.Reference):
         rule = r.get_reference()
         if rule is None:
             if r.name[0].isupper() or r.name[0] == "'":
-                css, radius, padding = self.style_provider.get_unresolved_terminal()
+                return self._terminal(r.name)
             else:
-                css, radius, padding = self.style_provider.get_unresolved_non_terminal()
-            return self._node(r.name, None, css, radius, padding)
+                return self._non_terminal(r.name)
         elif rule.is_doxygen_inline:
             return self.visit(rule.content)
         elif isinstance(rule, LexerRule):
-            literal_naming = self.style_provider.literal_naming
-            if not rule.is_literal:
-                name = rule.display_name or rule.name
-            elif literal_naming == LiteralNaming.FORCE_LITERAL:
-                name = str(rule.content)
-            elif literal_naming == LiteralNaming.FORCE_NAME:
-                name = rule.display_name or rule.name
-            else:
-                name = r.name
-            css, radius, padding = self.style_provider.get_terminal(rule)
-            href = self.href_provider.get_href(rule)
-            return self._node(name, href, css, radius, padding)
+            return self._terminal(
+                f'{rule.display_name or rule.name}',
+                f'{rule.model.get_name()}.{rule.name}',
+                title_is_weak=True)
         elif isinstance(rule, ParserRule):
-            name = rule.display_name or rule.name
-            css, radius, padding = self.style_provider.get_non_terminal(rule)
-            href = self.href_provider.get_href(rule)
-            return self._node(name, href, css, radius, padding)
+            return self._non_terminal(
+                f'{rule.display_name or rule.name}',
+                f'{rule.model.get_name()}.{rule.name}',
+                title_is_weak=True)
         else:
             assert False
 
     def visit_wildcard(self, r: RuleBase.Wildcard):
-        css, radius, padding = self.style_provider.get_wildcard(r)
-        text = self.style_provider.get_wildcard_text(r)
-        return self._node(text, None, css, radius, padding)
+        return self._wildcard('.')
 
     def visit_negation(self, r: RuleBase.Negation):
-        css, radius, padding = self.style_provider.get_negation(r)
-        return self._node(str(r), None, css, radius, padding)
+        return self._negation(str(r))
 
     def visit_zero_plus(self, r: RuleBase.ZeroPlus):
         skip = not self.importance_provider.visit(r.child)

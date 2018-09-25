@@ -109,7 +109,6 @@ class A4Autogrammar(docutils.parsers.rst.Directive):
                         rule_nodes[ident[len(prefix):]] = rule_node
                         rule_node.replace_self([])
                         break
-                break
 
         assert desc_content is not None
 
@@ -245,8 +244,10 @@ class A4Autogrammar(docutils.parsers.rst.Directive):
                 not rule.is_doxygen_no_diagram and
                 node.next_node(RailroadDiagramNode) is None
             ):
+                env = self.state.document.settings.env
+                grammar = env.ref_context.get('a4:grammar', '__default__')
                 dia = Renderer().visit(rule.content)
-                desc_content.append(RailroadDiagramNode(dia, {}))
+                desc_content.append(RailroadDiagramNode(dia, {}, grammar))
 
             self.render_docs(rule.position.file, docs, desc_content)
 
