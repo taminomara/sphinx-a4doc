@@ -294,5 +294,11 @@ class A4Domain(Domain):
 
     def get_objects(self):
         for refname, (docname, objtype) in list(self.data['objects'].items()):
-            dispname = self.data['dispnames'].get(refname, '') or refname
-            yield (refname, dispname, objtype, docname, 'a4.' + refname, 1)
+            if objtype == 'rule':
+                prefix, dispname = refname.rsplit('.', 1)
+                prefix += ' / '
+            else:
+                prefix, dispname = '', refname
+            dispname = self.data['dispnames'].get(refname, '') or dispname
+            dispname = prefix + dispname
+            yield (dispname, dispname, objtype, docname, 'a4.' + refname, 1)
