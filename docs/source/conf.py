@@ -43,6 +43,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx_a4doc',
+    'sphinx_a4doc.contrib.rst_autodoc',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -71,6 +72,9 @@ exclude_patterns = []
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
+
+# Role to be used by default.
+default_role = 'any'
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -179,4 +183,4 @@ intersphinx_mapping = {
 
 # -- A4Doc settings
 
-a4_base_path = os.path.dirname(__file__) + '/../../sphinx_a4doc/syntax'
+a4_base_path = os.path.dirname(__file__) + '/../examples'

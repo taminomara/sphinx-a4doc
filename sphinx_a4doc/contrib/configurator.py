@@ -6,7 +6,6 @@ import sphinx.environment
 
 from typing import *
 
-import docutils.parsers.rst
 
 T = TypeVar('T')
 
@@ -47,6 +46,14 @@ class Converter:
         """
         return self.from_str(value)
 
+    def __str__(self):
+        """
+        String representation used as a value description in rst autodoc.
+
+        """
+
+        return '...'
+
 
 class StrConverter(Converter):
     """
@@ -82,6 +89,9 @@ class StrConverter(Converter):
             if re.match(self.regex, value) is None:
                 raise ValueError(f'should match regex "{self.regex}"')
         return value
+
+    def __str__(self):
+        return '<str>'
 
 
 class IntConverter(Converter):
@@ -123,6 +133,9 @@ class IntConverter(Converter):
             raise ValueError(f'should be no greater than {self.min_val}')
         return value
 
+    def __str__(self):
+        return '<int>'
+
 
 class FloatConverter(Converter):
     """
@@ -160,6 +173,9 @@ class FloatConverter(Converter):
                 raise ValueError(f'should not be positive')
             raise ValueError(f'should be no greater than {self.min_val}')
         return value
+
+    def __str__(self):
+        return '<float>'
 
 
 class ListConverter(Converter):
@@ -205,6 +221,9 @@ class ListConverter(Converter):
         if self.max_len is not None and len(value) > self.max_len:
             raise ValueError(f'should be at most {self.min_len} elements long')
 
+    def __str__(self):
+        return f'{self.u}[, {self.u}[, ...]]'
+
 
 class TupleConverter(Converter):
     """
@@ -244,6 +263,9 @@ class TupleConverter(Converter):
         if len(value) != len(self.u):
             raise ValueError(f'should contain exactly {len(self.u)} items')
 
+    def __str__(self):
+        return ', '.join(map(str, self.u))
+
 
 class EnumConverter(Converter):
     """
@@ -273,6 +295,9 @@ class EnumConverter(Converter):
             raise ValueError(f'expected {self.cls.__name__}, got {type(value)}')
         return value
 
+    def __str__(self):
+        return '|'.join(map(lambda x: x.name.lower().replace('_', '-'), self.cls))
+
 
 class BoolConverter(Converter):
     """
@@ -282,18 +307,22 @@ class BoolConverter(Converter):
 
     def from_str(self, value: str):
         value = value.strip().lower()
-        if value in ['on', 'true']:
+        if value in ['on', 'yes', 'true']:
             return True
-        elif value in ['off', 'false']:
+        elif value in ['off', 'no', 'false']:
             return False
         else:
-            raise ValueError(f'expected one of [\'on\', \'true\', \'off\', '
-                             f'\'false\'], got {value!r} instead')
+            raise ValueError(f'expected one of [\'on\', \'yes\', \'true\', '
+                             f'\'off\', \'no\', \'false\'], '
+                             f'got {value!r} instead')
 
     def from_any(self, value: Any):
         if not isinstance(value, bool):
             raise ValueError(f'expected bool, got {type(value)}')
         return value
+
+    def __str__(self):
+        return 'True|False'
 
 
 class FlagConverter(Converter):
@@ -312,8 +341,11 @@ class FlagConverter(Converter):
             raise ValueError(f'expected bool, got {type(value)}')
         return value
 
+    def __str__(self):
+        return ''
 
-def _make_converter(tp) -> Converter:
+
+def make_converter(tp) -> Converter:
     if tp is str:
         return StrConverter()
     elif tp is bool:
@@ -325,25 +357,25 @@ def _make_converter(tp) -> Converter:
     elif tp is list:
         return ListConverter(StrConverter())
     elif getattr(tp, '__origin__', None) is list:
-        return ListConverter(_make_converter(tp.__args__[0]))
+        return ListConverter(make_converter(tp.__args__[0]))
     elif getattr(tp, '__origin__', None) is tuple:
         if ... in tp.__args__:
             raise TypeError('variadic tuples are not supported')
-        return TupleConverter(*[_make_converter(a) for a in tp.__args__])
+        return TupleConverter(*[make_converter(a) for a in tp.__args__])
     elif getattr(tp, '__origin__', None) is Union:
         if len(tp.__args__) != 2 or type(None) not in tp.__args__:
             raise TypeError('unions are not supported (optionals are, though)')
         if tp.__args__[0] is type(None):
-            return _make_converter(tp.__args__[1])
+            return make_converter(tp.__args__[1])
         else:
-            return _make_converter(tp.__args__[0])
+            return make_converter(tp.__args__[0])
     elif isinstance(tp, type) and issubclass(tp, enum.Enum):
         return EnumConverter(tp)
     else:
         raise TypeError(f'unsupported type {tp}')
 
 
-def _make_option_spec(cls):
+def make_option_spec(cls):
     options = {}
     for field in dataclasses.fields(cls):  # type: dataclasses.Field
         name = field.name.replace('_', '-')
@@ -353,7 +385,7 @@ def _make_option_spec(cls):
             converter = FlagConverter()
             options['no-' + name] = FlagConverter()
         else:
-            converter = _make_converter(field.type)
+            converter = make_converter(field.type)
         options[name] = converter
     return options
 
@@ -377,7 +409,7 @@ def _parse_options(cls, options, prefix=''):
     return result
 
 
-class _NamespaceHolder:
+class NamespaceHolder:
     def __init__(self, namespace, prefix):
         self.namespace = namespace
         self.prefix = prefix
@@ -402,6 +434,16 @@ class Namespace(Generic[T]):
         self._prefix = global_prefix
         self._cls = cls
 
+    def fields(self) -> Iterator[dataclasses.Field]:
+        return dataclasses.fields(self._cls)
+
+    def no_global_fields(self) -> Iterator[dataclasses.Field]:
+        fields = self.fields()
+        return filter(lambda f: not f.metadata.get('no_global', False), fields)
+
+    def get_cls(self):
+        return self._cls
+
     def make_option_spec(self, prefix: str = '') -> Dict[str, Converter]:
         """
         Creates ``option_spec`` for use in rst directives.
@@ -417,7 +459,7 @@ class Namespace(Generic[T]):
 
         """
 
-        option_spec = _make_option_spec(self._cls)
+        option_spec = make_option_spec(self._cls)
 
         if prefix:
             prefix += '-'
@@ -437,9 +479,7 @@ class Namespace(Generic[T]):
         if prefix:
             prefix += '_'
 
-        for field in dataclasses.fields(self._cls):  # type: dataclasses.Field
-            if field.metadata.get('no_global', False):
-                continue
+        for field in self.no_global_fields():
             default = field.default
             if field.default_factory is not dataclasses.MISSING:
                 default = self._make_default_factory(field.default_factory)
@@ -468,9 +508,7 @@ class Namespace(Generic[T]):
 
         if self._loaded is None:
             options = {}
-            for field in dataclasses.fields(self._cls):
-                if field.metadata.get('no_global', False):
-                    continue
+            for field in self.no_global_fields():
                 options[field.name] = env.config[prefix + field.name]
             self._loaded = self._cls(**options)
         return self._loaded
@@ -559,20 +597,24 @@ class Namespace(Generic[T]):
         return namespaces.setdefault(self._prefix, [])
 
     def for_directive(self, prefix='') -> T:
-        return _NamespaceHolder(self, prefix)
+        return NamespaceHolder(self, prefix)
 
 
 class ManagedDirectiveType(type):
     def __new__(mcs, name, bases, members):
         option_spec = {}
+        namespace_attrs = set()
 
         for base in bases:
             option_spec.update(getattr(base, 'option_spec', {}) or {})
+            namespace_attrs.update(getattr(base, '_namespace_attrs_', set()) or set())
 
         option_spec.update(members.get('option_spec', {}))
 
         for name, member in list(members.items()):
-            if isinstance(member, _NamespaceHolder):
+            if isinstance(member, NamespaceHolder):
+                namespace_attrs.add(member)
+
                 option_spec.update(
                     member.namespace.make_option_spec(member.prefix)
                 )
@@ -584,6 +626,7 @@ class ManagedDirectiveType(type):
                 )
 
         members['option_spec'] = option_spec
+        members['_namespace_attrs_'] = namespace_attrs
 
         return super(ManagedDirectiveType, mcs).__new__(mcs, name, bases, members)
 

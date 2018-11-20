@@ -10,7 +10,7 @@ import sphinx.util.nodes
 from sphinx.domains import Domain, ObjType
 from sphinx.directives import ObjectDescription
 from sphinx.roles import XRefRole
-from sphinx.locale import l_
+from sphinx.locale import _
 
 from sphinx_a4doc.settings import grammar_namespace, rule_namespace, diagram_namespace, GrammarType
 from sphinx_a4doc.contrib.configurator import ManagedDirective
@@ -124,6 +124,7 @@ class A4ObjectDescription(ObjectDescription, ManagedDirective):
         objtype = A4Domain.object_types[self.objtype].lname
         display_name = self.get_display_name() or name
 
+        # TODO: translate
         if subtype:
             indextext = f'{display_name} (Antlr4 {subtype} {objtype})'
         else:
@@ -135,6 +136,13 @@ class A4ObjectDescription(ObjectDescription, ManagedDirective):
 
 
 class Grammar(A4ObjectDescription):
+    """
+    Declare a new grammar with the given name.
+
+    Grammar names should be unique within the project.
+
+    """
+
     settings = grammar_namespace.for_directive()
 
     def get_fqn(self, name: str) -> str:
@@ -168,6 +176,21 @@ class Grammar(A4ObjectDescription):
 
 
 class Rule(A4ObjectDescription):
+    """
+    Declare a new production rule with the given name.
+
+    If placed within an :rst:dir:`a4:grammar` body, the rule will be added to
+    that grammar. It can then be referenced by a full path which will include
+    the grammar name and the rule name concatenated with a dot symbol.
+
+    If placed outside any grammar directive, the rule will be added to
+    an implicitly declared "default" grammar. In this case, the rule's full
+    path will only include its name.
+
+    In either case, the rule name should be unique within its grammar.
+
+    """
+
     settings = rule_namespace.for_directive()
 
     def get_fqn(self, name: str) -> str:
@@ -268,8 +291,8 @@ class A4Domain(Domain):
     label = 'Antlr4'
 
     object_types = {
-        'grammar': ObjType(l_('grammar'), 'grammar', 'g'),
-        'rule': ObjType(l_('production rule'), 'rule', 'r'),
+        'grammar': ObjType(_('grammar'), 'grammar', 'g'),
+        'rule': ObjType(_('production rule'), 'rule', 'r'),
     }
 
     directives = {

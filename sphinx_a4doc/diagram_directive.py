@@ -113,6 +113,253 @@ class RailroadDiagramNode(docutils.nodes.Element, docutils.nodes.General):
 
 
 class RailroadDiagram(sphinx.util.docutils.SphinxDirective, ManagedDirective):
+    """
+    This is the most flexible directive for rendering railroad diagrams.
+    Its content should be a valid `YAML <https://en.wikipedia.org/wiki/YAML>`_
+    document containing the diagram item description.
+
+    The diagram item description itself has a recursive definition.
+    It can be one of the next things:
+
+    - ``None`` (denoted as tilde in YAML) will produce a line without objects:
+
+      .. code-block:: rst
+
+         .. railroad-diagram:: ~
+
+      .. highlights::
+
+         .. railroad-diagram:: ~
+
+    - a string will produce a terminal node:
+
+      .. code-block:: rst
+
+         .. railroad-diagram:: just some string
+
+      .. highlights::
+
+         .. railroad-diagram:: just some string
+
+    - a list of diagram item descriptions will produce these items rendered one
+      next to another:
+
+      .. code-block:: rst
+
+         .. railroad-diagram::
+
+            - terminal 1
+            - terminal 2
+
+      .. highlights::
+
+         .. railroad-diagram::
+
+            - terminal 1
+            - terminal 2
+
+    - a dict with ``stack`` key produces a vertically stacked sequence.
+
+      The main value (i.e. the one that corresponds to the ``stack`` key)
+      should contain a list of diagram item descriptions.
+      These items will be rendered vertically:
+
+      .. code-block:: rst
+
+         .. railroad-diagram::
+
+            stack:
+            - terminal 1
+            -
+              - terminal 2
+              - terminal 3
+
+      .. highlights::
+
+         .. railroad-diagram::
+
+            stack:
+            - terminal 1
+            -
+              - terminal 2
+              - terminal 3
+
+    - a dict with ``choice`` key produces an alternative.
+
+      The main value should contain a list of diagram item descriptions:
+
+      .. code-block:: rst
+
+         .. railroad-diagram::
+
+            choice:
+            - terminal 1
+            -
+              - terminal 2
+              - terminal 3
+
+      .. highlights::
+
+         .. railroad-diagram::
+
+            choice:
+            - terminal 1
+            -
+              - terminal 2
+              - terminal 3
+
+    - a dict with ``optional`` key will produce an optional item.
+
+      The main value should contain a single diagram item description.
+
+      Additionally, the ``skip`` key with a boolean value may be added.
+      If equal to true, the element will be rendered off the main line:
+
+      .. code-block:: rst
+
+         .. railroad-diagram::
+
+            optional:
+            - terminal 1
+            - optional:
+              - terminal 2
+              skip: true
+
+      .. highlights::
+
+         .. railroad-diagram::
+
+            optional:
+            - terminal 1
+            - optional:
+              - terminal 2
+              skip: true
+
+    - a dict with ``one_or_more`` key will produce a loop.
+
+      The ``one_or_more`` element of the dict should contain a single diagram
+      item description.
+
+      Additionally, the ``repeat`` key with another diagram item description
+      may be added to insert nodes to the inverse connection of the loop.
+
+      .. code-block:: rst
+
+         .. railroad-diagram::
+
+            one_or_more:
+            - terminal 1
+            - terminal 2
+            repeat:
+            - terminal 3
+            - terminal 4
+
+      .. highlights::
+
+         .. railroad-diagram::
+
+            one_or_more:
+            - terminal 1
+            - terminal 2
+            repeat:
+            - terminal 3
+            - terminal 4
+
+    - a dict with ``zero_or_more`` key works like ``one_or_more`` except that
+      the produced item is optional:
+
+      .. code-block:: rst
+
+         .. railroad-diagram::
+
+            zero_or_more:
+            - terminal 1
+            - terminal 2
+            repeat:
+            - terminal 3
+            - terminal 4
+
+      .. highlights::
+
+         .. railroad-diagram::
+
+            zero_or_more:
+            - terminal 1
+            - terminal 2
+            repeat:
+            - terminal 3
+            - terminal 4
+
+    - a dict with ``node`` key produces a textual node of configurable shape.
+
+      The main value should contain text which will be rendered in the node.
+
+      Optional keys include ``href``, ``css_class``, ``radius`` and ``padding``.
+
+      .. code-block:: rst
+
+         .. railroad-diagram::
+
+            node: go to google
+            href: https://www.google.com/
+            css_class: terminal
+            radius: 3
+            padding: 50
+
+      .. highlights::
+
+         .. railroad-diagram::
+
+            node: go to google
+            href: https://www.google.com/
+            css_class: terminal
+            radius: 3
+            padding: 50
+
+    - a dict with ``terminal`` key produces a terminal node.
+
+      It works exactly like ``node``. The only optional key is ``href``.
+
+    - a dict with ``non_terminal`` key produces a non-terminal node.
+
+      It works exactly like ``node``. The only optional key is ``href``.
+
+    - a dict with ``comment`` key produces a comment node.
+
+      It works exactly like ``node``. The only optional key is ``href``.
+
+    **Example:**
+
+    This example renders a diagram from the :ref:`features <features>` section:
+
+    .. code-block:: rst
+
+       .. railroad-diagram::
+          - choice:
+            - terminal: 'parser'
+            -
+            - terminal: 'lexer '
+            default: 1
+          - terminal: 'grammar'
+          - non_terminal: 'identifier'
+          - terminal: ';'
+
+    which translates to:
+
+    .. highlights::
+
+       .. railroad-diagram::
+          - choice:
+            - terminal: 'parser'
+            -
+            - terminal: 'lexer '
+            default: 1
+          - terminal: 'grammar'
+          - non_terminal: 'identifier'
+          - terminal: ';'
+
+    """
+
     has_content = True
 
     settings = diagram_namespace.for_directive()
@@ -133,6 +380,28 @@ class RailroadDiagram(sphinx.util.docutils.SphinxDirective, ManagedDirective):
 
 
 class LexerRuleDiagram(RailroadDiagram):
+    """
+    The body of this directive should contain a valid Antlr4 lexer rule
+    description.
+
+    For example
+
+    .. code-block:: rst
+
+       .. lexer-rule-diagram:: ('+' | '-')? [1-9] [0-9]*
+
+    translates to:
+
+    .. highlights::
+
+       .. lexer-rule-diagram:: ('+' | '-')? [1-9] [0-9]*
+
+    **Options:**
+
+    Options are inherited from the :rst:dir:`railroad-diagram` directive.
+
+    """
+
     def get_content(self):
         content = f'grammar X; ROOT : {" ".join(self.content)} ;'
         model = ModelCache.instance().from_text(
@@ -145,6 +414,37 @@ class LexerRuleDiagram(RailroadDiagram):
 
 
 class ParserRuleDiagram(RailroadDiagram):
+    """
+    The body of this directive should contain a valid Antlr4 parser rule
+    description.
+
+    For example
+
+    .. code-block:: rst
+
+       .. parser-rule-diagram::
+
+          SELECT DISTINCT?
+          ('*' | expression (AS row_name)?
+                 (',' expression (AS row_name)?)*)
+
+    translates to:
+
+    .. highlights::
+
+       .. parser-rule-diagram::
+
+          SELECT DISTINCT?
+          ('*' | expression (AS row_name)?
+                 (',' expression (AS row_name)?)*)
+
+
+    **Options:**
+
+    Options are inherited from the :rst:dir:`railroad-diagram` directive.
+
+    """
+
     def get_content(self):
         content = f'grammar X; root : {" ".join(self.content)} ;'
         model = ModelCache.instance().from_text(

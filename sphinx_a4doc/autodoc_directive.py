@@ -247,3 +247,5 @@ class AutoGrammar(sphinx.util.docutils.SphinxDirective, ManagedDirective):
 
             with sphinx.util.docutils.switch_source_input(self.state, content):
                 self.state.nested_parse(content, 0, node)
+
+# TODO: self.directive.filename_set.add !!!
