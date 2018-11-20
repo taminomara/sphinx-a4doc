@@ -62,6 +62,13 @@ class ModelCache(metaclass=ABCMeta):
 
 class Model(metaclass=ABCMeta):
     @abstractmethod
+    def has_errors(self) -> bool:
+        """
+        Returns true if any error occurred while parsing model.
+
+        """
+
+    @abstractmethod
     def get_type(self) -> Optional[str]:
         """
         Get grammar type: lexer or parser. Returns ``None`` for mixed grammars.

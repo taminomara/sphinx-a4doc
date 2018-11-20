@@ -1,10 +1,8 @@
-from dataclasses import replace
-
 import docutils.parsers.rst
 import docutils.nodes
-import docutils.parsers.rst.directives
 import docutils.utils
 import sphinx.addnodes
+import sphinx.util.docutils
 import sphinx.writers.html
 import sphinx.util.logging
 import sphinx.environment
@@ -12,12 +10,12 @@ import sphinx.environment
 import yaml
 import yaml.error
 
-from sphinx_a4doc.contrib.railroad_diagrams import (
-    Diagram, Settings, InternalAlignment, EndClass, HrefResolver
-)
+from sphinx_a4doc.contrib.configurator import ManagedDirective
+from sphinx_a4doc.contrib.railroad_diagrams import Diagram, HrefResolver
 
 from sphinx_a4doc.model.model import ModelCache
 from sphinx_a4doc.model.model_renderer import Renderer
+from sphinx_a4doc.settings import diagram_namespace, DiagramSettings
 
 from typing import *
 
@@ -59,9 +57,8 @@ class DomainResolver(HrefResolver):
             '',
             reftype='rule',
             refdomain='a4',
-            refexplicit=False
+            refexplicit=explicit_title
         )
-        xref['a4:has_explicit_title'] = explicit_title
         xref['a4:grammar'] = self.grammar
 
         try:
@@ -93,13 +90,13 @@ class DomainResolver(HrefResolver):
 
 
 class RailroadDiagramNode(docutils.nodes.Element, docutils.nodes.General):
-    def __init__(self, diagram: dict, options: dict, grammar: str):
+    def __init__(self, diagram: dict, options: DiagramSettings, grammar: str):
         super().__init__('', diagram=diagram, options=options, grammar=grammar)
 
     @staticmethod
     def visit_node_html(self: sphinx.writers.html.HTMLTranslator, node):
         resolver = DomainResolver(self.builder, node['grammar'])
-        dia = Diagram(replace(Settings(href_resolver=resolver), **node['options']))
+        dia = Diagram(settings=node['options'], href_resolver=resolver)
         try:
             data = dia.load(node['diagram'])
             svg = dia.render(data)
@@ -115,37 +112,24 @@ class RailroadDiagramNode(docutils.nodes.Element, docutils.nodes.General):
         pass
 
 
-class RailroadDiagram(docutils.parsers.rst.Directive):
+class RailroadDiagram(sphinx.util.docutils.SphinxDirective, ManagedDirective):
     has_content = True
-    option_spec = {
-        'padding': docutils.parsers.rst.directives.positive_int_list,
-        'vertical-separation': docutils.parsers.rst.directives.positive_int,
-        'horizontal-separation': docutils.parsers.rst.directives.positive_int,
-        'arc-radius': docutils.parsers.rst.directives.positive_int,
-        'diagram-class': str.strip,
-        'translate-half-pixel': docutils.parsers.rst.directives.flag,
-        'internal-alignment': lambda x: InternalAlignment[x.strip().upper()],
-        'character-advance': docutils.parsers.rst.directives.positive_int,
-        'end-class': lambda x: EndClass[x.strip().upper()],
-    }
+
+    settings = diagram_namespace.for_directive()
 
     def run(self):
-        options = {k.replace('-', '_'): v for k, v in self.options.items()}
+        grammar = self.env.ref_context.get('a4:grammar', '__default__')
 
-        if 'translate_half_pixel' in options:
-            options['translate_half_pixel'] = True
-
-        env = self.state.document.settings.env
-        grammar = env.ref_context.get('a4:grammar', '__default__')
-
-        return [RailroadDiagramNode(self.get_content(), options, grammar)]
+        try:
+            content = self.get_content()
+        except Exception as e:
+            return [
+                self.state_machine.reporter.error(str(e), line=self.content_offset)
+            ]
+        return [RailroadDiagramNode(content, self.settings, grammar)]
 
     def get_content(self):
-        try:
-            return yaml.safe_load('\n'.join(self.content))
-        except (ValueError, yaml.error.YAMLError) as e:
-            return self.state_machine.reporter.error(
-                str(e), line=self.content_offset)
+        return yaml.safe_load('\n'.join(self.content))
 
 
 class LexerRuleDiagram(RailroadDiagram):

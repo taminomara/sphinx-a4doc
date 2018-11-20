@@ -3,7 +3,7 @@ import io
 import math
 
 from dataclasses import dataclass, field
-from enum import Enum
+from sphinx_a4doc.settings import DiagramSettings, InternalAlignment, EndClass
 
 from typing import *
 
@@ -14,13 +14,8 @@ except ImportError:
 
 
 __all__ = [
-    'e',
-    'InternalAlignment',
-    'EndClass',
-    'Settings',
     'Diagram',
     'HrefResolver',
-    'DEFAULT_SETTINGS',
 ]
 
 
@@ -34,37 +29,7 @@ def e(text):
     return ESCAPE_RE.sub(lambda c: f'&#{ord(c[0])};', str(text))
 
 
-def get_default_css():
-    return {
-        'path': {
-            'stroke-width': 1.5,
-            'stroke': 'black',
-            'fill': 'none',
-        },
-        'text': {
-            'font-size': '14px',
-            'font-family': "'Consolas', 'Menlo', 'Deja Vu Sans Mono', "
-                           "'Bitstream Vera Sans Mono', monospace",
-            'text-anchor': 'middle',
-            'alignment-baseline': 'central',
-            'font-weight': 'bold',
-        },
-        'a': {
-            'text-decoration': 'none',
-        },
-        'rect': {
-            'stroke-width': 1.5,
-            'stroke': 'black',
-            'fill': 'none',
-        },
-        'g.comment rect': {
-            'stroke-width': 0,
-        },
-    }
-
-
-def group_by_subsequences(items: Iterable['DiagramItem'],
-                          linebreaks: Iterable[bool]):
+def group_by_subsequences(items: Iterable['DiagramItem'], linebreaks: Iterable[bool]):
     subsequences: List[Tuple[int, List['DiagramItem']]] = []
     subsequence = []
     width = 0
@@ -111,158 +76,30 @@ def ensure_empty_dict(name, x):
         raise ValueError(f'{name} got unexpected parameters: {keys}')
 
 
-class InternalAlignment(Enum):
-    """
-    Controls how to align nodes within a single railroad.
-
-    """
-
-    CENTER = 'CENTER'
-    """
-    Nodes are centered.
-    
-    Example:
-    
-    .. parser-rule-diagram:: (A B | C D E) (',' (A B | C D E))*
-       :render.internal_alignment: CENTER
-    
-    """
-
-    LEFT = 'LEFT'
-    """
-    Nodes are flushed to left in all cases.
-    
-    Example:
-    
-    .. parser-rule-diagram:: (A B | C D E) (',' (A B | C D E))*
-       :render.internal_alignment: LEFT
-    
-    """
-
-    RIGHT = 'RIGHT'
-    """
-    Nodes are flushed to right in all cases.
-    
-    Example:
-    
-    .. parser-rule-diagram:: (A B | C D E) (',' (A B | C D E))*
-       :render.internal_alignment: RIGHT
-    
-    """
-
-    AUTO_LEFT = 'AUTO_LEFT'
-    """
-    Nodes in choice groups are flushed left, all other nodes are centered.
-    
-    Example:
-    
-    .. parser-rule-diagram:: (A B | C D E) (',' (A B | C D E))*
-       :render.internal_alignment: AUTO_LEFT
-    
-    """
-
-    AUTO_RIGHT = 'AUTO_RIGHT'
-    """
-    Nodes in choice groups are flushed right, all other nodes are centered.
-    
-    Example:
-    
-    .. parser-rule-diagram:: (A B | C D E) (',' (A B | C D E))*
-       :render.internal_alignment: AUTO_RIGHT
-    
-    """
-
-
-class EndClass(Enum):
-    """
-    Controls how diagram start and end look like.
-
-    """
-
-    SIMPLE = 'SIMPLE'
-    """
-    A simple `T`-shaped ending.
-    
-    Example:
-    
-    .. parser-rule-diagram:: X
-       :render.end_class: SIMPLE
-    
-    """
-
-    COMPLEX = 'COMPLEX'
-    """
-    A `T`-shaped ending with vertical line doubled.
-    
-    Example:
-    
-    .. parser-rule-diagram:: X
-       :render.end_class: COMPLEX
-
-    """
-
-
 class HrefResolver:
     def resolve(self, text: str, href: Optional[str], title_is_weak: bool):
         return text, href
 
 
-@dataclass(frozen=True)
-class Settings:
-    padding: Tuple[int, int, int, int] = (1, 1, 1, 1)
-    """Padding between diagram and root SVG component"""
-
-    vertical_separation: int = 8
-    """Space between railroads"""
-
-    horizontal_separation: int = 10
-    """Space between nodes"""
-
-    arc_radius: int = 10
-    """Radius for railroad arcs"""
-
-    diagram_class: str = 'railroad-diagram'
-    """CSS class that will be added to the top-level element"""
-
-    translate_half_pixel: bool = False
-    """Move diagram half pixel in both directions.
-    Set to `True` if using odd pixel lengths for 'stroke'."""
-
-    internal_alignment: InternalAlignment = InternalAlignment.AUTO_LEFT
-    """How to align nodes within diagram"""
-
-    character_advance: float = 8.4
-    """Width of a single symbol in the monospace font"""
-
-    end_class: EndClass = EndClass.SIMPLE
-    """How diagram ends look like"""
-
-    css: Dict[str, Dict[str, Any]] = field(default_factory=get_default_css)
-    """CSS styles to embed into diagram"""
-
-    max_width: int = 500
-    """Max width after which a sequence will be wrapped"""
-
-    href_resolver: HrefResolver = field(default_factory=HrefResolver)
-    """"""
-
-
-DEFAULT_SETTINGS = Settings()
-
-
 @dataclass
 class Diagram:
-    settings: Settings = DEFAULT_SETTINGS
-    """Settings used to render a diagram"""
+    settings: DiagramSettings = field(default_factory=DiagramSettings)
+    """
+    Settings used to render a diagram.
+    
+    """
+
+    href_resolver: HrefResolver = field(default_factory=HrefResolver)
+    """
+    Class that manages adding hrefs to diagram nodes.
+    
+    """
 
     def element(self, name: str, **kwargs) -> 'Element':
         return Element(self, name, **kwargs)
 
     def path(self, x: int, y: int) -> 'Path':
         return Path(self, x, y)
-
-    def style(self, css: Dict[str, Dict[str, Any]]) -> 'Style':
-        return Style(self, css)
 
     def sequence(self, *items: 'DiagramItem',
                  autowrap: bool=False,
@@ -566,7 +403,6 @@ class Diagram:
 
     def render(self, root, output=None):
         root = self.sequence(
-            self.style(self.settings.css),
             self.start(),
             root,
             self.end()
@@ -662,8 +498,12 @@ class DiagramItem:
     """Add extra space around this element"""
 
     @property
-    def settings(self) -> Settings:
+    def settings(self) -> DiagramSettings:
         return self.diagram.settings
+
+    @property
+    def href_resolver(self) -> HrefResolver:
+        return self.diagram.href_resolver
 
     @property
     def dia(self) -> Diagram:
@@ -786,38 +626,6 @@ class Path(DiagramItem):
 
     def format(self, *args, **kwargs):
         return FormattedItem(self)
-
-
-@dataclass
-class Style(DiagramItem):
-    @dataclass
-    class StyleFormattedItem(FormattedItem):
-        diagram_item: 'Style'
-
-        def write_svg(self, f):
-            # Write included stylesheet as CDATA.
-            # See https://developer.mozilla.org/en-US/docs/Web/SVG/Element/style
-            f.write('<style>/* <![CDATA[ */\n')
-            for k, v in self.diagram_item.css.items():
-                for cls in k.split(','):
-                    f.write(f'svg.{self.diagram_item.settings.diagram_class} ')
-                    f.write(cls.strip())
-                    f.write(' ')
-                f.write('{\n')
-                for k2, v2 in v.items():
-                    f.write(f'  {k2}: {v2};\n')
-                f.write('}\n')
-            f.write('\n/* ]]> */\n</style>')
-
-    css: Dict[str, Dict[str, Any]] = None
-
-    def __init__(self, dia: Diagram, css: Dict[str, Dict[str, Any]]):
-        super().__init__(dia, 'style')
-
-        self.css = css
-
-    def format(self, *args, **kwargs):
-        return self.StyleFormattedItem(self)
 
 
 @dataclass
@@ -1515,8 +1323,9 @@ class Node(DiagramItem):
         self.title_is_weak = title_is_weak
 
         if self.resolve:
-            self.text, self.href = self.settings.href_resolver.resolve(
-                self.text, self.href, self.title_is_weak)
+            self.text, self.href = self.href_resolver.resolve(
+                self.text, self.href, self.title_is_weak
+            )
 
         self.attrs = {'class': css_class}
         self.needs_space = True

@@ -56,7 +56,7 @@ class ModelCacheImpl(ModelCache):
 
         if not os.path.exists(path):
             logger.error(f'unable to load {path!r}: file not found')
-            model = self._loaded[path] = ModelImpl(path, offset, False)
+            model = self._loaded[path] = ModelImpl(path, offset, False, True)
             return model
 
         with open(path, 'r', encoding='utf-8', errors='strict') as f:
@@ -86,10 +86,10 @@ class ModelCacheImpl(ModelCache):
 
         tree = parser.grammarSpec()
 
-        model = ModelImpl(path, offset, in_memory)
-
         if parser.getNumberOfSyntaxErrors():
-            return model
+            return ModelImpl(path, offset, in_memory, True)
+
+        model = ModelImpl(path, offset, in_memory, False)
 
         MetaLoader(model, self).visit(tree)
         LexerRuleLoader(model).visit(tree)
@@ -99,10 +99,11 @@ class ModelCacheImpl(ModelCache):
 
 
 class ModelImpl(Model):
-    def __init__(self, path: str, offset: int, in_memory: bool):
+    def __init__(self, path: str, offset: int, in_memory: bool, has_errors: bool):
         self._path = path
         self._in_memory = in_memory
         self._offset = offset
+        self._has_errors = has_errors
 
         self._lexer_rules: Dict[str, LexerRule] = {}
         self._parser_rules: Dict[str, ParserRule] = {}
@@ -111,6 +112,9 @@ class ModelImpl(Model):
         self._type: Optional[str] = None
         self._name: Optional[str] = None
         self._docs: Optional[List[Tuple[int, str]]] = None
+
+    def has_errors(self) -> bool:
+        return self._has_errors
 
     def get_type(self) -> Optional[str]:
         return self._type

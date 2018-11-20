@@ -1,6 +1,8 @@
-from typing import *
+from weakref import WeakKeyDictionary
 
 from sphinx_a4doc.model.model import RuleBase, LexerRule, ParserRule
+
+from typing import *
 
 
 __all__ = [
@@ -123,7 +125,7 @@ class RuleContentVisitor(Generic[T]):
 
 class CachedRuleContentVisitor(RuleContentVisitor[T]):
     def __init__(self):
-        self._cache: Dict[RuleBase.RuleContent, T] = {}
+        self._cache: Dict[RuleBase.RuleContent, T] = WeakKeyDictionary()
 
     def visit(self, r: RuleBase.RuleContent) -> T:
         if r not in self._cache:
