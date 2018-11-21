@@ -369,7 +369,7 @@ class A4Domain(Domain):
 
     def clear_doc(self, docname):
         for fqn, entry in list(self.index.items()):
-            if fqn == docname:
+            if entry.docname == docname:
                 self.index.pop(fqn)
 
     def merge_domaindata(self, docnames, otherdata):
