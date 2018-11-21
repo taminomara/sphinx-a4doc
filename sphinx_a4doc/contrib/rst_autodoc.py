@@ -16,6 +16,7 @@ from sphinx.locale import _
 from sphinx.pycode import ModuleAnalyzer
 
 from .configurator import Namespace, NamespaceHolder, ManagedDirective, make_converter
+from .marker_nodes import find_or_add_marker
 
 from typing import *
 
@@ -25,19 +26,25 @@ class AutoDirectiveSettings:
     options: bool = True
     """
     Generate documentation for directive options.
-    
+
     """
 
     prefixed_options: bool = False
     """
     Generate documentation for directive options with non-empty prefix.
-    
+
     """
 
     prefix_filter: Optional[List[str]] = None
     """
     Filter options documentation by option prefix.
-    
+
+    """
+
+    options_header: bool = True
+    """
+    Controls whether directive should render a header for options section.
+
     """
 
 
@@ -68,20 +75,11 @@ class AutoDirective(sphinx.domains.rst.ReSTDirective, ManagedDirective):
                 )
             ]
 
-        if not issubclass(directive, ManagedDirective):
+        if not issubclass(directive, docutils.parsers.rst.Directive):
             return [
                 self.state_machine.reporter.error(
                     'cannot autodocument a directive that is not derived '
-                    'from ManagedDirective',
-                    line=self.content_offset
-                )
-            ]
-
-        if not issubclass(directive, sphinx.util.docutils.SphinxDirective):
-            return [
-                self.state_machine.reporter.error(
-                    'cannot autodocument a directive that is not derived '
-                    'from SphinxDirective',
+                    'from docutils.parsers.rst.Directive',
                     line=self.content_offset
                 )
             ]
@@ -137,9 +135,13 @@ class AutoDirective(sphinx.domains.rst.ReSTDirective, ManagedDirective):
 
     def render_directive(self, directive, nodes):
         if getattr(directive, '__doc__', None):
+            doc_node = find_or_add_marker(nodes, 'docstring')
+
             doc = self.canonize_docstring(directive.__doc__)
             lines = docutils.statemachine.StringList(doc.splitlines())
-            self.state.nested_parse(lines, self.content_offset, nodes)
+            self.state.nested_parse(lines, self.content_offset, doc_node)
+
+            doc_node.replace_self(doc_node.children)
 
         if not self.settings.options:
             return
@@ -172,9 +174,12 @@ class AutoDirective(sphinx.domains.rst.ReSTDirective, ManagedDirective):
         if not options:
             return
 
-        p = docutils.nodes.paragraph('', '')
-        p += docutils.nodes.strong('Options:', _('Options:'))
-        nodes += p
+        opt_node = find_or_add_marker(nodes, 'members')
+
+        if self.settings.options_header:
+            p = docutils.nodes.paragraph('', '')
+            p += docutils.nodes.strong('Options:', _('Options:'))
+            opt_node += p
 
         for p, cls, fields in sorted(options, key=lambda x: x[0]):
             fields = [
@@ -196,7 +201,9 @@ class AutoDirective(sphinx.domains.rst.ReSTDirective, ManagedDirective):
                 else:
                     value_desc = str(make_converter(field.type))
 
-                nodes += self.render_option(names, value_desc, doc)
+                opt_node += self.render_option(names, value_desc, doc)
+
+        opt_node.replace_self(opt_node.children)
 
     def render_option(self, names, value_desc, doc):
         node = sphinx.addnodes.desc()
@@ -269,5 +276,13 @@ class AutoDirective(sphinx.domains.rst.ReSTDirective, ManagedDirective):
 
 
 def setup(app: sphinx.application.Sphinx):
+    app.setup_extension('sphinx_a4doc.contrib.marker_nodes')
+
     namespace.register_settings(app)
     app.add_directive_to_domain('rst', 'autodirective', AutoDirective)
+
+    return {
+        'version': '1.0.0',
+        'parallel_read_safe': True,
+        'parallel_write_safe': True,
+    }

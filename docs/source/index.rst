@@ -191,6 +191,10 @@ Autodoc directive
 
 .. rst:autodirective:: .. a4:autogrammar:: name
 
+.. rst:autodirective:: docstring-marker
+
+.. rst:autodirective:: members-marker
+
 Configuration
 -------------
 

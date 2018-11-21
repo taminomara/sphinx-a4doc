@@ -14,6 +14,8 @@ def config_inited(app, config):
 
 
 def setup(app: sphinx.application.Sphinx):
+    app.setup_extension('sphinx_a4doc.contrib.marker_nodes')
+
     app.add_domain(A4Domain)
 
     app.add_node(RailroadDiagramNode,
