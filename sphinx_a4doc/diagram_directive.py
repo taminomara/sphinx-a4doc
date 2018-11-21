@@ -371,7 +371,10 @@ class RailroadDiagram(sphinx.util.docutils.SphinxDirective, ManagedDirective):
             content = self.get_content()
         except Exception as e:
             return [
-                self.state_machine.reporter.error(str(e), line=self.content_offset)
+                self.state_machine.reporter.error(
+                    str(e),
+                    line=self.lineno
+                )
             ]
         return [RailroadDiagramNode(content, self.settings, grammar)]
 
@@ -408,8 +411,7 @@ class LexerRuleDiagram(RailroadDiagram):
             content, (self.state_machine.reporter.source, self.content_offset))
         tree = model.lookup('ROOT')
         if tree is None or tree.content is None:
-            return self.state_machine.reporter.error(
-                'cannot parse the rule', line=self.content_offset)
+            raise RuntimeError('cannot parse the rule')
         return Renderer().visit(tree.content)
 
 
@@ -451,6 +453,5 @@ class ParserRuleDiagram(RailroadDiagram):
             content, (self.state_machine.reporter.source, self.content_offset))
         tree = model.lookup('root')
         if tree is None or tree.content is None:
-            return self.state_machine.reporter.error(
-                'cannot parse the rule', line=self.content_offset)
+            raise RuntimeError('cannot parse the rule')
         return Renderer().visit(tree.content)
