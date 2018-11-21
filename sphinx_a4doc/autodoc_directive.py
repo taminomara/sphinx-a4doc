@@ -27,9 +27,23 @@ class AutoGrammar(sphinx.util.docutils.SphinxDirective, ManagedDirective):
 
     diagram_settings = diagram_namespace.for_directive('diagram')
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, *kwargs)
+
+        self.used_models: Set[Model] = set()
+
     def run(self):
         # Load model from file
         model = self.load_model(self.arguments[0])
+        # Early exit
+        if model.has_errors():
+            self.register_deps()
+            return [
+                self.state_machine.reporter.error(
+                    'unable to document this grammar',
+                    line=self.lineno
+                )
+            ]
         # Create the `Grammar` directive which will be used for nested parse
         grammar_dir = self.make_grammar_directive(model)
         # From now on we want diagram settings to affect every nested diagram
@@ -37,9 +51,6 @@ class AutoGrammar(sphinx.util.docutils.SphinxDirective, ManagedDirective):
         try:
             # Create a skeleton of the grammar description
             nodes = grammar_dir.run()
-            # Early exit
-            if model.has_errors():
-                return nodes
             # If user described some rules manually, we want that descriptions
             # to replace ones obtained from the grammar file. We also want to
             # remove all descriptions temporarily to rearrange them according
@@ -67,12 +78,15 @@ class AutoGrammar(sphinx.util.docutils.SphinxDirective, ManagedDirective):
             return nodes
         finally:
             self.pop_settings(diagram_namespace)
+            self.register_deps()
 
     def load_model(self, name: str) -> Model:
         # TODO: use grammar resolver
         base_path = global_namespace.load_global_settings(self.env).base_path
         path = os.path.join(base_path, name + '.g4')
-        return ModelCache.instance().from_file(path)
+        model = ModelCache.instance().from_file(path)
+        self.used_models.add(model)
+        return model
 
     def make_grammar_directive(self, model):
         options = {
@@ -248,4 +262,14 @@ class AutoGrammar(sphinx.util.docutils.SphinxDirective, ManagedDirective):
             with sphinx.util.docutils.switch_source_input(self.state, content):
                 self.state.nested_parse(content, 0, node)
 
-# TODO: self.directive.filename_set.add !!!
+    def register_deps(self):
+        seen = set()
+        models = self.used_models.copy()
+        while models:
+            model = models.pop()
+            if model in seen:
+                continue
+            if not model.is_in_memory():
+                self.state.document.settings.record_dependencies.add(model.get_path())
+            models.update(model.get_imports())
+            seen.add(model)
