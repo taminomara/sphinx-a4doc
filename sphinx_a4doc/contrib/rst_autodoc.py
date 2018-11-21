@@ -181,7 +181,8 @@ class AutoDirective(sphinx.domains.rst.ReSTDirective, ManagedDirective):
                 (self.resolve_arg_doc_and_index(field.name, cls), field)
                 for field in fields
             ]
-            for (i, doc), field in sorted(fields):
+            fields.sort(key=lambda x: (x[0][0], x[1].name))
+            for (i, doc), field in fields:
                 if p:
                     p += '-'
 
