@@ -287,7 +287,7 @@ class RuleSettings:
     name: Optional[str] = field(default=None, metadata=dict(no_global=True))
     """
     Specifies a human-readable name for this rule. Refer to the corresponding
-    :rst:dir:`a4:grammar`'s option for more info.
+    :rst:opt:`a4:grammar <a4:grammar:name>`'s option for more info.
     
     """
 

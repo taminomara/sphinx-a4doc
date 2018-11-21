@@ -1,6 +1,10 @@
+import re
 import dataclasses
 import textwrap
 
+import sphinx.addnodes
+import sphinx.domains
+import sphinx.roles
 import sphinx.util.docfields
 from docutils.parsers.rst.languages import en
 import docutils.statemachine
@@ -19,6 +23,71 @@ from .configurator import Namespace, NamespaceHolder, ManagedDirective, make_con
 from .marker_nodes import find_or_add_marker
 
 from typing import *
+
+
+class ReSTDirective(sphinx.domains.rst.ReSTDirective):
+    def before_content(self):
+        super().before_content()
+        self.env.ref_context['rst:directive'] = self.names
+
+    def after_content(self):
+        super().after_content()
+        self.env.ref_context['rst:directive'] = None
+
+
+class ReSTOption(sphinx.domains.rst.ReSTMarkup):
+    def handle_signature(self, sig: str, signode: sphinx.addnodes.desc_signature) -> str:
+        directive: Optional[List[str]] = self.env.ref_context.get('rst:directive', None)
+
+        if directive is None:
+            raise ValueError('rst option cannot be documented '
+                             'outside of any directive')
+
+        sig = sig.strip()
+
+        if sig.startswith(':'):
+            match = re.match(r'^:([^:]*):(.*)', sig)
+            if match is None:
+                raise ValueError(f'invalid option name {sig}')
+            name, value_desc = match.group(1), match.group(2)
+        else:
+            name, value_desc = sig, ''
+
+        name, value_desc = name.strip(), value_desc.strip()
+
+        dispname = f':{name}:'
+        if value_desc:
+            dispname += ' '
+
+        signode += sphinx.addnodes.desc_name(dispname, dispname)
+        if value_desc:
+            signode += sphinx.addnodes.desc_addname(value_desc, value_desc)
+
+        return directive[0] + ':' + name
+
+
+class OptRole(sphinx.roles.XRefRole):
+    def process_link(self, env, refnode, has_explicit_title, title, target):
+        refnode['rst:directive'] = env.ref_context.get('rst:directive', None)
+        return super().process_link(env, refnode, has_explicit_title, title, target)
+
+
+class ExtendedReSTDomain(sphinx.domains.rst.ReSTDomain):
+    object_types = sphinx.domains.rst.ReSTDomain.object_types.copy()
+    object_types['option'] = sphinx.domains.ObjType(_('option'), 'opt')
+
+    directives = sphinx.domains.rst.ReSTDomain.directives.copy()
+    directives['directive'] = ReSTDirective
+    directives['option'] = ReSTOption
+
+    roles = sphinx.domains.rst.ReSTDomain.roles.copy()
+    roles['opt'] = OptRole()
+
+    def resolve_xref(self, env, fromdocname, builder, typ, target, node, contnode):
+        if typ == 'opt':
+            if ':' not in target and node.get('rst:directive', None):
+                target = node['rst:directive'][0] + ':' + target
+        return super().resolve_xref(env, fromdocname, builder, typ, target, node, contnode)
 
 
 @dataclasses.dataclass
@@ -51,7 +120,7 @@ class AutoDirectiveSettings:
 namespace = Namespace('configurator', AutoDirectiveSettings)
 
 
-class AutoDirective(sphinx.domains.rst.ReSTDirective, ManagedDirective):
+class AutoDirective(ReSTDirective, ManagedDirective):
     """
     Generates documentation for rst directives, including documentation for
     its options.
@@ -177,6 +246,7 @@ class AutoDirective(sphinx.domains.rst.ReSTDirective, ManagedDirective):
         opt_node = find_or_add_marker(nodes, 'members')
 
         if self.settings.options_header:
+            # TODO: maybe add anchor?
             p = docutils.nodes.paragraph('', '')
             p += docutils.nodes.strong('Options:', _('Options:'))
             opt_node += p
@@ -206,34 +276,27 @@ class AutoDirective(sphinx.domains.rst.ReSTDirective, ManagedDirective):
         opt_node.replace_self(opt_node.children)
 
     def render_option(self, names, value_desc, doc):
-        node = sphinx.addnodes.desc()
-        node['domain'] = 'rst'
-        node['objtype'] = node['desctype'] = 'option'
-        node['noindex'] = True
-
-        for i, name in enumerate(names):
-            sig = f':{name}: '
-            signode = sphinx.addnodes.desc_signature(sig, '')
-            signode['first'] = i == 0
-            signode += sphinx.addnodes.desc_name(sig, sig)
-            signode += sphinx.addnodes.desc_addname(value_desc, value_desc)
-
-            node.append(signode)
-
-        contentnode = sphinx.addnodes.desc_content()
-        node.append(contentnode)
-
-        if names:
-            # needed for association of version{added,changed} directives
-            self.env.temp_data['object'] = names
-        self.before_content()
         lines = docutils.statemachine.StringList(doc.splitlines())
-        self.state.nested_parse(lines, self.content_offset, contentnode)
-        sphinx.util.docfields.DocFieldTransformer(self).transform_all(contentnode)
-        self.env.temp_data['object'] = None
-        self.after_content()
 
-        return node
+        directive = ReSTOption(
+            name='rst:option',
+            arguments=[
+                f':{name}: {value_desc}' for name in names
+            ],
+            options=self.options,
+            content=lines,
+            lineno=self.lineno,
+            content_offset=self.content_offset,
+            block_text=self.block_text,
+            state=self.state,
+            state_machine=self.state_machine
+        )
+
+        self.before_content()
+        try:
+            return directive.run()
+        finally:
+            self.after_content()
 
     @staticmethod
     def canonize_docstring(description):
@@ -277,6 +340,8 @@ class AutoDirective(sphinx.domains.rst.ReSTDirective, ManagedDirective):
 
 def setup(app: sphinx.application.Sphinx):
     app.setup_extension('sphinx_a4doc.contrib.marker_nodes')
+
+    app.override_domain(ExtendedReSTDomain)
 
     namespace.register_settings(app)
     app.add_directive_to_domain('rst', 'autodirective', AutoDirective)

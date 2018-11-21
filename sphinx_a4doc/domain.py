@@ -141,6 +141,26 @@ class Grammar(A4ObjectDescription):
 
     Grammar names should be unique within the project.
 
+    .. members-marker::
+
+    **Other options:**
+
+    One can override any option for all :rst:dir:`railroad-diagram` invocations
+    within this grammar. Prefix the desired option with ``diagram-``
+    and add to the rule description.
+
+    For example:
+
+    .. code-block:: rst
+
+       .. a4:grammar:: Test
+          :diagram-end-class: complex
+
+          All diagrams rendered inside this grammar
+          will have 'end-class' set to 'complex'.
+
+    The standard sphinx ``:noindex:`` option is supported.
+
     """
 
     settings = grammar_namespace.for_directive()
@@ -188,6 +208,15 @@ class Rule(A4ObjectDescription):
     path will only include its name.
 
     In either case, the rule name should be unique within its grammar.
+
+    .. members-marker::
+
+    **Other options:**
+
+    One can override any option for all :rst:dir:`railroad-diagram` invocations
+    within this rule. See :rst:dir:`a4:grammar` for more info.
+
+    The standard sphinx ``:noindex:`` option is supported.
 
     """
 

@@ -99,8 +99,11 @@ class AutoGrammar(sphinx.util.docutils.SphinxDirective, ManagedDirective):
 
     def make_grammar_directive(self, model):
         options = {
-            'imports': [i.get_name() for i in model.get_imports() if i.get_name()]
+            'imports': [i.get_name() for i in model.get_imports() if i.get_name()],
         }
+
+        if 'noindex' in self.options:
+            options['noindex'] = None
 
         if self.settings.name:
             options['name'] = self.settings.name
@@ -211,6 +214,8 @@ class AutoGrammar(sphinx.util.docutils.SphinxDirective, ManagedDirective):
             return []  # nothing to document
 
         options = {}
+        if 'noindex' in self.options:
+            options['noindex'] = None
         if rule.display_name:
             options['name'] = rule.display_name
 
