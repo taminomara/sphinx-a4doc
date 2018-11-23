@@ -30,7 +30,7 @@ class A4ObjectDescription(ObjectDescription, ManagedDirective):
     diagram_settings = diagram_namespace.for_directive('diagram')
     """
     We can redefine rendering settings for all diagrams withing a single object.
-    
+
     """
 
     def get_fqn(self, name: str) -> str:
@@ -143,23 +143,26 @@ class Grammar(A4ObjectDescription):
 
     .. members-marker::
 
-    **Other options:**
+    .. rst:option:: noindex
 
-    One can override any option for all :rst:dir:`railroad-diagram` invocations
-    within this grammar. Prefix the desired option with ``diagram-``
-    and add to the rule description.
+       A standard sphinx option to disable indexing for this rule.
 
-    For example:
+    .. rst:option:: diagram-*
 
-    .. code-block:: rst
+       One can override any option for all
+       :rst:dir:`railroad diagrams <railroad-diagram>` within this grammar.
+       Prefix the desired option with ``diagram-`` and add to the
+       rule description.
 
-       .. a4:grammar:: Test
-          :diagram-end-class: complex
+       For example:
 
-          All diagrams rendered inside this grammar
-          will have 'end-class' set to 'complex'.
+       .. code-block:: rst
 
-    The standard sphinx ``:noindex:`` option is supported.
+          .. a4:grammar:: Test
+             :diagram-end-class: complex
+
+             All diagrams rendered inside this grammar
+             will have 'end-class' set to 'complex'.
 
     """
 
@@ -211,12 +214,16 @@ class Rule(A4ObjectDescription):
 
     .. members-marker::
 
-    **Other options:**
+    .. rst:option:: noindex
 
-    One can override any option for all :rst:dir:`railroad-diagram` invocations
-    within this rule. See :rst:dir:`a4:grammar` for more info.
+       A standard sphinx option to disable indexing for this rule.
 
-    The standard sphinx ``:noindex:`` option is supported.
+    .. rst:option:: diagram-*
+
+        One can override any option for all
+        :rst:dir:`railroad diagrams <railroad-diagram>`
+        within this rule. Refer to the corresponding
+        :rst:opt:`a4:grammar <a4:grammar:diagram-*>`'s option for more info.
 
     """
 
@@ -273,37 +280,37 @@ class A4Domain(Domain):
         docname: str
         """
         Name of the document in which this entry was indexed.
-        
+
         """
 
         objtype: str
         """
         Object type, either ``'grammar'`` or ``'rule'``.
-        
+
         """
 
         name: str
         """
         Object name.
-        
+
         """
 
         fqn: str
         """
         Fully qualified name.
-        
+
         """
 
         display_name: Optional[str] = None
         """
         Human readable name which should replace the default name in crossrefs.
-        
+
         """
 
         relations: Optional[List[str]] = None
         """
         For grammar objects, contains list of imported grammars.
-        
+
         """
 
     DEFAULT_GRAMMAR = IndexEntry(

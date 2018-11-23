@@ -45,13 +45,10 @@ class ReSTOption(sphinx.domains.rst.ReSTMarkup):
 
         sig = sig.strip()
 
-        if sig.startswith(':'):
-            match = re.match(r'^:([^:]*):(.*)', sig)
-            if match is None:
-                raise ValueError(f'invalid option name {sig}')
-            name, value_desc = match.group(1), match.group(2)
-        else:
-            name, value_desc = sig, ''
+        match = re.match(r'^([^ ]+)(( .*)?)', sig)
+        if match is None:
+            raise ValueError(f'invalid option name {sig}')
+        name, value_desc = match.group(1), match.group(2)
 
         name, value_desc = name.strip(), value_desc.strip()
 
@@ -206,9 +203,14 @@ class AutoDirective(ReSTDirective, ManagedDirective):
         if getattr(directive, '__doc__', None):
             doc_node = find_or_add_marker(nodes, 'docstring')
 
-            doc = self.canonize_docstring(directive.__doc__)
-            lines = docutils.statemachine.StringList(doc.splitlines())
-            self.state.nested_parse(lines, self.content_offset, doc_node)
+            self.before_content()
+
+            try:
+                doc = self.canonize_docstring(directive.__doc__)
+                lines = docutils.statemachine.StringList(doc.splitlines())
+                self.state.nested_parse(lines, self.content_offset, doc_node)
+            finally:
+                self.after_content()
 
             doc_node.replace_self(doc_node.children)
 
@@ -281,7 +283,7 @@ class AutoDirective(ReSTDirective, ManagedDirective):
         directive = ReSTOption(
             name='rst:option',
             arguments=[
-                f':{name}: {value_desc}' for name in names
+                '\n'.join([f'{name} {value_desc}' for name in names])
             ],
             options=self.options,
             content=lines,

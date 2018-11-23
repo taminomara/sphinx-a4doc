@@ -358,6 +358,11 @@ class RailroadDiagram(sphinx.util.docutils.SphinxDirective, ManagedDirective):
           - non_terminal: 'identifier'
           - terminal: ';'
 
+    **Customization:**
+
+    See more on how to customize diagram style in the ':ref:`custom_style`'
+    section.
+
     """
 
     has_content = True

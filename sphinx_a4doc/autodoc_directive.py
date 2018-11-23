@@ -1,5 +1,5 @@
 import os
-
+import dataclasses
 import docutils.parsers.rst
 import docutils.statemachine
 import docutils.nodes
@@ -8,7 +8,7 @@ import sphinx.util.docutils
 
 from sphinx_a4doc.contrib.configurator import ManagedDirective
 
-from sphinx_a4doc.settings import GrammarType, OrderSettings, GroupingSettings
+from sphinx_a4doc.settings import GrammarType, OrderSettings, GroupingSettings, EndClass
 from sphinx_a4doc.settings import global_namespace, autodoc_namespace, diagram_namespace
 from sphinx_a4doc.domain import Grammar, Rule
 from sphinx_a4doc.diagram_directive import RailroadDiagramNode
@@ -21,6 +21,28 @@ from typing import *
 
 
 class AutoGrammar(sphinx.util.docutils.SphinxDirective, ManagedDirective):
+    """
+    Autogrammar directive generates a grammar description by reading a ``.g4``
+    file and inspecting its documentation comments.
+
+    The :rst:dir:`a4:autogrammar` directive designed to behave like it's
+    :rst:dir:`a4:grammar`
+
+    Its only argument, ``name``, should contain name of the grammar which
+    will be parsed. It is passed unchanged to a grammar resolver which,
+    by default, loads a file ``{a4_base_path}/{name}.g4`` (where
+    ``a4_base_path`` is a variable defined in ``conf.py``). See more on how
+    to customize grammar file lookup process in the ':ref:`custom_lookup`'
+    section.
+
+    .. TODO: reference to global settings
+
+    See more on how to write documentation comments and control look of the
+    automatically generated railroad diagrams in the ':ref:`grammar_comments`'
+    section.
+
+    """
+
     required_arguments = 1
     has_content = True
 
@@ -32,6 +54,7 @@ class AutoGrammar(sphinx.util.docutils.SphinxDirective, ManagedDirective):
         super().__init__(*args, *kwargs)
 
         self.used_models: Set[Model] = set()
+        self.root_rule: Optional[RuleBase] = None
 
     def run(self):
         # Load model from file
@@ -200,6 +223,7 @@ class AutoGrammar(sphinx.util.docutils.SphinxDirective, ManagedDirective):
                 model_name, rule_name = rule_name.split('.', 1)
                 rule_model = self.load_model(model_name)
             rule = rule_model.lookup(rule_name)
+            self.root_rule = rule
             if rule is None:
                 return all_rules
             reachable = find_reachable_rules(rule)
@@ -254,8 +278,18 @@ class AutoGrammar(sphinx.util.docutils.SphinxDirective, ManagedDirective):
                 env = self.env
                 grammar = env.ref_context.get('a4:grammar', '__default__')
                 dia = Renderer().visit(rule.content)
+
+                settings = self.diagram_settings
+
+                if (
+                    self.settings.mark_root_rule and
+                    self.root_rule is not None and
+                    rule.name == self.root_rule.name and
+                    rule.model is self.root_rule.model
+                ):
+                    settings = dataclasses.replace(settings, end_class=EndClass.COMPLEX)
                 desc_content.append(
-                    RailroadDiagramNode(dia, self.diagram_settings, grammar)
+                    RailroadDiagramNode(dia, settings, grammar)
                 )
 
             self.render_docs(rule.position.file, docs, desc_content)

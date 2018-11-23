@@ -51,13 +51,13 @@ class OrderSettings(Enum):
     BY_SOURCE = 'BY_SOURCE'
     """
     Order by position in source file.
-    
+
     """
 
     BY_NAME = 'BY_NAME'
     """
     Order by human-readable name.
-    
+
     """
 
 
@@ -70,19 +70,19 @@ class GroupingSettings(Enum):
     MIXED = 'MIXED'
     """
     Rules are not ordered.
-    
+
     """
 
     LEXER_FIRST = 'LEXER_FIRST'
     """
     Lexer rules go first.
-    
+
     """
 
     PARSER_FIRST = 'PARSER_FIRST'
     """
     Parser rules go first.
-    
+
     """
 
 
@@ -98,38 +98,38 @@ class DiagramSettings:
     Array of four positive integers denoting top, right, bottom and left
     padding between the diagram and its container. By default, there is 1px
     of padding on each side.
-    
+
     """
 
     vertical_separation: int = 8
     """
     Vertical space between diagram lines.
-    
+
     """
 
     horizontal_separation: int = 10
     """
     Horizontal space between items within a sequence.
-    
+
     """
 
     arc_radius: int = 10
     """
     Arc radius of railroads. 10px by default.
-    
+
     """
 
     diagram_class: str = 'railroad-diagram'
     """
     CSS class for the SVG node in which the diagram will be rendered.
-    
+
     """
 
     translate_half_pixel: bool = False
     """
     If enabled, the diagram will be translated half-pixel in both directions.
     May be used to deal with anti-aliasing issues when using odd stroke widths.
-    
+
     """
 
     internal_alignment: InternalAlignment = InternalAlignment.AUTO_LEFT
@@ -163,7 +163,7 @@ class DiagramSettings:
 
       .. parser-rule-diagram:: (A B | C D E) (',' (A B | C D E))*
          :internal-alignment: AUTO_RIGHT
-    
+
     """
 
     character_advance: float = 8.4
@@ -171,7 +171,7 @@ class DiagramSettings:
     Average length of one character in the used font. Since SVG elements
     cannot expand and shrink dynamically, length of text nodes is calculated
     as number of symbols multiplied by this constant.
-    
+
     """
 
     end_class: EndClass = EndClass.SIMPLE
@@ -187,7 +187,7 @@ class DiagramSettings:
 
       .. parser-rule-diagram:: X
          :end-class: COMPLEX
-    
+
     """
 
     max_width: int = 500
@@ -196,7 +196,7 @@ class DiagramSettings:
     automatically convert sequences to stacks. Note that this is a suggestive
     option, there is no guarantee that the diagram will
     fit to its ``max_width``.
-    
+
     """
 
 
@@ -228,7 +228,7 @@ class GrammarSettings:
        .. a4:grammar:: PrimaryName
           :noindex:
           :name: Human-readable name
-    
+
     """
 
     type: GrammarType = field(default=GrammarType.MIXED, metadata=dict(no_global=True))
@@ -262,7 +262,7 @@ class GrammarSettings:
        .. a4:grammar:: Grammar3
           :noindex:
           :type: parser
-    
+
     """
 
     imports: List[str] = field(default_factory=list, metadata=dict(no_global=True))
@@ -273,7 +273,7 @@ class GrammarSettings:
     That is, if there is a reference to ``grammar.rule`` and there is no
     ``rule`` found in the ``grammar``, the imported grammars will be searched
     as well.
-    
+
     """
 
 
@@ -288,7 +288,7 @@ class RuleSettings:
     """
     Specifies a human-readable name for this rule. Refer to the corresponding
     :rst:opt:`a4:grammar <a4:grammar:name>`'s option for more info.
-    
+
     """
 
 
@@ -301,49 +301,92 @@ class AutodocSettings:
 
     only_reachable_from: Optional[str] = field(default=None, metadata=dict(no_global=True, rebuild=True))
     """
-    If given, only document items that are reachable from rule with this path.
-    
+    If given, autodoc will only render rules that are reachable from this root.
+    This is useful to exclude rules from imported grammars that are not used
+    by the primary grammar.
+ 
+    The value should be either name of a rule from the grammar that's being
+    documented or a full path which includes grammar name and rule name.
+ 
+    For example, suppose there's ``Lexer.g4`` and ``Parser.g4``. To filter
+    lexer rules that are not used by parser grammar, use:
+
+    .. code-block:: rst
+
+       .. a4:autogrammar:: Parser
+          :only-reachable-from: Parser.root
+
+       .. a4:autogrammar:: Lexer
+          :only-reachable-from: Parser.root
+
+    """
+
+    mark_root_rule: bool = field(default=True, metadata=dict(rebuild=True))
+    """
+    If enabled, automatic diagram for the rule that's listed in
+    :rst:opt:`only-reachable-from` will use complex line endings
+    (see the :rst:opt:`end-class <railroad-diagram:end-class>` option
+    of the :rst:dir:`railroad-diagram` directive).
+
     """
 
     name: Optional[str] = field(default=None, metadata=dict(no_global=True, rebuild=True))
     """
-    Human-readable name. Displayed instead of the default name.
-    
+    Set human-readable name for this grammar. Refer to the corresponding
+    :rst:opt:`a4:grammar <a4:grammar:name>`'s option for more info.
+
     """
 
     lexer_rules: bool = field(default=True, metadata=dict(rebuild=True))
     """
     Controls whether lexer rules should appear in documentation.
-    
+    Enabled by default.
+
     """
 
     parser_rules: bool = field(default=True, metadata=dict(rebuild=True))
     """
     Controls whether parser rules should appear in documentation.
-    
+    Enabled by default.
+
     """
 
     fragments: bool = field(default=False, metadata=dict(rebuild=True))
     """
     Controls whether fragments should appear in documentation.
-    
+    Disabled by default.
+
     """
 
     undocumented: bool = field(default=False, metadata=dict(rebuild=True))
     """
     Controls whether undocumented rules should appear in documentation.
-    
-    """
+    Disabled by default.
 
-    ordering: OrderSettings = field(default=OrderSettings.BY_SOURCE, metadata=dict(rebuild=True))
-    """
-    Controls how autodoc orders rules that are extracted from sources.
-    
     """
 
     grouping: GroupingSettings = field(default=GroupingSettings.MIXED, metadata=dict(rebuild=True))
     """
     Controls how autodoc groups rules that are extracted from sources.
+
+    - ``mixed`` -- there's one group that contain all rules.
+
+    - ``lexer-first`` -- there are two group: one for parser rules and one for
+      lexer rules and fragments. Lexer group goes first.
+
+    - ``parser-first`` -- like ``lexer-first``, but parser group preceeds
+      lexer group.
+
+    """
+
+    ordering: OrderSettings = field(default=OrderSettings.BY_SOURCE, metadata=dict(rebuild=True))
+    """
+    Controls how autodoc orders rules within each group
+    (see :rst:opt:`grouping` option).
+
+    - ``by-source`` -- rules are ordered as they appear in the grammar file.
+
+    - ``by-name`` -- rules are ordered lexicographically.
 
     """
 
@@ -359,7 +402,7 @@ class GlobalSettings:
     base_path: str = field(default='.', metadata=dict(rebuild=True))
     """
     Path which autodoc searches for grammar files.
-    
+
     """
 
 

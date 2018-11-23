@@ -195,31 +195,37 @@ Autodoc directive
 
 .. rst:autodirective:: members-marker
 
+.. _grammar_comments:
+
+Grammar comments and annotations
+--------------------------------
+
+.. _config:
+
 Configuration
 -------------
+
+.. _custom_style:
 
 Customizing diagram style
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. _custom_lookup:
+
 Customizing process of grammar files lookup
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Python API reference
---------------------
-
-This section describes A4Doc python API. It may come in handy for any extension
-that wishes to reuse or extend A4Doc's functionality.
 
 Example output
 --------------
 
-This example was generated from `Json.g4 <https://github.com/AmatanHead/sphinx-a4doc/blob/master/docs/examples/Json.g4>`_.
+This example was generated from
+`Json.g4 <https://github.com/AmatanHead/sphinx-a4doc/blob/master/docs/examples/Json.g4>`_.
 
 .. a4:autogrammar:: Json
+   :only-reachable-from: value
 
 Indices and tables
 ------------------
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
