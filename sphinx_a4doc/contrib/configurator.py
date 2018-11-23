@@ -410,7 +410,7 @@ def _parse_options(cls, options, prefix=''):
 
 
 class NamespaceHolder:
-    def __init__(self, namespace, prefix):
+    def __init__(self, namespace: 'Namespace', prefix: str):
         self.namespace = namespace
         self.prefix = prefix
 
@@ -603,21 +603,37 @@ class Namespace(Generic[T]):
 class ManagedDirectiveType(type):
     def __new__(mcs, name, bases, members):
         option_spec = {}
-        namespace_attrs = set()
+        namespace_attrs: Dict[str, NamespaceHolder] = {}
 
         for base in bases:
+            new_namespace_attrs: Set[NamespaceHolder] = getattr(base, '_namespace_attrs_', {}) or {}
+
+            for new_ns in new_namespace_attrs:
+                if new_ns.prefix in namespace_attrs:
+                    ns = namespace_attrs[new_ns.prefix]
+                    raise TypeError(
+                        f'cannot combine namespace '
+                        f'{new_ns.namespace.get_cls()} and '
+                        f'{ns.namespace.get_cls()}'
+                    )
+                namespace_attrs[new_ns.prefix] = new_ns
+
             option_spec.update(getattr(base, 'option_spec', {}) or {})
-            namespace_attrs.update(getattr(base, '_namespace_attrs_', set()) or set())
 
         option_spec.update(members.get('option_spec', {}))
 
         for name, member in list(members.items()):
             if isinstance(member, NamespaceHolder):
-                namespace_attrs.add(member)
-
-                option_spec.update(
-                    member.namespace.make_option_spec(member.prefix)
-                )
+                new_ns = member.namespace
+                if member.prefix in namespace_attrs:
+                    ns = namespace_attrs[member.prefix].namespace
+                    if not issubclass(new_ns.__class__, ns.__class__):
+                        raise TypeError(
+                            f'cannot override namespace {ns} with '
+                            f'namespace {new_ns}: the later must be a subclass '
+                            f'of the former'
+                        )
+                namespace_attrs[member.prefix] = member
 
                 members[name] = mcs._make_settings_getter(
                     '_configurator_cache_' + name,
@@ -625,8 +641,10 @@ class ManagedDirectiveType(type):
                     member.prefix
                 )
 
+                option_spec.update(new_ns.make_option_spec(member.prefix))
+
         members['option_spec'] = option_spec
-        members['_namespace_attrs_'] = namespace_attrs
+        members['_namespace_attrs_'] = set(namespace_attrs.values())
 
         return super(ManagedDirectiveType, mcs).__new__(mcs, name, bases, members)
 
