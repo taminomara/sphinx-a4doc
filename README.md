@@ -6,6 +6,13 @@ It’s primary target is to provide some overview for DSL users
 (generated documentation may not include some nuances essential
 for compiler developers).
 
+A4Doc's features are:
+
+- a new domain with grammar and rule directives called a4;
+- directives for rendering railroad diagrams;
+- directive for extracting documentation comments and rendering docs and
+  diagrams from `.g4` source files.
+
 ## Resources
 
 - [Documentation](https://amatanhead.github.io/sphinx-a4doc/)
