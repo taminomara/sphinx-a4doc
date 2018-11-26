@@ -1,0 +1,2 @@
+recursive-include sphinx_a4doc/_static *
+recursive-exclude statbox_abt_backend *.pyc

@@ -14,5 +14,6 @@ setup(
         'antlr4-python3-runtime==4.7.1',
         'PyYAML'
     ],
+    python_requires='>=3.7',
     zip_safe=False
 )
