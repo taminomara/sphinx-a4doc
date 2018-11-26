@@ -1,7 +1,9 @@
-from setuptools import setup
+from setuptools import setup, find_packages
+import re
 
 with open('README.md', encoding='utf-8') as readme_file:
     readme = readme_file.read()
+readme = re.sub(r'<!---\s*cut\s*--->.*', '', readme, flags=re.MULTILINE)
 
 setup(
     name='sphinx-a4doc',
@@ -12,9 +14,7 @@ setup(
     author='Vladimir Goncharov',
     author_email='dev.zelta@gmail.com',
     url='https://github.com/AmatanHead/sphinx-a4doc',
-    packages=[
-        'sphinx_a4doc'
-    ],
+    packages=find_packages(),
     install_requires=[
         'sphinx>=1.8.0,<2.0.0',
         'antlr4-python3-runtime==4.7.1',

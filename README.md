@@ -13,6 +13,8 @@ A4Doc's features are:
 - directive for extracting documentation comments and rendering docs and
   diagrams from `.g4` source files.
 
+<!--- cut --->
+
 ## Resources
 
 - [Documentation](https://amatanhead.github.io/sphinx-a4doc/)
