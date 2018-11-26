@@ -101,6 +101,13 @@ class AutoDirectiveSettings:
 
     """
 
+    inherited_options: bool = True
+    """
+    Generate documentation for inherited options (i.e., options that are
+    not in the namespace dataclass, but in its bases).
+
+    """
+
     prefix_filter: Optional[List[str]] = None
     """
     Filter options documentation by option prefix.
@@ -254,11 +261,11 @@ class AutoDirective(ReSTDirective, ManagedDirective):
             opt_node += p
 
         for p, cls, fields in sorted(options, key=lambda x: x[0]):
-            fields = [
+            fields = filter(lambda x: x[0], [
                 (self.resolve_arg_doc_and_index(field.name, cls), field)
                 for field in fields
-            ]
-            fields.sort(key=lambda x: (x[0][0], x[1].name))
+            ])
+            fields = sorted(fields, key=lambda x: (x[0][0], x[1].name))
             for (i, doc), field in fields:
                 if p:
                     p += '-'
@@ -327,17 +334,20 @@ class AutoDirective(ReSTDirective, ManagedDirective):
 
         return body
 
-    @classmethod
-    def resolve_arg_doc_and_index(cls, name, dataclass: type) -> Tuple[Tuple[int, int], str]:
-        for i, base in enumerate(dataclass.__mro__):
+    def resolve_arg_doc_and_index(self, name, dataclass: type) -> Optional[Tuple[Tuple[int, int], str]]:
+        if self.settings.inherited_options:
+            bases = dataclass.__mro__
+        else:
+            bases = [dataclass]
+        for i, base in enumerate(bases):
             analyzer = ModuleAnalyzer.for_module(base.__module__)
             docs = analyzer.find_attr_docs()
-            if (dataclass.__name__, name) in docs:
-                tag = analyzer.tagorder[f'{dataclass.__name__}.{name}']
-                return (i, tag), cls.canonize_docstring(
-                    '\n'.join(docs[dataclass.__name__, name])
+            if (base.__qualname__, name) in docs:
+                tag = analyzer.tagorder[f'{base.__qualname__}.{name}']
+                return (-i, tag), self.canonize_docstring(
+                    '\n'.join(docs[base.__qualname__, name])
                 )
-        return (1000, 1000), ''
+        return None
 
 
 def setup(app: sphinx.application.Sphinx):
