@@ -293,9 +293,9 @@ class RuleSettings:
 
 
 @dataclass(frozen=True)
-class AutodocSettings:
+class AutogrammarSettings(GrammarSettings):
     """
-    Settings for autodoc directives.
+    Settings for autogrammar directive.
 
     """
 
@@ -327,13 +327,6 @@ class AutodocSettings:
     :rst:opt:`only-reachable-from` will use complex line endings
     (see the :rst:opt:`end-class <railroad-diagram:end-class>` option
     of the :rst:dir:`railroad-diagram` directive).
-
-    """
-
-    name: Optional[str] = field(default=None, metadata=dict(no_global=True, rebuild=True))
-    """
-    Set human-readable name for this grammar. Refer to the corresponding
-    :rst:opt:`a4:grammar <a4:grammar:name>`'s option for more info.
 
     """
 
@@ -409,7 +402,7 @@ class GlobalSettings:
 diagram_namespace = Namespace('a4_diagram', DiagramSettings)
 grammar_namespace = Namespace('a4_grammar', GrammarSettings)
 rule_namespace = Namespace('a4_rule', RuleSettings)
-autodoc_namespace = Namespace('a4_autodoc', AutodocSettings)
+autodoc_namespace = Namespace('a4_autodoc', AutogrammarSettings)
 global_namespace = Namespace('a4', GlobalSettings)
 
 

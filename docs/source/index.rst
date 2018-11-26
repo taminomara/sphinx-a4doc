@@ -181,15 +181,15 @@ Rendering diagrams
 .. rst:autodirective:: railroad-diagram
 
 .. rst:autodirective:: lexer-rule-diagram
-   :no-options:
 
 .. rst:autodirective:: parser-rule-diagram
-   :no-options:
 
 Autodoc directive
 ~~~~~~~~~~~~~~~~~
 
-.. rst:autodirective:: .. a4:autogrammar:: name
+.. rst:autodirective:: .. a4:autogrammar:: filename
+   :no-inherited-options:
+   :no-options-header:
 
 .. rst:autodirective:: docstring-marker
 
@@ -221,7 +221,7 @@ Example output
 This example was generated from
 `Json.g4 <https://github.com/AmatanHead/sphinx-a4doc/blob/master/docs/examples/Json.g4>`_.
 
-.. a4:autogrammar:: Json
+.. a4:autogrammar:: ./Json
    :only-reachable-from: value
 
 Indices and tables

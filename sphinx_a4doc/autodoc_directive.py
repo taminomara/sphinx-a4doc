@@ -20,26 +20,47 @@ from sphinx_a4doc.contrib.marker_nodes import find_or_add_marker
 from typing import *
 
 
-class AutoGrammar(sphinx.util.docutils.SphinxDirective, ManagedDirective):
+class AutoGrammar(Grammar):
     """
-    Autogrammar directive generates a grammar description by reading a ``.g4``
-    file and inspecting its documentation comments.
+    Autogrammar directive generates a grammar description from a ``.g4`` file.
 
-    The :rst:dir:`a4:autogrammar` directive designed to behave like it's
-    :rst:dir:`a4:grammar`
-
-    Its only argument, ``name``, should contain name of the grammar which
-    will be parsed. It is passed unchanged to a grammar resolver which,
-    by default, loads a file ``{a4_base_path}/{name}.g4`` (where
-    ``a4_base_path`` is a variable defined in ``conf.py``). See more on how
-    to customize grammar file lookup process in the ':ref:`custom_lookup`'
-    section.
+    Its only argument, ``name``, should contain path of the grammar file
+    relative to the ``a4_base_path``. File extension may be omitted.
 
     .. TODO: reference to global settings
+    .. TODO: mention grammar resolver (once it's implemented).
+
+    Autogrammar will read a ``.g4`` file and extract grammar name (which will
+    be used for cross-referencing), grammar-level documentation comments,
+    set of production rules, their documentation and contents. It will then
+    generate railroad diagrams and render extracted information.
 
     See more on how to write documentation comments and control look of the
     automatically generated railroad diagrams in the ':ref:`grammar_comments`'
     section.
+
+    Like :rst:dir:`autoclass` and other default autodoc directives,
+    ``autogrammar`` can have contents on its own. These contents will
+    be merged with the automatically generated description.
+
+    Use :rst:dir:`docstring-marker` and :rst:dir:`members-marker` to control
+    merging process.
+
+    **Options:**
+
+    .. rst:option:: name
+                    type
+                    imports
+                    noindex
+                    diagram-*
+
+       Inherited from :rst:dir:`a4:grammar` directive.
+
+       If not given, :rst:opt:`:type: <a4:grammar:type>` and
+       :rst:opt:`:imports: <a4:grammar:imports>`
+       will be extracted from grammar file.
+
+    .. members-marker::
 
     """
 
@@ -48,8 +69,6 @@ class AutoGrammar(sphinx.util.docutils.SphinxDirective, ManagedDirective):
 
     settings = autodoc_namespace.for_directive()
 
-    diagram_settings = diagram_namespace.for_directive('diagram')
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, *kwargs)
 
@@ -57,6 +76,8 @@ class AutoGrammar(sphinx.util.docutils.SphinxDirective, ManagedDirective):
         self.root_rule: Optional[RuleBase] = None
 
     def run(self):
+        self.name = 'a4:grammar'
+
         # Load model from file
         model = self.load_model(self.arguments[0])
         # Early exit
@@ -68,20 +89,26 @@ class AutoGrammar(sphinx.util.docutils.SphinxDirective, ManagedDirective):
                     line=self.lineno
                 )
             ]
-        # Create the `Grammar` directive which will be used for nested parse
-        grammar_dir = self.make_grammar_directive(model)
-        # From now on we want diagram settings to affect every nested diagram
-        self.push_settings(diagram_namespace, self.diagram_settings)
+        # Update settings from model
+        if 'imports' not in self.options:
+            self.options['imports'] = [
+                i.get_name() for i in model.get_imports() if i.get_name()
+            ]
+        if 'type' not in self.options and model.get_type():
+            self.options['type'] = GrammarType[model.get_type().upper()]
+
+        self.arguments = [model.get_name()]
+
         try:
             # Create a skeleton of the grammar description
-            nodes = grammar_dir.run()
+            nodes = super(AutoGrammar, self).run()
             # If user described some rules manually, we want that descriptions
             # to replace ones obtained from the grammar file. We also want to
             # remove all descriptions temporarily to rearrange them according
             # to the `ordering` settings
             desc_content, rule_nodes = self.cut_rule_descriptions(model, nodes)
             # Set proper ref_context
-            grammar_dir.before_content()
+            self.before_content()
             try:
                 # Find place where docstring should be rendered
                 doc_node = find_or_add_marker(desc_content, 'docstring')
@@ -105,46 +132,22 @@ class AutoGrammar(sphinx.util.docutils.SphinxDirective, ManagedDirective):
                 # Insert rule descriptions to the document
                 rules_node.replace_self(rules_node.children)
             finally:
-                grammar_dir.after_content()
+                self.after_content()
 
             return nodes
         finally:
-            self.pop_settings(diagram_namespace)
             self.register_deps()
 
     def load_model(self, name: str) -> Model:
         # TODO: use grammar resolver
         base_path = global_namespace.load_global_settings(self.env).base_path
-        path = os.path.join(base_path, name + '.g4')
+        if not name.endswith('.g4'):
+            name += '.g4'
+        name = os.path.normpath(os.path.expanduser(name))
+        path = os.path.join(base_path, name)
         model = ModelCache.instance().from_file(path)
         self.used_models.add(model)
         return model
-
-    def make_grammar_directive(self, model):
-        options = {
-            'imports': [i.get_name() for i in model.get_imports() if i.get_name()],
-        }
-
-        if 'noindex' in self.options:
-            options['noindex'] = None
-
-        if self.settings.name:
-            options['name'] = self.settings.name
-
-        if model.get_type():
-            options['type'] = GrammarType[model.get_type().upper()]
-
-        return Grammar(
-            name='a4:grammar',
-            arguments=[model.get_name()],
-            options=options,
-            content=self.content,
-            lineno=self.lineno,
-            content_offset=self.content_offset,
-            block_text=self.block_text,
-            state=self.state,
-            state_machine=self.state_machine
-        )
 
     def cut_rule_descriptions(self, model, nodes):
         desc_content = None
