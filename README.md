@@ -16,6 +16,8 @@ A4Doc's features are:
 ## Resources
 
 - [Documentation](https://amatanhead.github.io/sphinx-a4doc/)
+- [Installation](https://amatanhead.github.io/sphinx-a4doc/#installation)
+- [Quickstart](https://amatanhead.github.io/sphinx-a4doc/#quickstart)
 - [Example output](https://amatanhead.github.io/sphinx-a4doc/#example-output)
 
 ## Requirements
@@ -28,5 +30,3 @@ A4Doc's features are:
 ```sh
 pip3 install sphinx-a4doc
 ```
-
-[Details](https://amatanhead.github.io/sphinx-a4doc/#installation)
