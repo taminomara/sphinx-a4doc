@@ -400,9 +400,9 @@ def _parse_options(cls, options, prefix=''):
         if name not in options and field.type is not bool:
             continue
         if field.type is bool:
-            if field.name in options:
+            if name in options:
                 result[field.name] = True
-            elif 'no-' + field.name in options:
+            elif 'no-' + name in options:
                 result[field.name] = False
         else:
             result[field.name] = options[name]
