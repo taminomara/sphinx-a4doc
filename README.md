@@ -25,7 +25,7 @@ A4Doc's features are:
 - python >= 3.7
 - sphinx >= 1.8.0
 
-## Install
+## Installation
 
 ```sh
 pip3 install sphinx-a4doc
