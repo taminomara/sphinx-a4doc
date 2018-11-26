@@ -200,6 +200,124 @@ Autodoc directive
 Grammar comments and annotations
 --------------------------------
 
+The :rst:dir:`a4:autogrammar` directive does not parse any comment that's found
+in a grammar file. Instead, it searches for 'documentation' comments, i.e. ones
+specially formatted. There are two types of such comments:
+
+- documentation comments are multiline comments that start with ``/**``
+  (that is, a slash followed by double asterisk). These comments should contain
+  valid rst-formatted text.
+
+  It is common to outline documentation comments by adding an asterisk on each
+  row. Though this is completely optional, a4doc can recognize and handle
+  this pattern.
+
+  Example:
+
+  .. code-block:: antlr
+
+     /**
+      * This is the grammar root.
+      */
+     module: moduleItem* EOF
+
+- control comments are inline comments that start with ``//@``. Control
+  comments contain special commands that affect rendering process.
+
+  Example:
+
+  .. code-block:: antlr
+
+     //@ doc:no-diagram
+     module: moduleItem* EOF
+
+There are also restrictions on were documentation and control comments may
+appear:
+
+- documentation comments can be placed either at the beginning of the file,
+  before the ``grammar`` keyword (in which case they document the whole
+  grammar), or they can be found right before a production rule or a fragment
+  declaration (in which case they are rendered as a rule description);
+- control comments can only be placed before a production rule declaration.
+  They only affect rendering of that specific production rule;
+- multiple documentation and control comments can appear before a rule. In this
+  case, the first documentation comment will be rendered before automatically
+  generated railroad diagram, all sequential documentation comments will
+  be rendered after it, and all control comments will be applied before
+  rendering documentation comments.
+
+.. _control_comments:
+
+Control comments
+~~~~~~~~~~~~~~~~
+
+The list of control comments includes:
+
+- ``//@ doc:nodoc`` -- exclude this rule from ``autogrammar`` output.
+
+- ``//@ doc:inline`` -- exclude this rule from ``autogrammar`` output; any
+  automatically generated railroad diagram that refer this rule will
+  include its contents instead of a single node.
+
+  Useful for fragments and simple lexer rules.
+
+  For example
+
+  .. code-block:: antlr
+
+     NUMBER
+         : '-'? ('0' | [1-9] [0-9]*) ('.' [0-9]+)? EXPONENT?
+         ;
+
+     //@ doc:inline
+     fragment EXPONENT
+         : ('e' | 'E')? ('+' | '-')? [0-9]+
+         ;
+
+  will produce the :a4:r:`Json.NUMBER` rule (note how exponent is rendered
+  inside of the number diagram).
+
+- ``//@ doc:no-diagram`` -- do not generate railroad diagram.
+
+- ``//@ doc:importance <int>`` -- controls the 'importance' of a rule.
+
+  By default, all rules have importance of ``1``.
+
+  Rules with importance of ``0`` will be rendered off the main line in optional
+  groups:
+
+  .. parser-rule-diagram:: R1? R0?;
+
+     //@ doc:name Rule with importance 0
+     //@ doc:importance 0
+     R0 : EOF;
+
+     //@ doc:name Rule with importance 1
+     //@ doc:importance 1
+     R1 : EOF
+
+  In alternative groups, rule with the highest priority will be centered:
+
+  .. parser-rule-diagram:: (R0 | R1) (R2 | R1);
+
+     //@ doc:name Rule with importance 0
+     //@ doc:importance 0
+     R0 : EOF;
+
+     //@ doc:name Rule with importance 1
+     //@ doc:importance 1
+     R1 : EOF;
+
+     //@ doc:name Rule with importance 2
+     //@ doc:importance 2
+     R2 : EOF
+
+- ``//@ doc:unimportant`` -- set importance to ``0``.
+
+- ``//@ doc:name <str>`` -- set a human-readable name for this rule.
+  See :rst:opt:`a4:rule:name` option.
+
+
 .. _config:
 
 Configuration
@@ -210,10 +328,10 @@ Configuration
 Customizing diagram style
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. _custom_lookup:
+.. . .. _custom_lookup:
 
-Customizing process of grammar files lookup
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. . Customizing process of grammar files lookup
+.. . ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Example output
 --------------

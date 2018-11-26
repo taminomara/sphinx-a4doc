@@ -411,7 +411,8 @@ class LexerRuleDiagram(RailroadDiagram):
     """
 
     def get_content(self):
-        content = f'grammar X; ROOT : {" ".join(self.content)} ;'
+        raw = "\n".join(self.content)
+        content = f'grammar X; ROOT : {raw} ;'
         model = ModelCache.instance().from_text(
             content, (self.state_machine.reporter.source, self.content_offset))
         tree = model.lookup('ROOT')
@@ -453,7 +454,8 @@ class ParserRuleDiagram(RailroadDiagram):
     """
 
     def get_content(self):
-        content = f'grammar X; root : {" ".join(self.content)} ;'
+        raw = "\n".join(self.content)
+        content = f'grammar X; root : {raw} ;'
         model = ModelCache.instance().from_text(
             content, (self.state_machine.reporter.source, self.content_offset))
         tree = model.lookup('root')
