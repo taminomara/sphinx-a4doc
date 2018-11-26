@@ -6,10 +6,8 @@ import docutils.nodes
 import sphinx.addnodes
 import sphinx.util.docutils
 
-from sphinx_a4doc.contrib.configurator import ManagedDirective
-
 from sphinx_a4doc.settings import GrammarType, OrderSettings, GroupingSettings, EndClass
-from sphinx_a4doc.settings import global_namespace, autodoc_namespace, diagram_namespace
+from sphinx_a4doc.settings import global_namespace, autodoc_namespace
 from sphinx_a4doc.domain import Grammar, Rule
 from sphinx_a4doc.diagram_directive import RailroadDiagramNode
 from sphinx_a4doc.model.model import ModelCache, Model, RuleBase
