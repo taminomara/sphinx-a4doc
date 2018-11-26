@@ -8,7 +8,7 @@ for compiler developers).
 
 A4Doc's features are:
 
-- a new domain with grammar and rule directives called a4;
+- a new domain with grammar and rule directives called ``a4``;
 - directives for rendering railroad diagrams;
 - directive for extracting documentation comments and rendering docs and
   diagrams from `.g4` source files.
@@ -28,3 +28,5 @@ A4Doc's features are:
 ```sh
 pip3 install sphinx-a4doc
 ```
+
+[Details](https://amatanhead.github.io/sphinx-a4doc/#installation)
