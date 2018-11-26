@@ -3,11 +3,11 @@ import re
 
 with open('README.md', encoding='utf-8') as readme_file:
     readme = readme_file.read()
-readme = re.sub(r'<!---\s*cut\s*--->.*', '', readme, flags=re.MULTILINE)
+    readme = readme[:readme.find('<!--- cut --->')]
 
 setup(
     name='sphinx-a4doc',
-    version='0.0.0.dev0',
+    version='0.0.0.dev1',
     description='Sphinx domain and autodoc for Antlr4 grammars',
     long_description=readme,
     long_description_content_type='text/markdown',
