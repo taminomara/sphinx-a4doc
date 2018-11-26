@@ -1,11 +1,17 @@
 from setuptools import setup
 
+with open('README.md', encoding='utf-8') as readme_file:
+    readme = readme_file.read()
+
 setup(
     name='sphinx-a4doc',
-    version='1.0.0',
-    description='Sphinx domain and autodoc for Antlr4 grammar files',
+    version='0.0.0.dev0',
+    description='Sphinx domain and autodoc for Antlr4 grammars',
+    long_description=readme,
+    long_description_content_type='text/markdown',
     author='Vladimir Goncharov',
     author_email='dev.zelta@gmail.com',
+    url='https://github.com/AmatanHead/sphinx-a4doc',
     packages=[
         'sphinx_a4doc'
     ],
@@ -15,5 +21,23 @@ setup(
         'PyYAML'
     ],
     python_requires='>=3.7',
-    zip_safe=False
+    license='MIT',
+    keywords='sphinx antlr4 autodoc',
+    project_urls={
+        'Documentation': 'https://amatanhead.github.io/sphinx-a4doc/',
+        'Source': 'https://github.com/AmatanHead/sphinx-a4doc',
+        'Tracker': 'https://github.com/AmatanHead/sphinx-a4doc/issues',
+    },
+    classifiers=[
+        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.7',
+        'License :: OSI Approved :: MIT License',
+        'Framework :: Sphinx',
+        'Framework :: Sphinx :: Extension',
+        'Topic :: Software Development :: Documentation',
+        'Topic :: Documentation',
+        'Topic :: Documentation :: Sphinx',
+    ],
+    zip_safe=False,
 )
