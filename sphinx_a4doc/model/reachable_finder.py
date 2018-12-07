@@ -1,5 +1,5 @@
 from sphinx_a4doc.model.model import RuleBase
-from sphinx_a4doc.model.visitor import RuleContentVisitor
+from sphinx_a4doc.model.visitor import RuleContentVisitor, T
 
 from typing import *
 
@@ -28,6 +28,9 @@ class _ReachableFiner(RuleContentVisitor[Set[RuleBase]]):
         else:
             self._seen.add(ref)
             return {ref} | self.visit(ref.content)
+
+    def visit_doc(self, r: RuleBase.Doc) -> T:
+        return set()
 
     def visit_wildcard(self, r: RuleBase.Wildcard) -> Set[RuleBase]:
         return set()

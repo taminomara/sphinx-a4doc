@@ -40,6 +40,9 @@ class RuleContentVisitor(Generic[T]):
     def visit_lexer_reference(self, r: LexerRule.Reference) -> T:
         return self.visit_reference(r)
 
+    def visit_lexer_doc(self, r: LexerRule.Doc) -> T:
+        return self.visit_doc(r)
+
     def visit_lexer_wildcard(self, r: LexerRule.Wildcard) -> T:
         return self.visit_wildcard(r)
 
@@ -65,6 +68,9 @@ class RuleContentVisitor(Generic[T]):
 
     def visit_parser_reference(self, r: ParserRule.Reference) -> T:
         return self.visit_reference(r)
+
+    def visit_parser_doc(self, r: ParserRule.Doc) -> T:
+        return self.visit_doc(r)
 
     def visit_parser_wildcard(self, r: ParserRule.Wildcard) -> T:
         return self.visit_wildcard(r)
@@ -99,6 +105,9 @@ class RuleContentVisitor(Generic[T]):
         return self.visit_default(r)
 
     def visit_reference(self, r: RuleBase.Reference) -> T:
+        return self.visit_default(r)
+
+    def visit_doc(self, r: RuleBase.Doc) -> T:
         return self.visit_default(r)
 
     def visit_wildcard(self, r: RuleBase.Wildcard) -> T:

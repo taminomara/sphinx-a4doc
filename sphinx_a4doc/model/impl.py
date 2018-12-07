@@ -404,6 +404,10 @@ class LexerRuleLoader(RuleLoader):
     def visitLexerAtomWildcard(self, ctx: Parser.LexerAtomWildcardContext):
         return LexerRule.WILDCARD
 
+    def visitLexerAtomDoc(self, ctx: Parser.LexerAtomDocContext):
+        docs = load_docs(self._model, [ctx.value], False)['documentation']
+        return LexerRule.Doc(value='\n'.join(d[1] for d in docs))
+
     def visitNotElement(self, ctx: Parser.NotElementContext):
         return LexerRule.Negation(child=self.visit(ctx.value))
 
@@ -484,6 +488,10 @@ class ParserRuleLoader(RuleLoader):
 
     def visitParserElementAction(self, ctx: Parser.ParserElementActionContext):
         return ParserRule.EMPTY
+
+    def visitParserInlineDoc(self, ctx: Parser.ParserInlineDocContext):
+        docs = load_docs(self._model, [ctx.value], False)['documentation']
+        return ParserRule.Doc(value='\n'.join(d[1] for d in docs))
 
     def visitLabeledElement(self, ctx: Parser.LabeledElementContext):
         return self.visit(ctx.atom() or ctx.block())

@@ -26,6 +26,9 @@ class ImportanceProvider(CachedRuleContentVisitor[int]):
         else:
             return rule.importance
 
+    def visit_doc(self, r: RuleBase.Doc) -> int:
+        return 0
+
     def visit_wildcard(self, r: RuleBase.Wildcard) -> int:
         return 1
 
@@ -147,6 +150,9 @@ class Renderer(CachedRuleContentVisitor[dict]):
                 title_is_weak=True)
         else:
             assert False
+
+    def visit_doc(self, r: RuleBase.Doc):
+        return self._comment(r.value)
 
     def visit_wildcard(self, r: RuleBase.Wildcard):
         return self._wildcard('.')

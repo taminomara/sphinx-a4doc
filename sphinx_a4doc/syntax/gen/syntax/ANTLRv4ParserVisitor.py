@@ -289,6 +289,11 @@ class ANTLRv4ParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by ANTLRv4Parser#parserInlineDoc.
+    def visitParserInlineDoc(self, ctx:ANTLRv4Parser.ParserInlineDocContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by ANTLRv4Parser#labeledElement.
     def visitLabeledElement(self, ctx:ANTLRv4Parser.LabeledElementContext):
         return self.visitChildren(ctx)
@@ -321,6 +326,11 @@ class ANTLRv4ParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by ANTLRv4Parser#lexerAtomWildcard.
     def visitLexerAtomWildcard(self, ctx:ANTLRv4Parser.LexerAtomWildcardContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ANTLRv4Parser#lexerAtomDoc.
+    def visitLexerAtomDoc(self, ctx:ANTLRv4Parser.LexerAtomDocContext):
         return self.visitChildren(ctx)
 
 

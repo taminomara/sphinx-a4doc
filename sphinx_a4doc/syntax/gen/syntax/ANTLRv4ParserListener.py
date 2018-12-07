@@ -512,6 +512,15 @@ class ANTLRv4ParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by ANTLRv4Parser#parserInlineDoc.
+    def enterParserInlineDoc(self, ctx:ANTLRv4Parser.ParserInlineDocContext):
+        pass
+
+    # Exit a parse tree produced by ANTLRv4Parser#parserInlineDoc.
+    def exitParserInlineDoc(self, ctx:ANTLRv4Parser.ParserInlineDocContext):
+        pass
+
+
     # Enter a parse tree produced by ANTLRv4Parser#labeledElement.
     def enterLabeledElement(self, ctx:ANTLRv4Parser.LabeledElementContext):
         pass
@@ -572,6 +581,15 @@ class ANTLRv4ParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by ANTLRv4Parser#lexerAtomWildcard.
     def exitLexerAtomWildcard(self, ctx:ANTLRv4Parser.LexerAtomWildcardContext):
+        pass
+
+
+    # Enter a parse tree produced by ANTLRv4Parser#lexerAtomDoc.
+    def enterLexerAtomDoc(self, ctx:ANTLRv4Parser.LexerAtomDocContext):
+        pass
+
+    # Exit a parse tree produced by ANTLRv4Parser#lexerAtomDoc.
+    def exitLexerAtomDoc(self, ctx:ANTLRv4Parser.LexerAtomDocContext):
         pass
 
 

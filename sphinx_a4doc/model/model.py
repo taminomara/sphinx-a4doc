@@ -328,6 +328,17 @@ class RuleBase:
             return self.model.lookup(self.name)
 
     @dataclass(frozen=True)
+    @meta(visitor_relay='visit_doc')
+    @meta(precedence=4, formatter=lambda x, f: f'/** {x.value} */')
+    class Doc(RuleContent):
+        """
+        Inline documentation.
+
+        """
+
+        value: str
+
+    @dataclass(frozen=True)
     @meta(visitor_relay='visit_wildcard')
     @meta(precedence=4, formatter=lambda x, f: f'.')
     class Wildcard(RuleContent):
@@ -491,6 +502,11 @@ class LexerRule(RuleBase):
             return rule
 
     @dataclass(frozen=True)
+    @meta(visitor_relay='visit_lexer_doc')
+    class Doc(RuleContent, RuleBase.Doc):
+        pass
+
+    @dataclass(frozen=True)
     @meta(visitor_relay='visit_lexer_wildcard')
     class Wildcard(RuleContent, RuleBase.Wildcard):
         pass
@@ -543,6 +559,11 @@ class ParserRule(RuleBase):
     @dataclass(frozen=True)
     @meta(visitor_relay='visit_parser_reference')
     class Reference(RuleContent, RuleBase.Reference):
+        pass
+
+    @dataclass(frozen=True)
+    @meta(visitor_relay='visit_parser_doc')
+    class Doc(RuleContent, RuleBase.Doc):
         pass
 
     @dataclass(frozen=True)

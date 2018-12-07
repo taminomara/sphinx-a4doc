@@ -289,6 +289,7 @@ element
    | value=atom suffix=ebnfSuffix? # parserElementAtom
    | value=block suffix=ebnfSuffix? # parserElementBlock
    | actionBlock QUESTION? # parserElementAction
+   | value=DOC_COMMENT # parserInlineDoc
    ;
 
 labeledElement
@@ -309,6 +310,7 @@ lexerAtom
    | notSet # lexerAtomNot
    | value=LEXER_CHAR_SET # lexerAtomCharSet
    | DOT elementOptions? # lexerAtomWildcard
+   | value=DOC_COMMENT # lexerAtomDoc
    ;
 
 atom
