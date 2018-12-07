@@ -18,7 +18,52 @@ from sphinx_a4doc.contrib.marker_nodes import find_or_add_marker
 from typing import *
 
 
-class AutoGrammar(Grammar):
+class ModelLoaderMixin:
+    used_models: Optional[Set[Model]] = None
+
+    def load_model(self, name: str) -> Model:
+        # TODO: use grammar resolver
+        base_path = global_namespace.load_global_settings(self.env).base_path
+        if not name.endswith('.g4'):
+            name += '.g4'
+        name = os.path.normpath(os.path.expanduser(name))
+        path = os.path.join(base_path, name)
+        model = ModelCache.instance().from_file(path)
+        if self.used_models is None:
+            self.used_models = set()
+        self.used_models.add(model)
+        return model
+
+    def register_deps(self):
+        if self.used_models is None:
+            return
+        seen = set()
+        models = self.used_models.copy()
+        while models:
+            model = models.pop()
+            if model in seen:
+                continue
+            if not model.is_in_memory():
+                self.state.document.settings.record_dependencies.add(model.get_path())
+            models.update(model.get_imports())
+            seen.add(model)
+
+
+class DocsRendererMixin:
+    def render_docs(self, path: str, docs: List[Tuple[int, str]], node):
+        docs = docs or []
+
+        for line, doc in docs:
+            lines = doc.splitlines()
+            items = [(path, line + i - 1) for i in range(len(lines))]
+
+            content = docutils.statemachine.StringList(lines, items=items)
+
+            with sphinx.util.docutils.switch_source_input(self.state, content):
+                self.state.nested_parse(content, 0, node)
+
+
+class AutoGrammar(Grammar, ModelLoaderMixin, DocsRendererMixin):
     """
     Autogrammar directive generates a grammar description from a ``.g4`` file.
 
@@ -70,7 +115,6 @@ class AutoGrammar(Grammar):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, *kwargs)
 
-        self.used_models: Set[Model] = set()
         self.root_rule: Optional[RuleBase] = None
 
     def run(self):
@@ -135,17 +179,6 @@ class AutoGrammar(Grammar):
             return nodes
         finally:
             self.register_deps()
-
-    def load_model(self, name: str) -> Model:
-        # TODO: use grammar resolver
-        base_path = global_namespace.load_global_settings(self.env).base_path
-        if not name.endswith('.g4'):
-            name += '.g4'
-        name = os.path.normpath(os.path.expanduser(name))
-        path = os.path.join(base_path, name)
-        model = ModelCache.instance().from_file(path)
-        self.used_models.add(model)
-        return model
 
     def cut_rule_descriptions(self, model, nodes):
         desc_content = None
@@ -299,26 +332,105 @@ class AutoGrammar(Grammar):
 
         return nodes
 
-    def render_docs(self, path: str, docs: List[Tuple[int, str]], node):
-        docs = docs or []
 
-        for line, doc in docs:
-            lines = doc.splitlines()
-            items = [(path, line + i - 1) for i in range(len(lines))]
+class AutoRule(Rule, ModelLoaderMixin, DocsRendererMixin):
+    """
+    Autorule directive renders documentation for a single rule.
+    It accepts two arguments, first is a path to the grammar file relative
+    to the ``a4_base_path``, second is name of the rule that should
+    be documented.
 
-            content = docutils.statemachine.StringList(lines, items=items)
+    Note that autorule can only be used when within a grammar definition.
+    Name of the current grammar definition must match name of the grammar
+    from which the documented rule is imported.
 
-            with sphinx.util.docutils.switch_source_input(self.state, content):
-                self.state.nested_parse(content, 0, node)
+    """
 
-    def register_deps(self):
-        seen = set()
-        models = self.used_models.copy()
-        while models:
-            model = models.pop()
-            if model in seen:
+    required_arguments = 2
+    has_content = True
+
+    def run(self):
+        self.name = 'a4:rule'
+
+        model = self.load_model(self.arguments[0])
+        if model.has_errors():
+            self.register_deps()
+            return [
+                self.state_machine.reporter.error(
+                    'unable to document this rule',
+                    line=self.lineno
+                )
+            ]
+
+        if self.env.ref_context.get('a4:grammar') != model.get_name():
+            return [
+                self.state_machine.reporter.error(
+                    f'cannot only use autorule while within a proper '
+                    f'grammar definition',
+                    line=self.lineno
+                )
+            ]
+
+        rule = model.lookup(self.arguments[1])
+        if rule is None:
+            self.register_deps()
+            return [
+                self.state_machine.reporter.error(
+                    f'unknown rule {self.arguments[1]!r}',
+                    line=self.lineno
+                )
+            ]
+
+        if rule.display_name and 'name' not in self.options:
+            self.options['name'] = rule.display_name
+
+        self.arguments = [rule.name]
+
+        try:
+            nodes = super(AutoRule, self).run()
+
+            desc_content = self.find_desc_content(nodes)
+
+            self.before_content()
+            try:
+                doc_node = find_or_add_marker(desc_content, 'docstring')
+
+                if rule.documentation:
+                    self.render_docs(rule.position.file, rule.documentation[:1], doc_node)
+                    docs = rule.documentation[1:]
+                else:
+                    docs = rule.documentation
+
+                if not rule.is_doxygen_no_diagram:
+                    env = self.env
+                    grammar = env.ref_context.get('a4:grammar', '__default__')
+                    dia = Renderer().visit(rule.content)
+
+                    settings = self.diagram_settings
+
+                    doc_node.append(
+                        RailroadDiagramNode(dia, settings, grammar)
+                    )
+
+                self.render_docs(rule.position.file, docs, doc_node)
+
+                doc_node.replace_self(doc_node.children)
+            finally:
+                self.after_content()
+
+            return nodes
+        finally:
+            self.register_deps()
+
+    def find_desc_content(self, nodes):
+        for node in nodes:
+            if not isinstance(node, sphinx.addnodes.desc):
                 continue
-            if not model.is_in_memory():
-                self.state.document.settings.record_dependencies.add(model.get_path())
-            models.update(model.get_imports())
-            seen.add(model)
+
+            for content_node in node.children:
+                if isinstance(content_node, sphinx.addnodes.desc_content):
+                    return content_node
+
+            break
+
+        raise RuntimeError('no desc_content can be found')

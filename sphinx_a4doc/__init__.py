@@ -5,7 +5,7 @@ import sphinx.application
 from sphinx_a4doc.domain import A4Domain
 from sphinx_a4doc.diagram_directive import RailroadDiagramNode, RailroadDiagram, LexerRuleDiagram, ParserRuleDiagram
 from sphinx_a4doc.settings import register_settings
-from sphinx_a4doc.autodoc_directive import AutoGrammar
+from sphinx_a4doc.autodoc_directive import AutoGrammar, AutoRule
 
 
 def config_inited(app, config):
@@ -27,6 +27,7 @@ def setup(app: sphinx.application.Sphinx):
     app.add_directive('parser-rule-diagram', ParserRuleDiagram)
 
     app.add_directive_to_domain('a4', 'autogrammar', AutoGrammar)
+    app.add_directive_to_domain('a4', 'autorule', AutoRule)
 
     register_settings(app)
 

@@ -224,7 +224,7 @@ class Diagram:
                     ctors_found.append(name)
 
             if len(ctors_found) != 1:
-                raise ValueError(f'cannot deternine type for {structure!r}')
+                raise ValueError(f'cannot determine type for {structure!r}')
 
             name = ctors_found[0]
             structure = structure.copy()
