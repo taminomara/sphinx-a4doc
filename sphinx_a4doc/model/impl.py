@@ -60,18 +60,18 @@ class ModelCacheImpl(ModelCache):
             return model
 
         with open(path, 'r', encoding='utf-8', errors='strict') as f:
-            self._loaded[path] = self._do_load(f.read(), path, offset, False)
+            self._loaded[path] = self._do_load(f.read(), path, offset, False, [])
 
         return self._loaded[path]
 
-    def from_text(self, text: str, path: Union[str, Tuple[str, int]] = '<in-memory>') -> 'Model':
+    def from_text(self, text: str, path: Union[str, Tuple[str, int]] = '<in-memory>', imports: List['Model'] = None) -> 'Model':
         if isinstance(path, tuple):
             path, offset = path
         else:
             path, offset = path, 0
-        return self._do_load(text, path, offset, True)
+        return self._do_load(text, path, offset, True, imports)
 
-    def _do_load(self, text: str, path: str, offset: int, in_memory: bool) -> 'Model':
+    def _do_load(self, text: str, path: str, offset: int, in_memory: bool, imports: List['Model']) -> 'Model':
         content = InputStream(text)
 
         lexer = Lexer(content)
@@ -90,6 +90,9 @@ class ModelCacheImpl(ModelCache):
             return ModelImpl(path, offset, in_memory, True)
 
         model = ModelImpl(path, offset, in_memory, False)
+
+        for im in imports or []:
+            model.add_import(im)
 
         MetaLoader(model, self).visit(tree)
         LexerRuleLoader(model).visit(tree)
@@ -144,9 +147,6 @@ class ModelImpl(Model):
         return self._offset
 
     def add_import(self, model: 'Model'):
-        # actually, loader will not call this function on in-memory models
-        assert not self.is_in_memory()
-        assert not model.is_in_memory()
         self._imports.add(model)
 
     def set_lexer_rule(self, name: str, rule: LexerRule):

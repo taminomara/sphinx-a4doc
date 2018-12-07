@@ -51,7 +51,7 @@ class ModelCache(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def from_text(self, text: str, path: Union[str, Tuple[str, int]] = '<in-memory>') -> 'Model':
+    def from_text(self, text: str, path: Union[str, Tuple[str, int]] = '<in-memory>', imports: List['Model'] = None) -> 'Model':
         """
         Load model from text.
         Models are not cached; they also cannot have any imports.

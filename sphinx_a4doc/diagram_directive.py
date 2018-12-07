@@ -387,7 +387,16 @@ class RailroadDiagram(sphinx.util.docutils.SphinxDirective, ManagedDirective):
         return yaml.safe_load('\n'.join(self.content))
 
 
-class LexerRuleDiagram(RailroadDiagram):
+class AntlrDiagram(RailroadDiagram):
+    def get_imports(self):
+        if self.env.temp_data.get('a4:autogrammar_ctx'):
+            path = self.env.temp_data['a4:autogrammar_ctx'][-1]
+            return [ModelCache.instance().from_file(path)]
+        else:
+            return []
+
+
+class LexerRuleDiagram(AntlrDiagram):
     """
     The body of this directive should contain a valid Antlr4 lexer rule
     description.
@@ -414,14 +423,15 @@ class LexerRuleDiagram(RailroadDiagram):
         raw = "\n".join(self.content)
         content = f'grammar X; ROOT : {raw} ;'
         model = ModelCache.instance().from_text(
-            content, (self.state_machine.reporter.source, self.content_offset))
+            content, (self.state_machine.reporter.source, self.content_offset),
+            self.get_imports())
         tree = model.lookup('ROOT')
         if tree is None or tree.content is None:
             raise RuntimeError('cannot parse the rule')
         return Renderer().visit(tree.content)
 
 
-class ParserRuleDiagram(RailroadDiagram):
+class ParserRuleDiagram(AntlrDiagram):
     """
     The body of this directive should contain a valid Antlr4 parser rule
     description.
@@ -457,7 +467,8 @@ class ParserRuleDiagram(RailroadDiagram):
         raw = "\n".join(self.content)
         content = f'grammar X; root : {raw} ;'
         model = ModelCache.instance().from_text(
-            content, (self.state_machine.reporter.source, self.content_offset))
+            content, (self.state_machine.reporter.source, self.content_offset),
+            self.get_imports())
         tree = model.lookup('root')
         if tree is None or tree.content is None:
             raise RuntimeError('cannot parse the rule')

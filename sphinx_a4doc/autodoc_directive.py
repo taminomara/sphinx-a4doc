@@ -141,6 +141,7 @@ class AutoGrammar(Grammar, ModelLoaderMixin, DocsRendererMixin):
 
         self.arguments = [model.get_name()]
 
+        self.env.temp_data.setdefault('a4:autogrammar_ctx', []).append(model.get_path())
         try:
             # Create a skeleton of the grammar description
             nodes = super(AutoGrammar, self).run()
@@ -178,6 +179,7 @@ class AutoGrammar(Grammar, ModelLoaderMixin, DocsRendererMixin):
 
             return nodes
         finally:
+            self.env.temp_data['a4:autogrammar_ctx'].pop()
             self.register_deps()
 
     def cut_rule_descriptions(self, model, nodes):
@@ -346,13 +348,30 @@ class AutoRule(Rule, ModelLoaderMixin, DocsRendererMixin):
 
     """
 
-    required_arguments = 2
+    required_arguments = 1
+    optional_arguments = 2
     has_content = True
 
     def run(self):
         self.name = 'a4:rule'
 
-        model = self.load_model(self.arguments[0])
+        if len(self.arguments) == 2:
+            path, rule_name = self.arguments
+        else:
+            rule_name = self.arguments[0]
+            if self.env.temp_data.get('a4:autogrammar_ctx'):
+                path = self.env.temp_data['a4:autogrammar_ctx'][-1]
+            elif 'a4:grammar' in self.env.ref_context:
+                path = self.env.ref_context['a4:grammar']
+            else:
+                return [
+                    self.state_machine.reporter.error(
+                        'could not figure out grammar path for autorule directive',
+                        line=self.lineno
+                    )
+                ]
+
+        model = self.load_model(path)
         if model.has_errors():
             self.register_deps()
             return [
@@ -371,12 +390,12 @@ class AutoRule(Rule, ModelLoaderMixin, DocsRendererMixin):
                 )
             ]
 
-        rule = model.lookup(self.arguments[1])
+        rule = model.lookup(rule_name)
         if rule is None:
             self.register_deps()
             return [
                 self.state_machine.reporter.error(
-                    f'unknown rule {self.arguments[1]!r}',
+                    f'unknown rule {rule_name!r}',
                     line=self.lineno
                 )
             ]
@@ -386,6 +405,7 @@ class AutoRule(Rule, ModelLoaderMixin, DocsRendererMixin):
 
         self.arguments = [rule.name]
 
+        self.env.temp_data.setdefault('a4:autogrammar_ctx', []).append(model.get_path())
         try:
             nodes = super(AutoRule, self).run()
 
@@ -420,6 +440,7 @@ class AutoRule(Rule, ModelLoaderMixin, DocsRendererMixin):
 
             return nodes
         finally:
+            self.env.temp_data['a4:autogrammar_ctx'].pop()
             self.register_deps()
 
     def find_desc_content(self, nodes):
