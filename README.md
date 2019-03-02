@@ -35,6 +35,10 @@ pip3 install sphinx-a4doc
 
 ## Changelog
 
+*v1.2.1*
+
+- Fixed integration with intersphinx.
+
 *v1.2.0*:
 
 - Renamed `conf.py` settings: `a4_autodoc_*` became `a4_autogrammar_*`.

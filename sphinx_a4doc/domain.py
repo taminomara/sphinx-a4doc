@@ -489,11 +489,5 @@ class A4Domain(Domain):
 
     def get_objects(self):
         for fqn, entry in self.index.items():
-            if entry.objtype == 'rule':
-                prefix, display_name = fqn.rsplit('.', 1)
-                prefix += ' / '
-            else:
-                prefix, display_name = '', fqn
-            display_name = entry.display_name or display_name
-            display_name = prefix + display_name
-            yield (display_name, display_name, entry.objtype, entry.docname, 'a4.' + fqn, 1)
+            display_name = entry.display_name or entry.name or fqn
+            yield (fqn, display_name, entry.objtype, entry.docname, 'a4.' + fqn, 1)

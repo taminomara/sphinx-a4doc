@@ -320,6 +320,8 @@ class GrammarSettings:
     That is, if there is a reference to ``grammar.rule`` and there is no
     ``rule`` found in the ``grammar``, the imported grammars will be searched
     as well.
+    
+    Note that this setting is not passed through intersphinx.
 
     """
 
