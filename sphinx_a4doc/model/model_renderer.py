@@ -1,7 +1,15 @@
 from typing import *
 
+import re
+
 from sphinx_a4doc.model.model import RuleBase, LexerRule, ParserRule
 from sphinx_a4doc.model.visitor import *
+from sphinx_a4doc.settings import LiteralRendering
+
+
+def cc_to_dash(name: str) -> str:
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1-\2', name)
+    return re.sub('([a-z0-9])([A-Z])', r'\1-\2', s1).lower()
 
 
 class ImportanceProvider(CachedRuleContentVisitor[int]):
@@ -54,10 +62,14 @@ class ImportanceProvider(CachedRuleContentVisitor[int]):
 class Renderer(CachedRuleContentVisitor[dict]):
     def __init__(
         self,
-        importance_provider: ImportanceProvider = ImportanceProvider(),
+        literal_rendering: LiteralRendering = LiteralRendering.CONTENTS_UNQUOTED,
+        do_cc_to_dash: bool = False,
+        importance_provider: ImportanceProvider = ImportanceProvider()
     ):
         super().__init__()
 
+        self._do_cc_to_dash = do_cc_to_dash
+        self.literal_rendering = literal_rendering
         self.importance_provider = importance_provider
 
     @staticmethod
@@ -132,20 +144,32 @@ class Renderer(CachedRuleContentVisitor[dict]):
     def visit_reference(self, r: RuleBase.Reference):
         rule = r.get_reference()
         if rule is None:
-            if r.name[0].isupper() or r.name[0] == "'":
-                return self._terminal(r.name)
+            if r.name and (r.name[0].isupper() or r.name.startswith('\'')):
+                if r.name.startswith('\'') and r.name.endswith('\''):
+                    if self.literal_rendering is LiteralRendering.CONTENTS_UNQUOTED:
+                        name = r.name[1:-1]
+                    else:
+                        name = r.name
+                else:
+                    name = self._cc_to_dash(r.name)
+                return self._terminal(name)
             else:
-                return self._non_terminal(r.name)
-        elif rule.is_doxygen_inline:
+                return self._non_terminal(self._cc_to_dash(r.name))
+        elif rule.is_doxygen_inline and rule.content is not None:
             return self.visit(rule.content)
         elif isinstance(rule, LexerRule):
-            return self._terminal(
-                f'{rule.display_name or rule.name}',
-                f'{rule.model.get_name()}.{rule.name}',
-                title_is_weak=True)
+            path = f'{rule.model.get_name()}.{rule.name}'
+            if rule.is_literal and self.literal_rendering is not LiteralRendering.NAME:
+                literal = str(rule.content)
+                if self.literal_rendering is LiteralRendering.CONTENTS_UNQUOTED:
+                    literal = literal[1:-1]
+                return self._terminal(literal, path)
+            else:
+                name = rule.display_name or self._cc_to_dash(rule.name)
+                return self._terminal(name, path, title_is_weak=True)
         elif isinstance(rule, ParserRule):
             return self._non_terminal(
-                f'{rule.display_name or rule.name}',
+                rule.display_name or self._cc_to_dash(rule.name),
                 f'{rule.model.get_name()}.{rule.name}',
                 title_is_weak=True)
         else:
@@ -245,3 +269,9 @@ class Renderer(CachedRuleContentVisitor[dict]):
         return self._sequence(*[
             e if isinstance(e, dict) else self.visit(e) for e in seq
         ], linebreaks=lb)
+
+    def _cc_to_dash(self, name):
+        if self._do_cc_to_dash:
+            return cc_to_dash(name)
+        else:
+            return name

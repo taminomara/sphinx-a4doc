@@ -86,6 +86,31 @@ class GroupingSettings(Enum):
     """
 
 
+class LiteralRendering(Enum):
+    """
+    Controls how literal rules are rendered.
+
+    """
+
+    NAME = 'NAME'
+    """
+    Name of the rule is displayed.
+
+    """
+
+    CONTENTS = 'CONTENTS'
+    """
+    Contents of the rule are displayed.
+
+    """
+
+    CONTENTS_UNQUOTED = 'CONTENTS_UNQUOTED'
+    """
+    Contents of the rule are displayed, single quotes are stripped away.
+
+    """
+
+
 @dataclass(frozen=True)
 class DiagramSettings:
     """
@@ -199,6 +224,34 @@ class DiagramSettings:
 
     """
 
+    literal_rendering: LiteralRendering = LiteralRendering.CONTENTS_UNQUOTED
+    """
+    Controls how literal rules (i.e. lexer rules that only consist of one
+    string) are rendered. Available options are:
+    
+    - ``name`` -- only name of the literal rule is displayed.
+    
+    - ``contents`` -- quoted literal string is displayed.
+    
+      .. parser-rule-diagram:: 'def' Id
+         :literal-rendering: contents
+    
+    - ``contents-unquoted``: -- literal string is displayed, quotes stripped
+      away.
+      
+
+      .. parser-rule-diagram:: 'def' Id
+         :literal-rendering: contents-unquoted
+    
+    """
+
+    cc_to_dash: bool = False
+    """
+    If rule have no human-readable name set, convert its name from
+    ``CamelCase`` to ``dash-case``.
+    
+    """
+
 
 @dataclass(frozen=True)
 class GrammarSettings:
@@ -304,10 +357,10 @@ class AutogrammarSettings(GrammarSettings):
     If given, autodoc will only render rules that are reachable from this root.
     This is useful to exclude rules from imported grammars that are not used
     by the primary grammar.
- 
+
     The value should be either name of a rule from the grammar that's being
     documented or a full path which includes grammar name and rule name.
- 
+
     For example, suppose there's ``Lexer.g4`` and ``Parser.g4``. To filter
     lexer rules that are not used by parser grammar, use:
 
@@ -383,6 +436,37 @@ class AutogrammarSettings(GrammarSettings):
 
     """
 
+    honor_sections: bool = field(default=True, metadata=dict(rebuild=True))
+    """
+    If true, render comments that start with a triple slash, treating them
+    as paragraphs that placed between rules.
+
+    This setting has no effect unless :rst:opt:`ordering` is ``by-source``.
+
+    .. versionadded:: 1.2.0
+
+    """
+
+    cc_to_dash: bool = False
+    """
+    For rules without explicit human-readable names, generate ones by converting
+    rule name from ``CamelCase`` to ``dash-case``.
+    
+    Setting this option will also set the ``diagram-cc-to-dash`` option, unless
+    the latter is specified explicitly.
+    
+    """
+
+
+@dataclass(frozen=True)
+class AutoruleSettings(GrammarSettings):
+    """
+    Settings for autorule directive.
+
+    .. versionadded:: 1.2.0
+
+    """
+
 
 @dataclass(frozen=True)
 class GlobalSettings:
@@ -402,7 +486,8 @@ class GlobalSettings:
 diagram_namespace = Namespace('a4_diagram', DiagramSettings)
 grammar_namespace = Namespace('a4_grammar', GrammarSettings)
 rule_namespace = Namespace('a4_rule', RuleSettings)
-autodoc_namespace = Namespace('a4_autodoc', AutogrammarSettings)
+autogrammar_namespace = Namespace('a4_autogrammar', AutogrammarSettings)
+autorule_namespace = Namespace('a4_autorule', AutoruleSettings)
 global_namespace = Namespace('a4', GlobalSettings)
 
 
@@ -410,5 +495,6 @@ def register_settings(app):
     diagram_namespace.register_settings(app)
     grammar_namespace.register_settings(app)
     rule_namespace.register_settings(app)
-    autodoc_namespace.register_settings(app)
+    autogrammar_namespace.register_settings(app)
+    autorule_namespace.register_settings(app)
     global_namespace.register_settings(app)

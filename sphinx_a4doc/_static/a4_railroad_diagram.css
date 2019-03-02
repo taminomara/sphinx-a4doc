@@ -22,6 +22,11 @@
     fill: none;
 }
 
+.railroad-diagram g.comment text {
+    font-weight: normal;
+    font-style: italic;
+}
+
 .railroad-diagram g.comment rect {
     stroke-width: 0;
 }
