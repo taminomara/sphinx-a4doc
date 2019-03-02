@@ -32,3 +32,21 @@ A4Doc's features are:
 ```sh
 pip3 install sphinx-a4doc
 ```
+
+## Changelog
+
+*v1.2.0*:
+
+- Renamed `conf.py` settings: `a4_autodoc_*` became `a4_autogrammar_*`.
+- Added support for section comments in grammar files.
+- Added flexible settings to control how literal lexer rules are rendered.
+- Added setting to convert rule names from ``CamelCase`` to ``dash-case``.
+- Fixed documentation comments are parsed incorrectly in some cases.
+
+*v1.0.1*:
+
+- Fixed absence of `.css` file for railroad diagrams.
+
+*v1.0.0*:
+
+- Initial release.
