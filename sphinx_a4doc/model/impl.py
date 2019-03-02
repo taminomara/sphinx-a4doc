@@ -7,7 +7,7 @@ from typing import *
 from antlr4 import CommonTokenStream, InputStream
 from antlr4.error.ErrorListener import ErrorListener
 
-from sphinx_a4doc.model.model import ModelCache, Model, Position, RuleBase, LexerRule, ParserRule
+from sphinx_a4doc.model.model import ModelCache, Model, Position, RuleBase, LexerRule, ParserRule, Section
 from sphinx_a4doc.syntax import Lexer, Parser, ParserVisitor
 
 import sphinx.util.logging
@@ -238,6 +238,7 @@ class MetaLoader(ParserVisitor):
                 is_doxygen_no_diagram=True,
                 importance=1,
                 documentation='',
+                section=None,
             )
 
             self._model.set_lexer_rule(rule.name, rule)
@@ -248,6 +249,7 @@ class RuleLoader(ParserVisitor):
 
     def __init__(self, model: ModelImpl):
         self._model = model
+        self._current_section: Optional[Section] = None
 
     def wrap_suffix(self, element, suffix):
         if element == self.rule_class.EMPTY:
@@ -313,6 +315,37 @@ class RuleLoader(ParserVisitor):
                            for i in range(len(elements)))
         return self.rule_class.Sequence(tuple(elements), linebreaks)
 
+    def visitRuleSpec(self, ctx: Parser.RuleSpecContext):
+        docs: List[Tuple[int, str]] = []
+
+        start_line = None
+        cur_line = None
+        cur_doc: List[str] = []
+
+        for token in ctx.headers:
+            text: str = token.text.lstrip('/').strip()
+            line: int = token.line + self._model.get_offset()
+
+            if start_line is None:
+                start_line = line
+
+            if cur_line is None or cur_line == line - 1:
+                cur_doc.append(text)
+            else:
+                docs.append((start_line, '\n'.join(cur_doc)))
+                start_line = line
+                cur_doc = [text]
+            cur_line = line
+
+        if cur_doc:
+            docs.append((start_line, '\n'.join(cur_doc)))
+
+        if docs:
+            self._current_section = Section(docs)
+        else:
+            self._current_section = None
+        super(RuleLoader, self).visitRuleSpec(ctx)
+
 
 class LexerRuleLoader(RuleLoader):
     rule_class = LexerRule
@@ -347,7 +380,8 @@ class LexerRuleLoader(RuleLoader):
             importance=doc_info['importance'],
             documentation=doc_info['documentation'],
             is_fragment=bool(ctx.frag),
-            is_literal=is_literal
+            is_literal=is_literal,
+            section=self._current_section,
         )
 
         self._model.set_lexer_rule(rule.name, rule)
@@ -451,7 +485,8 @@ class ParserRuleLoader(RuleLoader):
             is_doxygen_inline=doc_info['is_doxygen_inline'],
             is_doxygen_no_diagram=doc_info['is_doxygen_no_diagram'],
             importance=doc_info['importance'],
-            documentation=doc_info['documentation']
+            documentation=doc_info['documentation'],
+            section=self._current_section,
         )
 
         self._model.set_parser_rule(rule.name, rule)

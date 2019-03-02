@@ -215,6 +215,18 @@ def meta(**kwargs):
 
 
 @dataclass(eq=False, frozen=True)
+class Section:
+    """
+    Represents a single section header, i.e. a group of comments that start
+    with a triple slash.
+
+    """
+
+    docs: List[Tuple[int, str]]
+    """List of documentation lines in the section description"""
+
+
+@dataclass(eq=False, frozen=True)
 class RuleBase:
     """
     Base class for parser and lexer rules.
@@ -231,7 +243,7 @@ class RuleBase:
     """Reference to the model in which this rule was declared"""
 
     position: Position
-    """A position at which this rule is declared."""
+    """A position at which this rule is declared"""
 
     content: Optional['RuleBase.RuleContent']
     """Body of the token or rule definition.
@@ -261,6 +273,9 @@ class RuleBase:
 
     documentation: Optional[List[Tuple[int, str]]]
     """Documentation for this rule"""
+
+    section: Optional[Section]
+    """Which section this rule belong to?"""
 
     def __str__(self):
         lines = [self.name]
