@@ -181,13 +181,19 @@ Rendering diagrams
 .. rst:autodirective:: railroad-diagram
 
 .. rst:autodirective:: lexer-rule-diagram
+   :no-options:
 
 .. rst:autodirective:: parser-rule-diagram
+   :no-options:
 
 Autodoc directive
 ~~~~~~~~~~~~~~~~~
 
 .. rst:autodirective:: .. a4:autogrammar:: filename
+   :no-inherited-options:
+   :no-options-header:
+
+.. rst:autodirective:: .. a4:autorule:: filename rulename
    :no-inherited-options:
    :no-options-header:
 
@@ -202,7 +208,7 @@ Grammar comments and annotations
 
 The :rst:dir:`a4:autogrammar` directive does not parse any comment that's found
 in a grammar file. Instead, it searches for 'documentation' comments, i.e. ones
-specially formatted. There are two types of such comments:
+specially formatted. There are three types of such comments:
 
 - documentation comments are multiline comments that start with ``/**``
   (that is, a slash followed by double asterisk). These comments should contain
@@ -231,20 +237,42 @@ specially formatted. There are two types of such comments:
      //@ doc:no-diagram
      module: moduleItem* EOF
 
+- section comments are comments that start with ``///``. They're used to render text
+  between production rules and split grammar definition in sections.
+
+  Example:
+
+  .. code-block:: antlr
+
+     /// **Module definition**
+     ///
+     /// This paragraph describes the ``Module definition``
+     /// section of the grammar.
+
+     module: moduleItem* EOF
+
+     moduleItem: import | symbol
+
+  .. versionadded:: 1.2.0
+
 There are also restrictions on were documentation and control comments may
 appear:
 
 - documentation comments can be placed either at the beginning of the file,
   before the ``grammar`` keyword (in which case they document the whole
   grammar), or they can be found right before a production rule or a fragment
-  declaration (in which case they are rendered as a rule description);
+  declaration (in which case they are rendered as a rule description).
+  Also, they can be embedded into the rule description, in which case they
+  are rendered as part of the railroad diagram;
 - control comments can only be placed before a production rule declaration.
   They only affect rendering of that specific production rule;
 - multiple documentation and control comments can appear before a rule. In this
   case, the first documentation comment will be rendered before automatically
   generated railroad diagram, all sequential documentation comments will
   be rendered after it, and all control comments will be applied before
-  rendering documentation comments.
+  rendering documentation comments;
+- section comments can only be placed between rules in the main section
+  of a file.
 
 .. _control_comments:
 
@@ -296,7 +324,7 @@ The list of control comments includes:
      //@ doc:importance 1
      R1 : EOF
 
-  In alternative groups, rule with the highest priority will be centered:
+  In alternative groups, rule with the highest importance will be centered:
 
   .. parser-rule-diagram:: (R0 | R1) (R2 | R1);
 
