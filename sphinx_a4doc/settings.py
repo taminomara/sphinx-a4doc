@@ -144,12 +144,6 @@ class DiagramSettings:
 
     """
 
-    diagram_class: str = 'railroad-diagram'
-    """
-    CSS class for the SVG node in which the diagram will be rendered.
-
-    """
-
     translate_half_pixel: bool = False
     """
     If enabled, the diagram will be translated half-pixel in both directions.

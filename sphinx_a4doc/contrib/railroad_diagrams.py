@@ -420,7 +420,7 @@ class Diagram:
         svg.attrs['width'] = str(width)
         svg.attrs['height'] = str(height)
         svg.attrs['viewBox'] = f'0 0 {width} {height}'
-        svg.attrs['class'] = self.settings.diagram_class
+        svg.attrs['class'] = 'railroad-diagram'
         svg = svg.format()
 
         g = self.element('g')
