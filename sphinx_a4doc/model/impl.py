@@ -590,23 +590,24 @@ def load_docs(model, tokens, allow_cmd=True):
             else:
                 documentation_lines = []
 
-                lines = list(map(str.strip, text.splitlines()))
+                lines = text.splitlines()
 
                 if len(lines) == 1:
                     documentation_lines.append(lines[0][3:-2].strip())
                 else:
-                    first_line, *lines = lines
+                    first_line = lines[0]
+                    lines = lines[1:]
 
-                    first_line = first_line[3:].lstrip()
+                    first_line = first_line[3:].strip()
                     documentation_lines.append(first_line)
 
                     lines[-1] = lines[-1][:-2].rstrip()
 
-                    if not lines[-1]:
+                    if not lines[-1].lstrip():
                         lines.pop()
 
-                    if all(line.startswith('*') for line in lines):
-                        lines = [line[1:] for line in lines]
+                    if all(line.lstrip().startswith('*') for line in lines):
+                        lines = [line.lstrip()[1:] for line in lines]
 
                     text = textwrap.dedent('\n'.join(lines))
 
