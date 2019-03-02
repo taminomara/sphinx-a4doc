@@ -356,6 +356,9 @@ Configuration
 Customizing diagram style
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
+To customize diagram style, one can replace `the default css file <https://github.com/AmatanHead/sphinx-a4doc/blob/master/sphinx_a4doc/_static/a4_railroad_diagram.css>`_
+by placing a ``a4_railroad_diagram.css`` file to the ``_static`` directory.
+
 .. . .. _custom_lookup:
 
 .. . Customizing process of grammar files lookup
