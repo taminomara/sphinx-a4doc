@@ -139,8 +139,7 @@ rules
    ;
 
 ruleSpec
-   : parserRuleSpec
-   | lexerRuleSpec
+   : headers+=HEADER* (parserRuleSpec | lexerRuleSpec)
    ;
 
 parserRuleSpec

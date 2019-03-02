@@ -32,6 +32,10 @@ DOC_COMMENT
     :	DocComment
     ;
 
+HEADER
+    : '///' ~[\r\n]*
+    ;
+
 BLOCK_COMMENT
     :	BlockComment	-> channel(OFF_CHANNEL)
     ;
