@@ -40,7 +40,7 @@ def push_html():
         path = os.path.join(tmp, 'html')
         shutil.copytree(BUILD_PATH, path)
         with cd(path):
-            shutil.rmtree('.doctrees')
+            shutil.rmtree('.doctrees', ignore_errors=True)
             os.system('git init')
             os.system('git add .')
             os.system('git commit -m "update docs"')
