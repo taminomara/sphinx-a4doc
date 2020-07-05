@@ -33,6 +33,10 @@ A4Doc's features are:
 pip3 install sphinx-a4doc
 ```
 
+## Use cases
+
+- [7zip format specification](https://py7zr.readthedocs.io/en/latest/archive_format.html)
+
 ## Changelog
 
 *v1.2.1*
