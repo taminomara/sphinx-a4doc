@@ -109,6 +109,14 @@ class RailroadDiagramNode(docutils.nodes.Element, docutils.nodes.General):
             self.body.append('</p>')
 
     @staticmethod
+    def visit_node_text(self: sphinx.writers.text.TextTranslator, node):
+        if node['options'].alt:
+            self.add_text('{}'.format(node['options'].alt))
+        else:
+            self.add_text(yaml.dump(node['diagram']))
+        raise docutils.nodes.SkipNode
+
+    @staticmethod
     def depart_node(self, node):
         pass
 
@@ -372,7 +380,6 @@ class RailroadDiagram(sphinx.util.docutils.SphinxDirective, ManagedDirective):
 
     def run(self):
         grammar = self.env.ref_context.get('a4:grammar', '__default__')
-
         try:
             content = self.get_content()
         except Exception as e:
