@@ -15,7 +15,7 @@ setup(
     url='https://github.com/AmatanHead/sphinx-a4doc',
     packages=find_packages(),
     install_requires=[
-        'sphinx>=1.8.0,<2.0.0',
+        'sphinx>=1.8.0',
         'antlr4-python3-runtime==4.7.1',
         'PyYAML'
     ],
