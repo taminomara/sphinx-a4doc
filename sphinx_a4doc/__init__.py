@@ -19,6 +19,8 @@ def setup(app: sphinx.application.Sphinx):
     app.add_domain(A4Domain)
 
     app.add_node(RailroadDiagramNode,
+                 text=(RailroadDiagramNode.visit_node_text,
+                       None),
                  html=(RailroadDiagramNode.visit_node_html,
                        RailroadDiagramNode.depart_node))
 

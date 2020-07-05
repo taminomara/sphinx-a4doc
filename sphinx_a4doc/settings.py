@@ -246,6 +246,12 @@ class DiagramSettings:
     
     """
 
+    alt: Optional[str] = None
+    """
+    If rendering engine does not support output of contents, specified
+    string is used alternatively.
+    """
+
 
 @dataclass(frozen=True)
 class GrammarSettings:
