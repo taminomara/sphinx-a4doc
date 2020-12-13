@@ -25,7 +25,7 @@ jobs:
       if: startsWith(github.event.ref, 'refs/heads/master')
       uses: pypa/gh-action-pypi-publish@master
       with:
-        password: ${{ secrets.testpypi_password }}
+        password: ${{ secrets.test_pypi_password }}
         repository_url: https://test.pypi.org/legacy/
     - name: Publish distribution 📦 to PyPI
       if: startsWith(github.event.ref, 'refs/tags')
