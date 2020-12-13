@@ -10,7 +10,7 @@ jobs:
     - uses: actions/checkout@master
       with:
         fetch-depth: 20
-    - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+    - run: "git fetch --depth=1 origin +refs/tags/*:refs/tags/* || :"
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
       with:
