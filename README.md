@@ -39,6 +39,10 @@ pip3 install sphinx-a4doc
 
 ## Changelog
 
+*v1.2.2*
+
+- Set up automatic PyPI pushes.
+
 *v1.2.1*
 
 - Fixed integration with intersphinx.
