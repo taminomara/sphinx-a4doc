@@ -19,7 +19,7 @@ import sys
 # -- Project information -----------------------------------------------------
 
 project = 'A4Doc'
-copyright = '2018, Vladimir Goncharov'
+copyright = '2020, Vladimir Goncharov'
 author = 'Vladimir Goncharov'
 
 # The short X.Y version
