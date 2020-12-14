@@ -39,6 +39,10 @@ pip3 install sphinx-a4doc
 
 ## Changelog
 
+*v1.2.3*
+
+- Further improve automatic PyPI pushes.
+
 *v1.2.2*
 
 - Set up automatic PyPI pushes.
