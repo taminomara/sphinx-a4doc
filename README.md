@@ -35,6 +35,7 @@ pip3 install sphinx-a4doc
 
 ## Use cases
 
+- [Solidity specification](https://docs.soliditylang.org/en/latest/grammar.html)
 - [7zip format specification](https://py7zr.readthedocs.io/en/latest/archive_format.html)
 
 ## Changelog
