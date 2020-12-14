@@ -353,7 +353,7 @@ class AutoDirective(ReSTDirective, ManagedDirective):
 def setup(app: sphinx.application.Sphinx):
     app.setup_extension('sphinx_a4doc.contrib.marker_nodes')
 
-    app.override_domain(ExtendedReSTDomain)
+    app.add_domain(ExtendedReSTDomain, override=True)
 
     namespace.register_settings(app)
     app.add_directive_to_domain('rst', 'autodirective', AutoDirective)
