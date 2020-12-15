@@ -46,7 +46,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: dist/sphinx-a4doc-${{ steps.get_version.outputs.VERSION }}.tar.gz
-        asset_name: dist/sphinx-a4doc-${{ steps.get_version.outputs.VERSION }}.tar.gz
+        asset_name: sphinx-a4doc-${{ steps.get_version.outputs.VERSION }}.tar.gz
         asset_content_type: application/tar+gzip
     - name: Publish distribution to Test PyPI
       uses: pypa/gh-action-pypi-publish@master
