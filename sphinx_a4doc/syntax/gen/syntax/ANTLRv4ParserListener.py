@@ -1,4 +1,3 @@
-# Generated from /Users/amatanhead/Documents/sphinx-a4doc/sphinx_a4doc/syntax/ANTLRv4Parser.g4 by ANTLR 4.7
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .ANTLRv4Parser import ANTLRv4Parser
@@ -771,5 +770,3 @@ class ANTLRv4ParserListener(ParseTreeListener):
     # Exit a parse tree produced by ANTLRv4Parser#tokenRefIdentifier.
     def exitTokenRefIdentifier(self, ctx:ANTLRv4Parser.TokenRefIdentifierContext):
         pass
-
-

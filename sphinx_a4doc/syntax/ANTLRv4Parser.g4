@@ -30,7 +30,7 @@
  */
 /*	A grammar for ANTLR v4 written in ANTLR v4.
  *
- *  Modified 2018.08.13 amatanhead -
+ *  Modified 2018.08.13 taminomara -
  *  -- annotate some code parts with labels and named alternatives
  *  -- update tokens, options and channels spec to match new lexer behaviour
  *	Modified 2015.06.16 gbr -

@@ -30,7 +30,7 @@
 /**
  * A generally reusable set of fragments for import in to Lexer grammars.
  *
- *  Modified 2018.08.13 amatanhead -
+ *  Modified 2018.08.13 taminomara -
  *  -- treat `'//@' ~ [\r\n]*` as doc comments
  *	Modified 2015.06.16 gbr -
  *	-- generalized for inclusion into the ANTLRv4 grammar distribution

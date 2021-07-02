@@ -5,7 +5,7 @@ import shutil
 import tempfile
 
 
-REPO = 'https://github.com/AmatanHead/sphinx-a4doc.git'
+REPO = 'https://github.com/taminomara/sphinx-a4doc.git'
 
 DOCS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'docs'))
 BUILD_PATH = os.path.join(DOCS_PATH, 'build', 'html')

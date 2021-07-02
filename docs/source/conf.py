@@ -19,8 +19,8 @@ import sys
 # -- Project information -----------------------------------------------------
 
 project = 'A4Doc'
-copyright = '2020, Vladimir Goncharov'
-author = 'Vladimir Goncharov'
+copyright = '2021, Tamika Nomara'
+author = 'Tamika Nomara'
 
 # The short X.Y version
 version = ''
@@ -145,7 +145,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'A4Doc.tex', 'A4Doc Documentation',
-     'Vladimir Goncharov', 'manual'),
+     'Tamika Nomara', 'manual'),
 ]
 
 

@@ -1,4 +1,3 @@
-# Generated from /Users/amatanhead/Documents/sphinx-a4doc/sphinx_a4doc/syntax/ANTLRv4Lexer.g4 by ANTLR 4.7
 from antlr4 import *
 from io import StringIO
 from typing.io import TextIO
@@ -652,6 +651,3 @@ class ANTLRv4Lexer(LexerAdaptor):
     def END_ACTION_action(self, localctx:RuleContext , actionIndex:int):
         if actionIndex == 2:
              self.handleEndAction() 
-     
-
-

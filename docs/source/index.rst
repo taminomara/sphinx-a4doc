@@ -356,7 +356,8 @@ Configuration
 Customizing diagram style
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To customize diagram style, one can replace `the default css file <https://github.com/AmatanHead/sphinx-a4doc/blob/master/sphinx_a4doc/_static/a4_railroad_diagram.css>`_
+To customize diagram style, one can replace
+`the default css file <https://github.com/taminomara/sphinx-a4doc/blob/master/sphinx_a4doc/_static/a4_railroad_diagram.css>`_
 by placing a ``a4_railroad_diagram.css`` file to the ``_static`` directory.
 
 .. . .. _custom_lookup:
@@ -368,7 +369,7 @@ Example output
 --------------
 
 This example was generated from
-`Json.g4 <https://github.com/AmatanHead/sphinx-a4doc/blob/master/docs/examples/Json.g4>`_.
+`Json.g4 <https://github.com/taminomara/sphinx-a4doc/blob/master/docs/examples/Json.g4>`_.
 
 .. a4:autogrammar:: ./Json
    :only-reachable-from: value
