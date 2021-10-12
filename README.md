@@ -40,6 +40,10 @@ pip3 install sphinx-a4doc
 
 ## Changelog
 
+*v1.2.5*
+
+- Fixed python 3.9 compatibility issue (by @sandrotosi).
+
 *v1.2.2, v1.2.3, v1.2.4*
 
 - No functional changes, just setting up CI to push PyPI releases automatically.
