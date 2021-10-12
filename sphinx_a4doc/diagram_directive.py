@@ -4,6 +4,7 @@ import docutils.utils
 import sphinx.addnodes
 import sphinx.util.docutils
 import sphinx.writers.html
+import sphinx.writers.text
 import sphinx.util.logging
 import sphinx.environment
 
