@@ -42,7 +42,7 @@ pip3 install sphinx-a4doc
 
 *v1.2.5*
 
-- Fixed python 3.9 compatibility issue (by @sandrotosi).
+- Fixed python 3.9 compatibility issue (by [@sandrotosi](https://github.com/sandrotosi)).
 
 *v1.2.2, v1.2.3, v1.2.4*
 
