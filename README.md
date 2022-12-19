@@ -40,6 +40,11 @@ pip3 install sphinx-a4doc
 
 ## Changelog
 
+*v1.5.0*
+
+- Fixed position of text in diagram nodes in Firefox.
+- Added an option to set custom classes to diagram nodes: `//@ doc:css-class`.
+
 *v1.4.0*
 
 - Fixed compatibility with `singlehtml` mode (see [#15](https://github.com/taminomara/sphinx-a4doc/issues/15)).
