@@ -352,7 +352,9 @@ class AutoGrammar(Grammar, ModelLoaderMixin, DocsRendererMixin):
                 ):
                     settings = dataclasses.replace(settings, end_class=EndClass.COMPLEX)
                 desc_content.append(
-                    RailroadDiagramNode(dia, settings, grammar)
+                    RailroadDiagramNode(
+                        '', diagram=dia, options=settings, grammar=grammar
+                    )
                 )
 
             self.render_docs(rule.position.file, docs, desc_content)
@@ -472,7 +474,9 @@ class AutoRule(Rule, ModelLoaderMixin, DocsRendererMixin):
                     settings = self.diagram_settings
 
                     doc_node.append(
-                        RailroadDiagramNode(dia, settings, grammar)
+                        RailroadDiagramNode(
+                            '', diagram=dia, options=settings, grammar=grammar
+                        )
                     )
 
                 self.render_docs(rule.position.file, docs, doc_node)

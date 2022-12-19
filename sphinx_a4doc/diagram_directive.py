@@ -92,8 +92,23 @@ class DomainResolver(HrefResolver):
 
 
 class RailroadDiagramNode(docutils.nodes.Element, docutils.nodes.General):
-    def __init__(self, diagram: dict, options: DiagramSettings, grammar: str):
-        super().__init__('', diagram=diagram, options=options, grammar=grammar)
+    def __init__(
+        self,
+        rawsource='',
+        *args,
+        diagram: dict,
+        options: DiagramSettings,
+        grammar: str,
+        **kwargs
+    ):
+        super().__init__(
+            rawsource,
+            *args,
+            diagram=diagram,
+            options=options,
+            grammar=grammar,
+            **kwargs
+        )
 
     @staticmethod
     def visit_node_html(self: sphinx.writers.html.HTMLTranslator, node):
@@ -390,7 +405,11 @@ class RailroadDiagram(sphinx.util.docutils.SphinxDirective, ManagedDirective):
                     line=self.lineno
                 )
             ]
-        return [RailroadDiagramNode(content, self.settings, grammar)]
+        return [
+            RailroadDiagramNode(
+                '', diagram=content, options=self.settings, grammar=grammar
+            )
+        ]
 
     def get_content(self):
         return yaml.safe_load('\n'.join(self.content))
