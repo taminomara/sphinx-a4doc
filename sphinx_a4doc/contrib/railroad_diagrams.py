@@ -67,7 +67,7 @@ def ensure_type(name, x, *types):
     if not isinstance(x, types):
         types_str = ', '.join([t.__name__ for t in types])
         raise ValueError(f'{name} should be {types_str}, '
-                         f'got {type(x)} instead')
+                         f'got {type(x)} ({x!r}) instead')
 
 
 def ensure_empty_dict(name, x):
@@ -160,11 +160,11 @@ class Diagram:
     def node(self, text: str, href: Optional[str] = None, css_class: str = '', radius: int = 0, padding: int = 20, resolve: bool = False, title_is_weak: bool = False) -> 'DiagramItem':
         return Node(self, text, href, css_class, radius, padding, resolve, title_is_weak)
 
-    def terminal(self, text: str, href: Optional[str] = None, resolve: bool = True, title_is_weak: bool = False):
-        return self.node(text, href, 'node terminal', 10, 20, resolve, title_is_weak)
+    def terminal(self, text: str, href: Optional[str] = None, css_class: str = '', resolve: bool = True, title_is_weak: bool = False):
+        return self.node(text, href, 'node terminal ' + css_class, 10, 20, resolve, title_is_weak)
 
-    def non_terminal(self, text: str, href: Optional[str] = None, resolve: bool = True, title_is_weak: bool = False):
-        return self.node(text, href, 'node non-terminal', 0, 20, resolve, title_is_weak)
+    def non_terminal(self, text: str, href: Optional[str] = None, css_class: str = '', resolve: bool = True, title_is_weak: bool = False):
+        return self.node(text, href, 'node non-terminal ' + css_class, 0, 20, resolve, title_is_weak)
 
     def comment(self, text: str, href: Optional[str] = None):
         return self.node(text, href, 'node comment', 0, 5)
@@ -300,6 +300,7 @@ class Diagram:
             a, kw, self.terminal, (str,), lambda s: ([s], {}),
             {
                 'href':          ((str,                  ), None           ),
+                'css_class':     ((str,                  ), None           ),
                 'resolve':       ((bool,                 ), None           ),
                 'title_is_weak': ((bool,                 ), None           ),
             }
@@ -310,6 +311,7 @@ class Diagram:
             a, kw, self.non_terminal, (str,), lambda s: ([s], {}),
             {
                 'href':          ((str,                  ), None           ),
+                'css_class':     ((str,                  ), None           ),
                 'resolve':       ((bool,                 ), None           ),
                 'title_is_weak': ((bool,                 ), None           ),
             }

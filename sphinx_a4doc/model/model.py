@@ -261,6 +261,10 @@ class RuleBase:
     If true, generators should not produce railroad diagram for this rule.
     """
 
+    css_class: Optional[str]
+    """Custom css class set via `//@ doc:css_class`.
+    """
+
     is_doxygen_inline: bool
     """Indicates that the `'inline'` flag is set for this rule.
     If true, generators should not output any content for this rule.

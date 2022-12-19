@@ -236,6 +236,7 @@ class MetaLoader(ParserVisitor):
                 is_doxygen_nodoc=True,
                 is_doxygen_inline=True,
                 is_doxygen_no_diagram=True,
+                css_class=None,
                 importance=1,
                 documentation='',
                 section=None,
@@ -377,6 +378,7 @@ class LexerRuleLoader(RuleLoader):
             is_doxygen_nodoc=doc_info['is_doxygen_nodoc'],
             is_doxygen_inline=doc_info['is_doxygen_inline'],
             is_doxygen_no_diagram=doc_info['is_doxygen_no_diagram'],
+            css_class=doc_info['css_class'],
             importance=doc_info['importance'],
             documentation=doc_info['documentation'],
             is_fragment=bool(ctx.frag),
@@ -484,6 +486,7 @@ class ParserRuleLoader(RuleLoader):
             is_doxygen_nodoc=doc_info['is_doxygen_nodoc'],
             is_doxygen_inline=doc_info['is_doxygen_inline'],
             is_doxygen_no_diagram=doc_info['is_doxygen_no_diagram'],
+            css_class=doc_info['css_class'],
             importance=doc_info['importance'],
             documentation=doc_info['documentation'],
             section=self._current_section,
@@ -575,6 +578,7 @@ def load_docs(model, tokens, allow_cmd=True):
         is_doxygen_nodoc = False
         is_doxygen_inline = False
         is_doxygen_no_diagram = False
+        css_class = None
         importance = 1
         name = None
         docs: List[Tuple[int, str]] = []
@@ -617,6 +621,11 @@ def load_docs(model, tokens, allow_cmd=True):
                     if not name:
                         logger.error(f'{position}: WARNING: name command requires an argument')
                         continue
+                elif cmd == 'css_class':
+                    css_class = match['ctx'].strip()
+                    if not name:
+                        logger.error(f'{position}: WARNING: css_class command requires an argument')
+                        continue
                 else:
                     logger.error(f'{position}: WARNING: unknown command {cmd!r}')
 
@@ -655,6 +664,7 @@ def load_docs(model, tokens, allow_cmd=True):
             is_doxygen_inline=is_doxygen_inline,
             is_doxygen_nodoc=is_doxygen_nodoc,
             is_doxygen_no_diagram=is_doxygen_no_diagram,
+            css_class=css_class,
             name=name,
             documentation=docs
         )

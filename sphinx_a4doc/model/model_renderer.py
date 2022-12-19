@@ -97,12 +97,12 @@ class Renderer(CachedRuleContentVisitor[dict]):
         return dict(zero_or_more=item, repeat=repeat)
 
     @staticmethod
-    def _terminal(text: str, href: Optional[str]=None, resolve: bool = True, title_is_weak: bool = False):
-        return dict(terminal=text, href=href, resolve=resolve, title_is_weak=title_is_weak)
+    def _terminal(text: str, href: Optional[str]=None, resolve: bool = True, title_is_weak: bool = False, css_class: Optional[str] = None):
+        return dict(terminal=text, href=href, resolve=resolve, title_is_weak=title_is_weak, css_class=css_class)
 
     @staticmethod
-    def _non_terminal(text: str, href: Optional[str]=None, resolve: bool = True, title_is_weak: bool = False):
-        return dict(non_terminal=text, href=href, resolve=resolve, title_is_weak=title_is_weak)
+    def _non_terminal(text: str, href: Optional[str]=None, resolve: bool = True, title_is_weak: bool = False, css_class: Optional[str] = None):
+        return dict(non_terminal=text, href=href, resolve=resolve, title_is_weak=title_is_weak, css_class=css_class)
 
     @staticmethod
     def _comment(text: str, href: Optional[str]=None):
@@ -163,15 +163,16 @@ class Renderer(CachedRuleContentVisitor[dict]):
                 literal = str(rule.content)
                 if self.literal_rendering is LiteralRendering.CONTENTS_UNQUOTED:
                     literal = literal[1:-1]
-                return self._terminal(literal, path)
+                return self._terminal(literal, path, css_class=rule.css_class)
             else:
                 name = rule.display_name or self._cc_to_dash(rule.name)
-                return self._terminal(name, path, title_is_weak=True)
+                return self._terminal(name, path, title_is_weak=True, css_class=rule.css_class)
         elif isinstance(rule, ParserRule):
             return self._non_terminal(
                 rule.display_name or self._cc_to_dash(rule.name),
                 f'{rule.model.get_name()}.{rule.name}',
-                title_is_weak=True)
+                title_is_weak=True,
+                css_class=rule.css_class)
         else:
             assert False
 
