@@ -40,6 +40,10 @@ pip3 install sphinx-a4doc
 
 ## Changelog
 
+*v1.4.0*
+
+- Fixed compatibility with `singlehtml` mode (see [#15](https://github.com/taminomara/sphinx-a4doc/issues/15)).
+
 *v1.3.0*
 
 - Fixed python 3.9 compatibility issue (by [@sandrotosi](https://github.com/sandrotosi)).
