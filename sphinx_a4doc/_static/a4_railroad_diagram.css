@@ -8,7 +8,7 @@
     font-size: 14px;
     font-family: 'Consolas', 'Menlo', 'Deja Vu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
     text-anchor: middle;
-    alignment-baseline: central;
+    dominant-baseline: central;
     font-weight: bold;
 }
 
