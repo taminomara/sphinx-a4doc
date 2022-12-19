@@ -345,6 +345,11 @@ The list of control comments includes:
 - ``//@ doc:name <str>`` -- set a human-readable name for this rule.
   See :rst:opt:`a4:rule:name` option.
 
+- ``//@ doc:css-class`` -- add a custom CSS class to all diagrams
+  referencing this rule.
+
+  .. versionadded:: 1.5.0
+
 
 .. _config:
 

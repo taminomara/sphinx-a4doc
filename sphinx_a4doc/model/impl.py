@@ -621,10 +621,10 @@ def load_docs(model, tokens, allow_cmd=True):
                     if not name:
                         logger.error(f'{position}: WARNING: name command requires an argument')
                         continue
-                elif cmd == 'css_class':
+                elif cmd == 'css-class':
                     css_class = match['ctx'].strip()
                     if not name:
-                        logger.error(f'{position}: WARNING: css_class command requires an argument')
+                        logger.error(f'{position}: WARNING: css-class command requires an argument')
                         continue
                 else:
                     logger.error(f'{position}: WARNING: unknown command {cmd!r}')
