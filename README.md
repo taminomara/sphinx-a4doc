@@ -40,6 +40,10 @@ pip3 install sphinx-a4doc
 
 ## Changelog
 
+*v1.6.0*
+
+- Support LaTeX builder.
+
 *v1.5.0*
 
 - Fixed position of text in diagram nodes in Firefox.
