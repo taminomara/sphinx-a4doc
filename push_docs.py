@@ -44,7 +44,7 @@ def push_html():
             os.system('git init')
             os.system('git add .')
             os.system('git commit -m "update docs"')
-            os.system('git push -f ' + REPO + ' master:gh-pages')
+            os.system('git push -f ' + REPO + ' main:gh-pages')
 
 
 if __name__ == '__main__':
