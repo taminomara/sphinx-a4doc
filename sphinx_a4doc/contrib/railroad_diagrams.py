@@ -398,12 +398,12 @@ class Diagram:
         return [self.load(x)], {}
 
     @overload
-    def render(self, root: 'DiagramItem', output: None = None) -> str: ...
+    def render(self, root: 'DiagramItem', output: None = None, style=None) -> str: ...
 
     @overload
-    def render(self, root: 'DiagramItem', output: TextIO) -> None: ...
+    def render(self, root: 'DiagramItem', output: TextIO, style=None) -> None: ...
 
-    def render(self, root, output=None):
+    def render(self, root, output=None, style=None):
         root = self.sequence(
             self.start(),
             root,
@@ -424,6 +424,11 @@ class Diagram:
         svg.attrs['viewBox'] = f'0 0 {width} {height}'
         svg.attrs['class'] = 'railroad-diagram'
         svg = svg.format()
+
+        if style:
+            style_r = self.element('style').format()
+            style_r.children.append(style)
+            style_r.add_to(svg)
 
         g = self.element('g')
         if self.settings.translate_half_pixel:

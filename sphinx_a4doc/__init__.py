@@ -10,7 +10,7 @@ from sphinx_a4doc.autodoc_directive import AutoGrammar, AutoRule
 
 def config_inited(app, config):
     static_path = os.path.join(os.path.dirname(__file__), '_static')
-    config.html_static_path.insert(0, static_path)
+    config.html_static_path.append(static_path)
 
 
 def setup(app: sphinx.application.Sphinx):
@@ -20,9 +20,13 @@ def setup(app: sphinx.application.Sphinx):
 
     app.add_node(RailroadDiagramNode,
                  text=(RailroadDiagramNode.visit_node_text,
-                       None),
+                       RailroadDiagramNode.depart_node),
                  html=(RailroadDiagramNode.visit_node_html,
-                       RailroadDiagramNode.depart_node))
+                       RailroadDiagramNode.depart_node),
+                 latex=(RailroadDiagramNode.visit_node_latex,
+                        RailroadDiagramNode.depart_node),
+                 man=(RailroadDiagramNode.visit_node_man,
+                      RailroadDiagramNode.depart_node))
 
     app.add_directive('railroad-diagram', RailroadDiagram)
     app.add_directive('lexer-rule-diagram', LexerRuleDiagram)

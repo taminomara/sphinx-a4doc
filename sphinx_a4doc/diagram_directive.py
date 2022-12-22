@@ -1,3 +1,6 @@
+import json
+import os.path
+
 import docutils.parsers.rst
 import docutils.nodes
 import docutils.utils
@@ -5,6 +8,9 @@ import sphinx.addnodes
 import sphinx.util.docutils
 import sphinx.writers.html
 import sphinx.writers.text
+import sphinx.writers.latex
+import sphinx.writers.manpage
+import sphinx.util.docutils
 import sphinx.util.logging
 import sphinx.environment
 
@@ -54,7 +60,10 @@ class DomainResolver(HrefResolver):
         builder = self.builder
         env = builder.env
         domain = env.get_domain('a4')
-        docname = builder.current_docname
+        if hasattr(builder, 'current_docname'):
+            docname = builder.current_docname
+        else:
+            docname = None
 
         xref = sphinx.addnodes.pending_xref(
             '',
@@ -111,15 +120,27 @@ class RailroadDiagramNode(docutils.nodes.Element, docutils.nodes.General):
         )
 
     @staticmethod
-    def visit_node_html(self: sphinx.writers.html.HTMLTranslator, node):
+    def node_to_svg(self: sphinx.util.docutils.SphinxTranslator, node, add_style=False):
         resolver = DomainResolver(self.builder, node['grammar'])
         dia = Diagram(settings=node['options'], href_resolver=resolver)
+        style = None
+        if add_style:
+            for basedir in self.config.html_static_path:
+                path = os.path.join(self.builder.confdir, basedir, 'a4_railroad_diagram_latex.css')
+                if os.path.exists(path):
+                    with open(path, 'r') as f:
+                        style = f.read()
+                    break
         try:
             data = dia.load(node['diagram'])
-            svg = dia.render(data)
+            return dia.render(data, style=style)
         except Exception as e:
             logger.exception(f'{node.source}:{node.line}: WARNING: {e}')
-        else:
+
+    @staticmethod
+    def visit_node_html(self: sphinx.writers.html.HTMLTranslator, node):
+        svg = RailroadDiagramNode.node_to_svg(self, node)
+        if svg:
             self.body.append('<p class="railroad-diagram-container">')
             self.body.append(svg)
             self.body.append('</p>')
@@ -130,9 +151,42 @@ class RailroadDiagramNode(docutils.nodes.Element, docutils.nodes.General):
             self.add_text('{}'.format(node['options'].alt))
         else:
             self.add_text(yaml.dump(node['diagram']))
-        raise docutils.nodes.SkipNode
 
     @staticmethod
+    def visit_node_latex(self: sphinx.writers.latex.LaTeXTranslator, node):
+        from svglib.svglib import svg2rlg
+        from reportlab.graphics import renderPDF
+        import io
+        import hashlib
+
+        outdir = os.path.join(self.builder.outdir, 'railroad_diagrams')
+        os.makedirs(outdir, exist_ok=True)
+
+        hash = hashlib.sha256()
+        hash.update(
+            yaml.safe_dump(node['diagram'], sort_keys=True, canonical=True).encode())
+        hash.update(
+            repr(node['options']).encode())
+        pdf_file = f'diagram:{node["grammar"]}:{hash.hexdigest()}.pdf'
+        pdf_file = os.path.join(outdir, pdf_file)
+
+        svg = RailroadDiagramNode.node_to_svg(self, node, add_style=True)
+        svg_file = io.StringIO(svg)
+        rlg = svg2rlg(svg_file)
+
+        renderPDF.drawToFile(rlg, pdf_file)
+
+        self.body.append(
+            f'\n\n\\includegraphics[scale=0.6]{{{pdf_file}}}\n\n'
+        )
+
+    @staticmethod
+    def visit_node_man(self: sphinx.writers.manpage.ManualPageTranslator, node):
+        if node['options'].alt:
+            self.body.append('{}'.format(node['options'].alt))
+        else:
+            self.body.append(yaml.dump(node['diagram']))
+
     def depart_node(self, node):
         pass
 
@@ -407,7 +461,7 @@ class RailroadDiagram(sphinx.util.docutils.SphinxDirective, ManagedDirective):
             ]
         return [
             RailroadDiagramNode(
-                '', diagram=content, options=self.settings, grammar=grammar
+                diagram=content, options=self.settings, grammar=grammar
             )
         ]
 
