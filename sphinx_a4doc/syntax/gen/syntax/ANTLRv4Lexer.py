@@ -1,7 +1,11 @@
+# Generated from sphinx_a4doc/syntax/ANTLRv4Lexer.g4 by ANTLR 4.9.2
 from antlr4 import *
 from io import StringIO
-from typing.io import TextIO
 import sys
+if sys.version_info[1] > 5:
+    from typing import TextIO
+else:
+    from typing.io import TextIO
 
 
 from sphinx_a4doc.syntax.lexer_adaptor import LexerAdaptor
@@ -619,24 +623,25 @@ class ANTLRv4Lexer(LexerAdaptor):
 
     def __init__(self, input=None, output:TextIO = sys.stdout):
         super().__init__(input, output)
-        self.checkVersion("4.7")
+        self.checkVersion("4.9.2")
         self._interp = LexerATNSimulator(self, self.atn, self.decisionsToDFA, PredictionContextCache())
         self._actions = None
         self._predicates = None
 
 
     def action(self, localctx:RuleContext, ruleIndex:int, actionIndex:int):
-    	if self._actions is None:
-    		actions = dict()
-    		actions[7] = self.BEGIN_ARGUMENT_action 
-    		actions[105] = self.END_ARGUMENT_action 
-    		actions[115] = self.END_ACTION_action 
-    		self._actions = actions
-    	action = self._actions.get(ruleIndex, None)
-    	if action is not None:
-    		action(localctx, actionIndex)
-    	else:
-    		raise Exception("No registered action for:" + str(ruleIndex))
+        if self._actions is None:
+            actions = dict()
+            actions[7] = self.BEGIN_ARGUMENT_action 
+            actions[105] = self.END_ARGUMENT_action 
+            actions[115] = self.END_ACTION_action 
+            self._actions = actions
+        action = self._actions.get(ruleIndex, None)
+        if action is not None:
+            action(localctx, actionIndex)
+        else:
+            raise Exception("No registered action for:" + str(ruleIndex))
+
 
     def BEGIN_ARGUMENT_action(self, localctx:RuleContext , actionIndex:int):
         if actionIndex == 0:
@@ -651,3 +656,6 @@ class ANTLRv4Lexer(LexerAdaptor):
     def END_ACTION_action(self, localctx:RuleContext , actionIndex:int):
         if actionIndex == 2:
              self.handleEndAction() 
+     
+
+
