@@ -1,8 +1,13 @@
+# Generated from sphinx_a4doc/syntax/ANTLRv4Parser.g4 by ANTLR 4.9.2
 # encoding: utf-8
 from antlr4 import *
 from io import StringIO
-from typing.io import TextIO
 import sys
+if sys.version_info[1] > 5:
+	from typing import TextIO
+else:
+	from typing.io import TextIO
+
 
 def serializedATN():
     with StringIO() as buf:
@@ -498,13 +503,15 @@ class ANTLRv4Parser ( Parser ):
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
-        self.checkVersion("4.7")
+        self.checkVersion("4.9.2")
         self._interp = ParserATNSimulator(self, self.atn, self.decisionsToDFA, self.sharedContextCache)
         self._predicates = None
 
 
 
+
     class GrammarSpecContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -628,7 +635,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class GrammarTypeContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -699,7 +708,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class PrequelConstructContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -789,7 +800,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class OptionsSpecContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -865,7 +878,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class OptionContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -924,7 +939,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class OptionValueContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -1110,7 +1127,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class DelegateGrammarsContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -1188,7 +1207,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class DelegateGrammarContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -1235,7 +1256,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class TokensSpecContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -1299,7 +1322,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ChannelsSpecContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -1362,7 +1387,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class IdListContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -1443,7 +1470,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ActionContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -1517,7 +1546,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ActionScopeNameContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -1587,7 +1618,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ActionBlockContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -1654,7 +1687,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ArgActionBlockContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -1721,7 +1756,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ModeSpecContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -1795,7 +1832,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class RulesContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -1853,7 +1892,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class RuleSpecContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -1935,7 +1976,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ParserRuleSpecContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -2100,7 +2143,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ExceptionGroupContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -2170,7 +2215,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ExceptionHandlerContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -2227,7 +2274,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class FinallyClauseContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -2278,7 +2327,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class RulePrequelContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -2341,7 +2392,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class RuleReturnsContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -2392,7 +2445,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ThrowsSpecContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -2465,7 +2520,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class LocalsSpecContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -2516,7 +2573,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class RuleActionContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -2573,7 +2632,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class RuleModifiersContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -2633,7 +2694,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class RuleModifierContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -2693,7 +2756,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class RuleBlockContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -2739,7 +2804,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class RuleAltListContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -2811,7 +2878,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class LabeledAltContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -2875,7 +2944,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class LexerRuleSpecContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -2969,7 +3040,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class LexerRuleBlockContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -3015,7 +3088,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class LexerAltListContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -3087,7 +3162,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class LexerAltContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -3158,7 +3235,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class LexerElementsContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -3221,7 +3300,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class LexerElementContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -3433,7 +3514,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class LabeledLexerElementContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -3515,7 +3598,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class LexerBlockContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -3571,7 +3656,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class LexerCommandsContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -3644,7 +3731,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class LexerCommandContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -3719,7 +3808,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class LexerCommandNameContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -3781,7 +3872,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class LexerCommandExprContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -3843,7 +3936,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class AltListContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -3915,7 +4010,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class AlternativeContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -4002,7 +4099,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ElementContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -4246,7 +4345,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class LabeledElementContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -4328,7 +4429,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class EbnfSuffixContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -4425,7 +4528,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class LexerAtomContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -4662,7 +4767,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class AtomContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -4833,7 +4940,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class NotSetContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -4941,7 +5050,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class BlockSetContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -5023,7 +5134,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class SetElementContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -5208,7 +5321,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class BlockContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -5305,7 +5420,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class RulerefContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -5376,7 +5493,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class CharacterRangeContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -5433,7 +5552,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class TerminalContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -5554,7 +5675,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ElementOptionsContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -5632,7 +5755,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ElementOptionContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -5716,7 +5841,9 @@ class ANTLRv4Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class IdentifierContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -5813,3 +5940,8 @@ class ANTLRv4Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
+
+
+
+
