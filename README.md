@@ -1,8 +1,8 @@
 # Sphinx plugin for Antlr4
 
-Sphinx-A4Doc is deprecated, please use [Sphinx-Syntax] instead.
+**Sphinx-A4Doc is deprecated, please use [Sphinx-Syntax] instead.**
 
-See [migration guide] for more info.
+**See [migration guide] for more info.**
 
 [Sphinx-Syntax]: https://taminomara.github.io/sphinx-syntax/
 
