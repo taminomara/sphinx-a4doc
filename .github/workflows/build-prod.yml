@@ -43,8 +43,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dist/sphinx-a4doc-${{ steps.get_version.outputs.VERSION }}.tar.gz
-        asset_name: sphinx-a4doc-${{ steps.get_version.outputs.VERSION }}.tar.gz
+        asset_path: dist/sphinx_a4doc-${{ steps.get_version.outputs.VERSION }}.tar.gz
+        asset_name: sphinx_a4doc-${{ steps.get_version.outputs.VERSION }}.tar.gz
         asset_content_type: application/tar+gzip
     - name: Publish distribution to Test PyPI
       uses: pypa/gh-action-pypi-publish@master
