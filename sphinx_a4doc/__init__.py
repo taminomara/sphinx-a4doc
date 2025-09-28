@@ -1,11 +1,14 @@
 import os
 
 import sphinx.application
+import sphinx.util.logging
 
 from sphinx_a4doc.domain import A4Domain
 from sphinx_a4doc.diagram_directive import RailroadDiagramNode, RailroadDiagram, LexerRuleDiagram, ParserRuleDiagram
 from sphinx_a4doc.settings import register_settings
 from sphinx_a4doc.autodoc_directive import AutoGrammar, AutoRule
+
+_logger = sphinx.util.logging.getLogger(__name__)
 
 
 def config_inited(app, config):
@@ -14,6 +17,11 @@ def config_inited(app, config):
 
 
 def setup(app: sphinx.application.Sphinx):
+    _logger.warning(
+        "sphinx-a4doc is now deprecated, please use sphinx-syntax instead.\n"
+        "See migration guide at https://taminomara.github.io/sphinx-syntax/sphinx-a4doc.html"
+    )
+
     app.setup_extension('sphinx_a4doc.contrib.marker_nodes')
 
     app.add_domain(A4Domain)

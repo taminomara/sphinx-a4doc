@@ -8,9 +8,6 @@ else:
     from typing.io import TextIO
 
 
-from sphinx_a4doc.syntax.lexer_adaptor import LexerAdaptor
-
-
 if "." in __name__:
     from .LexerAdaptor import LexerAdaptor
 else:
@@ -464,59 +461,59 @@ class ANTLRv4Lexer(LexerAdaptor):
 
     channelNames = [ u"DEFAULT_TOKEN_CHANNEL", u"HIDDEN", u"OFF_CHANNEL" ]
 
-    modeNames = [ "DEFAULT_MODE", "Argument", "Action", "Options", "Tokens", 
+    modeNames = [ "DEFAULT_MODE", "Argument", "Action", "Options", "Tokens",
                   "Channels", "LexerCharSet" ]
 
     literalNames = [ "<INVALID>",
-            "'import'", "'fragment'", "'lexer'", "'parser'", "'grammar'", 
-            "'protected'", "'public'", "'private'", "'returns'", "'locals'", 
+            "'import'", "'fragment'", "'lexer'", "'parser'", "'grammar'",
+            "'protected'", "'public'", "'private'", "'returns'", "'locals'",
             "'throws'", "'catch'", "'finally'", "'mode'" ]
 
     symbolicNames = [ "<INVALID>",
-            "TOKEN_REF", "RULE_REF", "LEXER_CHAR_SET", "DOC_COMMENT", "HEADER", 
-            "BLOCK_COMMENT", "LINE_COMMENT", "INT", "STRING_LITERAL", "UNTERMINATED_STRING_LITERAL", 
-            "BEGIN_ARGUMENT", "BEGIN_ACTION", "OPTIONS", "TOKENS", "CHANNELS", 
-            "IMPORT", "FRAGMENT", "LEXER", "PARSER", "GRAMMAR", "PROTECTED", 
-            "PUBLIC", "PRIVATE", "RETURNS", "LOCALS", "THROWS", "CATCH", 
-            "FINALLY", "MODE", "COLON", "COLONCOLON", "COMMA", "SEMI", "LPAREN", 
-            "RPAREN", "LBRACE", "RBRACE", "RARROW", "LT", "GT", "ASSIGN", 
-            "QUESTION", "STAR", "PLUS_ASSIGN", "PLUS", "OR", "DOLLAR", "RANGE", 
-            "DOT", "AT", "POUND", "NOT", "ID", "WS", "ERRCHAR", "END_ARGUMENT", 
-            "UNTERMINATED_ARGUMENT", "ARGUMENT_CONTENT", "END_ACTION", "UNTERMINATED_ACTION", 
+            "TOKEN_REF", "RULE_REF", "LEXER_CHAR_SET", "DOC_COMMENT", "HEADER",
+            "BLOCK_COMMENT", "LINE_COMMENT", "INT", "STRING_LITERAL", "UNTERMINATED_STRING_LITERAL",
+            "BEGIN_ARGUMENT", "BEGIN_ACTION", "OPTIONS", "TOKENS", "CHANNELS",
+            "IMPORT", "FRAGMENT", "LEXER", "PARSER", "GRAMMAR", "PROTECTED",
+            "PUBLIC", "PRIVATE", "RETURNS", "LOCALS", "THROWS", "CATCH",
+            "FINALLY", "MODE", "COLON", "COLONCOLON", "COMMA", "SEMI", "LPAREN",
+            "RPAREN", "LBRACE", "RBRACE", "RARROW", "LT", "GT", "ASSIGN",
+            "QUESTION", "STAR", "PLUS_ASSIGN", "PLUS", "OR", "DOLLAR", "RANGE",
+            "DOT", "AT", "POUND", "NOT", "ID", "WS", "ERRCHAR", "END_ARGUMENT",
+            "UNTERMINATED_ARGUMENT", "ARGUMENT_CONTENT", "END_ACTION", "UNTERMINATED_ACTION",
             "ACTION_CONTENT", "UNTERMINATED_CHAR_SET" ]
 
-    ruleNames = [ "DOC_COMMENT", "HEADER", "BLOCK_COMMENT", "LINE_COMMENT", 
-                  "INT", "STRING_LITERAL", "UNTERMINATED_STRING_LITERAL", 
-                  "BEGIN_ARGUMENT", "BEGIN_ACTION", "OPTIONS", "TOKENS", 
-                  "CHANNELS", "IMPORT", "FRAGMENT", "LEXER", "PARSER", "GRAMMAR", 
-                  "PROTECTED", "PUBLIC", "PRIVATE", "RETURNS", "LOCALS", 
-                  "THROWS", "CATCH", "FINALLY", "MODE", "COLON", "COLONCOLON", 
-                  "COMMA", "SEMI", "LPAREN", "RPAREN", "LBRACE", "RBRACE", 
-                  "RARROW", "LT", "GT", "ASSIGN", "QUESTION", "STAR", "PLUS_ASSIGN", 
-                  "PLUS", "OR", "DOLLAR", "RANGE", "DOT", "AT", "POUND", 
-                  "NOT", "ID", "WS", "ERRCHAR", "Ws", "Hws", "Vws", "BlockComment", 
-                  "DocComment", "LineComment", "EscSeq", "EscAny", "UnicodeEsc", 
-                  "DecimalNumeral", "HexDigit", "DecDigit", "BoolLiteral", 
-                  "CharLiteral", "SQuoteLiteral", "DQuoteLiteral", "USQuoteLiteral", 
-                  "NameChar", "NameStartChar", "Int", "Esc", "Colon", "DColon", 
-                  "SQuote", "DQuote", "LParen", "RParen", "LBrace", "RBrace", 
-                  "LBrack", "RBrack", "RArrow", "Lt", "Gt", "Equal", "Question", 
-                  "Star", "Plus", "PlusAssign", "Underscore", "Pipe", "Dollar", 
-                  "Comma", "Semi", "Dot", "Range", "At", "Pound", "Tilde", 
-                  "NESTED_ARGUMENT", "ARGUMENT_ESCAPE", "ARGUMENT_STRING_LITERAL", 
-                  "ARGUMENT_CHAR_LITERAL", "END_ARGUMENT", "UNTERMINATED_ARGUMENT", 
-                  "ARGUMENT_CONTENT", "NESTED_ACTION", "ACTION_ESCAPE", 
-                  "ACTION_STRING_LITERAL", "ACTION_CHAR_LITERAL", "ACTION_DOC_COMMENT", 
-                  "ACTION_BLOCK_COMMENT", "ACTION_LINE_COMMENT", "END_ACTION", 
-                  "UNTERMINATED_ACTION", "ACTION_CONTENT", "OPT_DOC_COMMENT", 
-                  "OPT_BLOCK_COMMENT", "OPT_LINE_COMMENT", "OPT_LBRACE", 
-                  "OPT_RBRACE", "OPT_ID", "OPT_DOT", "OPT_ASSIGN", "OPT_STRING_LITERAL", 
-                  "OPT_INT", "OPT_STAR", "OPT_SEMI", "OPT_WS", "TOK_DOC_COMMENT", 
-                  "TOK_BLOCK_COMMENT", "TOK_LINE_COMMENT", "TOK_LBRACE", 
-                  "TOK_RBRACE", "TOK_ID", "TOK_DOT", "TOK_COMMA", "TOK_WS", 
-                  "CHN_DOC_COMMENT", "CHN_BLOCK_COMMENT", "CHN_LINE_COMMENT", 
-                  "CHN_LBRACE", "CHN_RBRACE", "CHN_ID", "CHN_DOT", "CHN_COMMA", 
-                  "CHN_WS", "LEXER_CHAR_SET_BODY", "LEXER_CHAR_SET", "UNTERMINATED_CHAR_SET", 
+    ruleNames = [ "DOC_COMMENT", "HEADER", "BLOCK_COMMENT", "LINE_COMMENT",
+                  "INT", "STRING_LITERAL", "UNTERMINATED_STRING_LITERAL",
+                  "BEGIN_ARGUMENT", "BEGIN_ACTION", "OPTIONS", "TOKENS",
+                  "CHANNELS", "IMPORT", "FRAGMENT", "LEXER", "PARSER", "GRAMMAR",
+                  "PROTECTED", "PUBLIC", "PRIVATE", "RETURNS", "LOCALS",
+                  "THROWS", "CATCH", "FINALLY", "MODE", "COLON", "COLONCOLON",
+                  "COMMA", "SEMI", "LPAREN", "RPAREN", "LBRACE", "RBRACE",
+                  "RARROW", "LT", "GT", "ASSIGN", "QUESTION", "STAR", "PLUS_ASSIGN",
+                  "PLUS", "OR", "DOLLAR", "RANGE", "DOT", "AT", "POUND",
+                  "NOT", "ID", "WS", "ERRCHAR", "Ws", "Hws", "Vws", "BlockComment",
+                  "DocComment", "LineComment", "EscSeq", "EscAny", "UnicodeEsc",
+                  "DecimalNumeral", "HexDigit", "DecDigit", "BoolLiteral",
+                  "CharLiteral", "SQuoteLiteral", "DQuoteLiteral", "USQuoteLiteral",
+                  "NameChar", "NameStartChar", "Int", "Esc", "Colon", "DColon",
+                  "SQuote", "DQuote", "LParen", "RParen", "LBrace", "RBrace",
+                  "LBrack", "RBrack", "RArrow", "Lt", "Gt", "Equal", "Question",
+                  "Star", "Plus", "PlusAssign", "Underscore", "Pipe", "Dollar",
+                  "Comma", "Semi", "Dot", "Range", "At", "Pound", "Tilde",
+                  "NESTED_ARGUMENT", "ARGUMENT_ESCAPE", "ARGUMENT_STRING_LITERAL",
+                  "ARGUMENT_CHAR_LITERAL", "END_ARGUMENT", "UNTERMINATED_ARGUMENT",
+                  "ARGUMENT_CONTENT", "NESTED_ACTION", "ACTION_ESCAPE",
+                  "ACTION_STRING_LITERAL", "ACTION_CHAR_LITERAL", "ACTION_DOC_COMMENT",
+                  "ACTION_BLOCK_COMMENT", "ACTION_LINE_COMMENT", "END_ACTION",
+                  "UNTERMINATED_ACTION", "ACTION_CONTENT", "OPT_DOC_COMMENT",
+                  "OPT_BLOCK_COMMENT", "OPT_LINE_COMMENT", "OPT_LBRACE",
+                  "OPT_RBRACE", "OPT_ID", "OPT_DOT", "OPT_ASSIGN", "OPT_STRING_LITERAL",
+                  "OPT_INT", "OPT_STAR", "OPT_SEMI", "OPT_WS", "TOK_DOC_COMMENT",
+                  "TOK_BLOCK_COMMENT", "TOK_LINE_COMMENT", "TOK_LBRACE",
+                  "TOK_RBRACE", "TOK_ID", "TOK_DOT", "TOK_COMMA", "TOK_WS",
+                  "CHN_DOC_COMMENT", "CHN_BLOCK_COMMENT", "CHN_LINE_COMMENT",
+                  "CHN_LBRACE", "CHN_RBRACE", "CHN_ID", "CHN_DOT", "CHN_COMMA",
+                  "CHN_WS", "LEXER_CHAR_SET_BODY", "LEXER_CHAR_SET", "UNTERMINATED_CHAR_SET",
                   "Id" ]
 
     grammarFileName = "ANTLRv4Lexer.g4"
@@ -532,9 +529,9 @@ class ANTLRv4Lexer(LexerAdaptor):
     def action(self, localctx:RuleContext, ruleIndex:int, actionIndex:int):
         if self._actions is None:
             actions = dict()
-            actions[7] = self.BEGIN_ARGUMENT_action 
-            actions[105] = self.END_ARGUMENT_action 
-            actions[115] = self.END_ACTION_action 
+            actions[7] = self.BEGIN_ARGUMENT_action
+            actions[105] = self.END_ARGUMENT_action
+            actions[115] = self.END_ACTION_action
             self._actions = actions
         action = self._actions.get(ruleIndex, None)
         if action is not None:
@@ -545,17 +542,14 @@ class ANTLRv4Lexer(LexerAdaptor):
 
     def BEGIN_ARGUMENT_action(self, localctx:RuleContext , actionIndex:int):
         if actionIndex == 0:
-             self.handleBeginArgument() 
-     
+             self.handleBeginArgument()
+
 
     def END_ARGUMENT_action(self, localctx:RuleContext , actionIndex:int):
         if actionIndex == 1:
-             self.handleEndArgument() 
-     
+             self.handleEndArgument()
+
 
     def END_ACTION_action(self, localctx:RuleContext , actionIndex:int):
         if actionIndex == 2:
-             self.handleEndAction() 
-     
-
-
+             self.handleEndAction()

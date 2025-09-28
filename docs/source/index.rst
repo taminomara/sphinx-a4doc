@@ -1,6 +1,16 @@
 Sphinx plugin for Antlr4
 ========================
 
+.. warning::
+
+   Sphinx-A4Doc is deprecated, please use `Sphinx-Syntax`__ instead.
+
+   See `migration guide`__ for more info.
+
+   __ https://taminomara.github.io/sphinx-syntax/
+
+   __ https://taminomara.github.io/sphinx-syntax/sphinx-a4doc.html
+
 A4Doc is a sphinx plugin for documenting Antlr4 grammars.
 
 It's primary target is to provide some overview for DSL users

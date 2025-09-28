@@ -6,10 +6,6 @@ options {
 
 import LexBasic;	// Standard set of fragments
 
-@header {
-from sphinx_a4doc.syntax.lexer_adaptor import LexerAdaptor
-}
-
 tokens {
     TOKEN_REF,
     RULE_REF,
